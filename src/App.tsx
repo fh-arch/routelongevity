@@ -13,7 +13,7 @@ import { useLanguage } from './context/LanguageContext';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { Compass, Map as MapIcon, Activity, Heart, User, BookOpen, Calendar, ShieldCheck, LogOut } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { getCurrentUser, signout } from './api';
+import { getCurrentUser, getFavorites, setFavoriteJourney, setFavoriteListing, signout } from './api';
 
 export default function App() {
   const { t, language } = useLanguage();
@@ -91,10 +91,35 @@ export default function App() {
     localStorage.setItem('route_longevity_favorites', JSON.stringify(favorites));
   }, [favorites]);
 
-  const toggleFavorite = (id: string) => {
-    setFavorites(prev => 
+  useEffect(() => {
+    if (!authSession) return;
+
+    getFavorites()
+      .then(({ listingIds, journeyIds }) => {
+        setFavorites(listingIds);
+        setSavedRouteIds(journeyIds);
+        localStorage.setItem('route_longevity_favorites', JSON.stringify(listingIds));
+        localStorage.setItem('route_longevity_saved_routes', JSON.stringify(journeyIds));
+      })
+      .catch((error) => {
+        console.warn('Could not load account favorites.', error);
+      });
+  }, [authSession]);
+
+  const toggleFavorite = async (id: string) => {
+    const willSave = !favorites.includes(id);
+
+    setFavorites(prev =>
       prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
     );
+
+    if (authSession) {
+      try {
+        await setFavoriteListing(id, willSave);
+      } catch (error) {
+        console.warn('Could not sync listing favorite.', error);
+      }
+    }
   };
 
   // Load and save favorite route/wellness journeys to localStorage
@@ -111,10 +136,20 @@ export default function App() {
     localStorage.setItem('route_longevity_saved_routes', JSON.stringify(savedRouteIds));
   }, [savedRouteIds]);
 
-  const toggleSavedRoute = (id: string) => {
+  const toggleSavedRoute = async (id: string) => {
+    const willSave = !savedRouteIds.includes(id);
+
     setSavedRouteIds(prev =>
       prev.includes(id) ? prev.filter(rId => rId !== id) : [...prev, id]
     );
+
+    if (authSession) {
+      try {
+        await setFavoriteJourney(id, willSave);
+      } catch (error) {
+        console.warn('Could not sync route favorite.', error);
+      }
+    }
   };
 
   // State to handle direct focus-out and auto-centering on map pins

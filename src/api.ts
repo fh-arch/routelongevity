@@ -1,4 +1,5 @@
 import type { AuthRole, AuthSession } from './components/AuthModal';
+import type { RouteJourney } from './types';
 
 const API_BASE = import.meta.env.VITE_API_BASE || '';
 
@@ -60,4 +61,24 @@ export async function getCurrentUser() {
 
 export async function signout() {
   return request<{ ok: true }>('/api/auth/signout', { method: 'POST' });
+}
+
+export async function getFavorites() {
+  return request<{ listingIds: string[]; journeyIds: string[] }>('/api/favorites');
+}
+
+export async function setFavoriteListing(id: string, isFavorite: boolean) {
+  return request<{ ok: true }>(`/api/favorites/listings/${encodeURIComponent(id)}`, {
+    method: isFavorite ? 'PUT' : 'DELETE',
+  });
+}
+
+export async function setFavoriteJourney(id: string, isFavorite: boolean) {
+  return request<{ ok: true }>(`/api/favorites/journeys/${encodeURIComponent(id)}`, {
+    method: isFavorite ? 'PUT' : 'DELETE',
+  });
+}
+
+export async function getExperiences() {
+  return request<{ journeys: RouteJourney[] }>('/api/experiences');
 }

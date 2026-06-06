@@ -96,6 +96,10 @@ const adApplicationSchema = z.object({
   budgetRange: z.string().max(80).optional(),
 });
 
+const externalIdSchema = z.object({
+  id: z.string().min(1).max(120),
+});
+
 function validate(schema, req, res) {
   const result = schema.safeParse(req.body);
   if (!result.success) {
@@ -336,6 +340,147 @@ app.get('/api/listings', async (req, res, next) => {
     );
 
     res.json({ listings: listingResult.rows });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.get('/api/experiences', async (req, res, next) => {
+  try {
+    const journeyResult = await query(
+      `SELECT j.id, j.title, j.subtitle, j.duration, j.cities, j.description,
+              j.image_url, j.tags,
+              COALESCE(
+                jsonb_agg(s.listing_external_id ORDER BY s.sort_order)
+                FILTER (WHERE s.listing_external_id IS NOT NULL),
+                '[]'::jsonb
+              ) AS partner_ids
+       FROM route_journeys j
+       LEFT JOIN route_journey_stops s ON s.journey_id = j.id
+       WHERE j.is_active = true
+       GROUP BY j.id
+       ORDER BY j.sort_order, j.created_at`,
+    );
+
+    const journeys = journeyResult.rows.map((journey) => ({
+      id: journey.id,
+      title: journey.title,
+      subtitle: journey.subtitle,
+      duration: journey.duration,
+      cities: journey.cities || [],
+      description: journey.description,
+      partnerIds: journey.partner_ids || [],
+      imageUrl: journey.image_url,
+      tags: journey.tags || [],
+    }));
+
+    return res.json({ journeys });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.get('/api/favorites', requireAuth, async (req, res, next) => {
+  try {
+    const [listingResult, journeyResult] = await Promise.all([
+      query(
+        `SELECT listing_external_id
+         FROM user_favorite_listings
+         WHERE user_id = $1
+         ORDER BY created_at DESC`,
+        [req.user.id],
+      ),
+      query(
+        `SELECT journey_id
+         FROM user_favorite_journeys
+         WHERE user_id = $1
+         ORDER BY created_at DESC`,
+        [req.user.id],
+      ),
+    ]);
+
+    return res.json({
+      listingIds: listingResult.rows.map((row) => row.listing_external_id),
+      journeyIds: journeyResult.rows.map((row) => row.journey_id),
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.put('/api/favorites/listings/:id', requireAuth, async (req, res, next) => {
+  try {
+    const params = externalIdSchema.safeParse(req.params);
+    if (!params.success) {
+      return res.status(400).json({ error: 'Invalid listing id.' });
+    }
+
+    await query(
+      `INSERT INTO user_favorite_listings (user_id, listing_external_id)
+       VALUES ($1, $2)
+       ON CONFLICT (user_id, listing_external_id) DO NOTHING`,
+      [req.user.id, params.data.id],
+    );
+
+    return res.json({ ok: true });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.delete('/api/favorites/listings/:id', requireAuth, async (req, res, next) => {
+  try {
+    const params = externalIdSchema.safeParse(req.params);
+    if (!params.success) {
+      return res.status(400).json({ error: 'Invalid listing id.' });
+    }
+
+    await query(
+      `DELETE FROM user_favorite_listings
+       WHERE user_id = $1 AND listing_external_id = $2`,
+      [req.user.id, params.data.id],
+    );
+
+    return res.json({ ok: true });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.put('/api/favorites/journeys/:id', requireAuth, async (req, res, next) => {
+  try {
+    const params = externalIdSchema.safeParse(req.params);
+    if (!params.success) {
+      return res.status(400).json({ error: 'Invalid journey id.' });
+    }
+
+    await query(
+      `INSERT INTO user_favorite_journeys (user_id, journey_id)
+       VALUES ($1, $2)
+       ON CONFLICT (user_id, journey_id) DO NOTHING`,
+      [req.user.id, params.data.id],
+    );
+
+    return res.json({ ok: true });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.delete('/api/favorites/journeys/:id', requireAuth, async (req, res, next) => {
+  try {
+    const params = externalIdSchema.safeParse(req.params);
+    if (!params.success) {
+      return res.status(400).json({ error: 'Invalid journey id.' });
+    }
+
+    await query(
+      `DELETE FROM user_favorite_journeys
+       WHERE user_id = $1 AND journey_id = $2`,
+      [req.user.id, params.data.id],
+    );
+
+    return res.json({ ok: true });
   } catch (error) {
     return next(error);
   }
