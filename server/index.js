@@ -6,9 +6,11 @@ import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
 import {
   clearSessionCookie,
+  createEmailVerification,
   createPasswordReset,
   hashPassword,
   hashResetToken,
+  hashVerificationCode,
   publicUser,
   requireAuth,
   requirePartner,
@@ -55,6 +57,11 @@ const signinSchema = z.object({
   password: z.string().min(1),
 });
 
+const verifyEmailSchema = z.object({
+  email: z.string().email().transform((email) => email.toLowerCase()),
+  code: z.string().regex(/^\d{6}$/, 'Enter the 6-digit verification code.'),
+});
+
 const forgotPasswordSchema = z.object({
   email: z.string().email().transform((email) => email.toLowerCase()),
 });
@@ -99,6 +106,32 @@ function validate(schema, req, res) {
   return result.data;
 }
 
+async function sendVerificationCode(email, code) {
+  if (!process.env.RESEND_API_KEY || !process.env.AUTH_EMAIL_FROM) {
+    console.info(`Route Longevity verification code for ${email}: ${code}`);
+    return;
+  }
+
+  const response = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: process.env.AUTH_EMAIL_FROM,
+      to: email,
+      subject: 'Your Route Longevity verification code',
+      text: `Your Route Longevity verification code is ${code}. It expires in 15 minutes.`,
+    }),
+  });
+
+  if (!response.ok) {
+    const details = await response.text();
+    console.error(`Verification email failed for ${email}: ${details}`);
+  }
+}
+
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'route-longevity-api' });
 });
@@ -130,14 +163,54 @@ app.post('/api/auth/signup', authLimiter, async (req, res, next) => {
       );
     }
 
-    const token = signSession(user);
-    setSessionCookie(res, token);
-    return res.status(201).json({ user: publicUser(user) });
+    const code = await createEmailVerification(user.id);
+    await sendVerificationCode(user.email, code);
+
+    return res.status(201).json({
+      verificationRequired: true,
+      email: user.email,
+      message: 'Verification code sent.',
+    });
   } catch (error) {
     if (error.code === '23505') {
       return res.status(409).json({ error: 'An account already exists for this email.' });
     }
 
+    return next(error);
+  }
+});
+
+app.post('/api/auth/verify-email', authLimiter, async (req, res, next) => {
+  try {
+    const body = validate(verifyEmailSchema, req, res);
+    if (!body) return;
+
+    const codeHash = hashVerificationCode(body.code);
+    const result = await query(
+      `SELECT u.id, u.role, u.name, u.email, c.id AS code_id
+       FROM email_verification_codes c
+       JOIN users u ON u.id = c.user_id
+       WHERE u.email = $1
+         AND c.code_hash = $2
+         AND c.used_at IS NULL
+         AND c.expires_at > now()
+       ORDER BY c.created_at DESC
+       LIMIT 1`,
+      [body.email, codeHash],
+    );
+
+    const user = result.rows[0];
+    if (!user) {
+      return res.status(400).json({ error: 'Verification code is invalid or expired.' });
+    }
+
+    await query('UPDATE email_verification_codes SET used_at = now() WHERE id = $1', [user.code_id]);
+    await query('UPDATE users SET email_verified_at = now(), updated_at = now() WHERE id = $1', [user.id]);
+
+    const token = signSession(user);
+    setSessionCookie(res, token);
+    return res.json({ user: publicUser(user) });
+  } catch (error) {
     return next(error);
   }
 });
@@ -157,6 +230,21 @@ app.post('/api/auth/signin', authLimiter, async (req, res, next) => {
 
     if (!user || !(await verifyPassword(body.password, user.password_hash))) {
       return res.status(401).json({ error: 'Invalid email or password.' });
+    }
+
+    const verifiedResult = await query(
+      'SELECT email_verified_at FROM users WHERE id = $1',
+      [user.id],
+    );
+
+    if (!verifiedResult.rows[0]?.email_verified_at) {
+      const code = await createEmailVerification(user.id);
+      await sendVerificationCode(user.email, code);
+      return res.status(403).json({
+        verificationRequired: true,
+        email: user.email,
+        error: 'Please verify your email before signing in. A new code was sent.',
+      });
     }
 
     const token = signSession(user);

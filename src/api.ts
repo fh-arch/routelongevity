@@ -28,7 +28,7 @@ export async function signup(input: {
   email: string;
   password: string;
 }) {
-  return request<{ user: AuthSession }>('/api/auth/signup', {
+  return request<{ verificationRequired: true; email: string; message: string }>('/api/auth/signup', {
     method: 'POST',
     body: JSON.stringify(input),
   });
@@ -39,6 +39,16 @@ export async function signin(input: {
   password: string;
 }) {
   return request<{ user: AuthSession }>('/api/auth/signin', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function verifyEmail(input: {
+  email: string;
+  code: string;
+}) {
+  return request<{ user: AuthSession }>('/api/auth/verify-email', {
     method: 'POST',
     body: JSON.stringify(input),
   });

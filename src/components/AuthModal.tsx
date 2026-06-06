@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Building2, CheckCircle2, Lock, Mail, User, UserPlus, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useLanguage } from '../context/LanguageContext';
-import { signin, signup } from '../api';
+import { signin, signup, verifyEmail } from '../api';
 
 export type AuthRole = 'user' | 'partner';
 export type AuthMode = 'signin' | 'signup';
@@ -37,6 +37,8 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -46,6 +48,8 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
       setError('');
       setSuccess(false);
       setIsSubmitting(false);
+      setVerificationEmail('');
+      setVerificationCode('');
     }
   }, [isOpen, initialRole, initialMode]);
 
@@ -97,24 +101,50 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
 
     try {
       setIsSubmitting(true);
-      const response = isSignup
-        ? await signup({
+      if (isSignup) {
+        const response = await signup({
           role,
           name: form.name,
           businessName: form.businessName,
           email: form.email,
           password: form.password,
-        })
-        : await signin({
-          email: form.email,
-          password: form.password,
         });
+
+        setVerificationEmail(response.email);
+        return;
+      }
+
+      const response = await signin({
+        email: form.email,
+        password: form.password,
+      });
 
       localStorage.setItem('route_longevity_session_user', JSON.stringify(response.user));
       setSuccess(true);
       onSuccess(response.user);
     } catch (submitError) {
       setError(submitError instanceof Error ? submitError.message : 'Authentication failed.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleVerifyCode = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setError('');
+
+    try {
+      setIsSubmitting(true);
+      const response = await verifyEmail({
+        email: verificationEmail,
+        code: verificationCode,
+      });
+
+      localStorage.setItem('route_longevity_session_user', JSON.stringify(response.user));
+      setSuccess(true);
+      onSuccess(response.user);
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : 'Verification failed.');
     } finally {
       setIsSubmitting(false);
     }
@@ -204,6 +234,52 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
                   {language === 'tr' ? 'Uygulamaya dön' : 'Return to app'}
                 </button>
               </div>
+            ) : verificationEmail ? (
+              <form onSubmit={handleVerifyCode} className="min-h-[320px] flex flex-col justify-center space-y-4">
+                <div>
+                  <h3 className="text-xl font-black text-brand-deep-slate">
+                    {language === 'tr' ? 'E-postanı doğrula' : 'Verify your email'}
+                  </h3>
+                  <p className="text-sm text-brand-deep-slate/65 leading-6 mt-2">
+                    {language === 'tr'
+                      ? `${verificationEmail} adresine 6 haneli bir kod gönderdik.`
+                      : `We sent a 6-digit code to ${verificationEmail}.`}
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-brand-deep-slate/65 mb-1.5">
+                    {language === 'tr' ? 'Doğrulama kodu' : 'Verification code'}
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={6}
+                    value={verificationCode}
+                    onChange={(event) => setVerificationCode(event.target.value.replace(/\D/g, '').slice(0, 6))}
+                    className="w-full text-xl tracking-[0.35em] font-black text-center p-3 bg-white border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
+                  />
+                </div>
+
+                {error && (
+                  <div className="text-xs font-semibold text-red-700 bg-red-50 border border-red-100 rounded-xl px-3 py-2">
+                    {error}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting || verificationCode.length !== 6}
+                  className="w-full py-3 rounded-xl bg-brand-deep-slate hover:bg-brand-med-teal disabled:opacity-50 text-white font-extrabold text-sm transition-colors cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <CheckCircle2 className="w-4 h-4 text-brand-turquoise" />
+                  <span>
+                    {isSubmitting
+                      ? language === 'tr' ? 'Doğrulanıyor...' : 'Verifying...'
+                      : language === 'tr' ? 'Kodu doğrula' : 'Verify code'}
+                  </span>
+                </button>
+              </form>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 {isSignup && (

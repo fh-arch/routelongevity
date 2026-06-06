@@ -89,3 +89,26 @@ export async function createPasswordReset(userId) {
 export function hashResetToken(token) {
   return crypto.createHash('sha256').update(token).digest('hex');
 }
+
+export function makeVerificationCode() {
+  const code = crypto.randomInt(100000, 1000000).toString();
+  const codeHash = crypto.createHash('sha256').update(code).digest('hex');
+  return { code, codeHash };
+}
+
+export function hashVerificationCode(code) {
+  return crypto.createHash('sha256').update(code).digest('hex');
+}
+
+export async function createEmailVerification(userId) {
+  const { code, codeHash } = makeVerificationCode();
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
+  await query(
+    `INSERT INTO email_verification_codes (user_id, code_hash, expires_at)
+     VALUES ($1, $2, $3)`,
+    [userId, codeHash, expiresAt],
+  );
+
+  return code;
+}
