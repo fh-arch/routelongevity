@@ -13,6 +13,7 @@ import { useLanguage } from './context/LanguageContext';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { Compass, Map as MapIcon, Activity, Heart, User, BookOpen, Calendar, ShieldCheck, LogOut } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
+import { getCurrentUser, signout } from './api';
 
 export default function App() {
   const { t, language } = useLanguage();
@@ -26,7 +27,7 @@ export default function App() {
   });
   const [authSession, setAuthSession] = useState<AuthSession | null>(() => {
     try {
-      const saved = localStorage.getItem('route_longevity_demo_session');
+      const saved = localStorage.getItem('route_longevity_session_user');
       return saved ? JSON.parse(saved) : null;
     } catch (e) {
       return null;
@@ -51,8 +52,25 @@ export default function App() {
     setAuthModal({ isOpen: true, role, mode });
   };
 
-  const signOut = () => {
-    localStorage.removeItem('route_longevity_demo_session');
+  useEffect(() => {
+    getCurrentUser()
+      .then(({ user }) => {
+        localStorage.setItem('route_longevity_session_user', JSON.stringify(user));
+        setAuthSession(user);
+      })
+      .catch(() => {
+        localStorage.removeItem('route_longevity_session_user');
+        setAuthSession(null);
+      });
+  }, []);
+
+  const signOut = async () => {
+    try {
+      await signout();
+    } catch (error) {
+      console.warn('Sign out request failed, clearing local session anyway.', error);
+    }
+    localStorage.removeItem('route_longevity_session_user');
     setAuthSession(null);
     if (activeTab === 'profile') {
       setActiveTab('explore');

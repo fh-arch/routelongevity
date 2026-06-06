@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Building2, CheckCircle2, Lock, Mail, User, UserPlus, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useLanguage } from '../context/LanguageContext';
+import { signin, signup } from '../api';
 
 export type AuthRole = 'user' | 'partner';
 export type AuthMode = 'signin' | 'signup';
 
 export interface AuthSession {
+  id?: string;
   role: AuthRole;
   email: string;
   name: string;
@@ -34,6 +36,7 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
   const [form, setForm] = useState(emptyForm);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -42,6 +45,7 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
       setForm(emptyForm);
       setError('');
       setSuccess(false);
+      setIsSubmitting(false);
     }
   }, [isOpen, initialRole, initialMode]);
 
@@ -67,7 +71,7 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
         : 'Save favorite routes, listed hubs, and event reservations.',
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setError('');
 
@@ -91,15 +95,29 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
       return;
     }
 
-    const session = {
-      role,
-      email: form.email,
-      name: isSignup ? form.name : form.email.split('@')[0],
-    };
+    try {
+      setIsSubmitting(true);
+      const response = isSignup
+        ? await signup({
+          role,
+          name: form.name,
+          businessName: form.businessName,
+          email: form.email,
+          password: form.password,
+        })
+        : await signin({
+          email: form.email,
+          password: form.password,
+        });
 
-    localStorage.setItem('route_longevity_demo_session', JSON.stringify(session));
-    setSuccess(true);
-    onSuccess(session);
+      localStorage.setItem('route_longevity_session_user', JSON.stringify(response.user));
+      setSuccess(true);
+      onSuccess(response.user);
+    } catch (submitError) {
+      setError(submitError instanceof Error ? submitError.message : 'Authentication failed.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -176,8 +194,8 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
                 </h3>
                 <p className="text-sm text-brand-deep-slate/65 leading-6 mt-2 max-w-sm">
                   {language === 'tr'
-                    ? 'Demo hesabınız aktif edildi. Gerçek kimlik doğrulama daha sonra API’ye bağlanabilir.'
-                    : 'Your demo account is active. Real authentication can be connected to an API later.'}
+                    ? 'Hesabınız güvenli oturum ile açıldı.'
+                    : 'Your account is signed in with a secure session.'}
                 </p>
                 <button
                   onClick={onClose}
@@ -254,13 +272,18 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
 
                 <button
                   type="submit"
+                  disabled={isSubmitting}
                   className="w-full py-3 rounded-xl bg-brand-deep-slate hover:bg-brand-med-teal text-white font-extrabold text-sm transition-colors cursor-pointer flex items-center justify-center gap-2"
                 >
                   {isSignup ? <UserPlus className="w-4 h-4 text-brand-turquoise" /> : <Lock className="w-4 h-4 text-brand-turquoise" />}
                   <span>
                     {isSignup
-                      ? language === 'tr' ? 'Hesap oluştur' : 'Create account'
-                      : language === 'tr' ? 'Giriş yap' : 'Sign in'}
+                      ? isSubmitting
+                        ? language === 'tr' ? 'Oluşturuluyor...' : 'Creating...'
+                        : language === 'tr' ? 'Hesap oluştur' : 'Create account'
+                      : isSubmitting
+                        ? language === 'tr' ? 'Giriş yapılıyor...' : 'Signing in...'
+                        : language === 'tr' ? 'Giriş yap' : 'Sign in'}
                   </span>
                 </button>
               </form>
