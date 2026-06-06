@@ -1,0 +1,6 @@
+{
+  "name": "Route Longevity",
+  "description": "An interactive web platform mapping Türkiye's ancient wellness heritage onto a clean, modern map interface.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

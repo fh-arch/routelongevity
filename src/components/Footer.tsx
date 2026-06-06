@@ -1,0 +1,167 @@
+import React, { useState } from 'react';
+import { BookOpen, Calendar, Mail, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+
+interface FooterProps {
+  onOpenBlog: () => void;
+  onOpenEvents: () => void;
+}
+
+export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
+  const { t } = useLanguage();
+  const [email, setEmail] = useState('');
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim().includes('@')) {
+      setSubscribed(true);
+      setTimeout(() => {
+        setSubscribed(false);
+        setEmail('');
+      }, 5000);
+    }
+  };
+
+  return (
+    <footer className="w-full bg-[#0F2B2D] text-[#FAF7F2] rounded-3xl mt-16 overflow-hidden border border-[#FAF7F2]/10 shadow-2xl relative z-10 animate-in fade-in duration-300">
+      {/* Decorative Brand Overlay Ring */}
+      <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-[#0E6F6D]/15 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-[#C08240]/10 blur-[100px] pointer-events-none" />
+
+      {/* Primary Grid */}
+      <div className="p-8 md:p-12 grid grid-cols-1 lg:grid-cols-12 gap-10 relative z-10">
+        
+        {/* Left Side: Brand Summary */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] flex items-center justify-center shadow-md shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="#0F2B2D" />
+                <path d="M12 6.5C13 5.5 14.5 5 16 5.5" stroke="#C08240" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+            </div>
+            <div>
+              <span className="font-sans font-extrabold text-[#FAF7F2] tracking-wider text-base block leading-none">
+                {t('routeLongevity')}
+              </span>
+              <span className="font-mono text-[9px] text-[#C08240] tracking-widest block uppercase mt-0.5">
+                {t('scienceAntiquity')}
+              </span>
+            </div>
+          </div>
+          
+          <p className="text-xs md:text-sm text-[#FAF7F2]/75 leading-relaxed font-serif max-w-sm">
+            {t('footerDesc')}
+          </p>
+
+          <div className="flex items-center gap-2 text-[10px] text-[#4FB8B1] uppercase font-bold tracking-widest bg-white/5 py-1 px-2.5 rounded w-fit border border-white/10">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            <span>{t('scienceDatabase')}</span>
+          </div>
+        </div>
+
+        {/* Middle Column: Resource Sections (Blog & Events Highlights) */}
+        <div className="lg:col-span-4 space-y-5">
+          <p className="text-[10px] tracking-widest font-mono text-[#FAF7F2]/40 uppercase">
+            {t('harnessingHeritage')}
+          </p>
+
+          <div className="space-y-3">
+            {/* Quick Blog Trigger */}
+            <button
+              onClick={onOpenBlog}
+              className="w-full text-left p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#C08240]/55 hover:bg-white/[0.08] transition-all duration-300 flex items-start gap-3.5 group cursor-pointer"
+            >
+              <div className="p-2 bg-[#C08240]/15 rounded-lg text-[#C08240]">
+                <BookOpen className="w-4 h-4" />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-xs font-bold text-[#FAF7F2] group-hover:text-[#C08240] transition-colors">
+                  {t('scientificGazette')}
+                </h4>
+                <p className="text-[10px] text-[#FAF7F2]/60 leading-normal mt-0.5">
+                  {t('scientificGazetteDesc')}
+                </p>
+              </div>
+            </button>
+
+            {/* Quick Events Trigger */}
+            <button
+              onClick={onOpenEvents}
+              className="w-full text-left p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#4FB8B1]/55 hover:bg-white/[0.08] transition-all duration-300 flex items-start gap-3.5 group cursor-pointer"
+            >
+              <div className="p-2 bg-[#4FB8B1]/15 rounded-lg text-[#4FB8B1]">
+                <Calendar className="w-4 h-4" />
+              </div>
+              <div className="flex-1">
+                <h4 className="text-xs font-bold text-[#FAF7F2] group-hover:text-[#4FB8B1] transition-colors">
+                  {t('workshopsEvents')}
+                </h4>
+                <p className="text-[10px] text-[#FAF7F2]/60 leading-normal mt-0.5">
+                  {t('workshopsEventsDesc')}
+                </p>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Right Column: Longevity Gazette Subscription */}
+        <div className="lg:col-span-3 space-y-4">
+          <p className="text-[10px] tracking-widest font-mono text-[#FAF7F2]/40 uppercase">
+            {t('longevityGazette')}
+          </p>
+          <p className="text-xs text-[#FAF7F2]/75 font-serif leading-relaxed">
+            {t('gazetteDesc')}
+          </p>
+
+          {subscribed ? (
+            <div className="p-4 rounded-xl bg-[#7A8F6A]/20 border border-[#7A8F6A]/40 flex items-center gap-2.5 text-xs text-[#E6D9C2]">
+              <CheckCircle2 className="w-4.5 h-4.5 text-[#7A8F6A]" />
+              <div>
+                <p className="font-bold">{t('subConfirmed')}</p>
+                <p className="text-[10px] text-[#FAF7F2]/60 mt-0.5">{t('welcomeLongevity')}</p>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubscribe} className="space-y-2">
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FAF7F2]/40" />
+                <input
+                  type="email"
+                  required
+                  placeholder={t('enterEmail')}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full py-2.5 pl-9 pr-3.5 bg-white/5 hover:bg-white/[0.08] rounded-xl border border-white/15 focus:outline-none focus:border-[#4FB8B1]/50 text-xs text-white placeholder-[#FAF7F2]/30 transition-all font-sans"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full py-2.5 rounded-xl bg-[#C08240] hover:bg-[#C08240]/90 text-[#FAF7F2] font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span>{t('joinGazette')}</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </form>
+          )}
+        </div>
+
+      </div>
+
+      {/* Underbar Metadata */}
+      <div className="px-8 py-5 border-t border-white/5 bg-black/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-[#FAF7F2]/40 font-mono tracking-wider relative z-10 w-full">
+        <div>
+          <span>© 2026 {t('routeLongevity')} • {t('royalties') || 'TRANSLATED MEDICINE'}</span>
+        </div>
+        <div className="flex gap-4">
+          <button onClick={onOpenBlog} className="hover:text-[#C08240] transition-colors cursor-pointer">{t('journalArticles')}</button>
+          <span>•</span>
+          <button onClick={onOpenEvents} className="hover:text-[#4FB8B1] transition-colors cursor-pointer">{t('epigeneticEvents')}</button>
+          <span>•</span>
+          <span>{t('ancientRoots')}</span>
+        </div>
+      </div>
+    </footer>
+  );
+}

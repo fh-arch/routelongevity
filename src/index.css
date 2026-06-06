@@ -1,0 +1,50 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Sora", "Inter", system-ui, sans-serif;
+  --font-serif: "Lora", Georgia, serif;
+
+  --color-brand-deep-slate: #0F2B2D;
+  --color-brand-med-teal: #0E6F6D;
+  --color-brand-turquoise: #4FB8B1;
+  --color-brand-olive-sage: #7A8F6A;
+  --color-brand-warm-sand: #E6D9C2;
+  --color-brand-soft-ivory: #FAF7F2;
+  --color-brand-copper: #C08240;
+}
+
+/* Custom scrollbar and minor cleanups for Leaflet */
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-brand-soft-ivory);
+  color: var(--color-brand-deep-slate);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+}
+
+.leaflet-container {
+  font-family: var(--font-sans) !important;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E6D9C2;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #CDBC9C;
+}
