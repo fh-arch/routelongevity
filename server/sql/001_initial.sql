@@ -109,7 +109,7 @@ INSERT INTO listing_categories (id, name_en, name_tr) VALUES
   ('mediterranean-diet', 'Mediterranean Diet', 'Akdeniz Diyeti'),
   ('longevity-clinics', 'Longevity Clinics', 'Uzun Yaşam Klinikleri'),
   ('retreat-nature', 'Retreat & Nature', 'Retreat & Doğa'),
-  ('traditional-medicine', 'Traditional Medicine', 'Geleneksel Tıp'),
+  ('traditional-med', 'Traditional Medicine', 'Geleneksel Tıp'),
   ('local-producers', 'Local Producers', 'Yerel Üreticiler')
 ON CONFLICT (id) DO NOTHING;
 
