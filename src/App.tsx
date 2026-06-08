@@ -197,12 +197,12 @@ export default function App() {
       <header className="flex md:hidden items-center justify-between px-5 py-4 bg-white border-b border-[#E5EDE1]/45 shrink-0 z-40">
         <button
           onClick={() => setActiveTab('explore')}
-          className="h-11 w-[142px] shrink-0 cursor-pointer rounded-xl bg-brand-deep-slate px-2 py-1 shadow-sm"
+          className="h-12 w-[154px] shrink-0 cursor-pointer rounded-xl border border-brand-warm-sand/80 bg-white px-2.5 py-1 shadow-sm"
         >
           <img
             src="/route-longevity-logo.png"
             alt={t('routeLongevity')}
-            className="h-full w-full object-contain"
+            className="h-full w-full object-contain brightness-0"
           />
         </button>
 
@@ -229,12 +229,12 @@ export default function App() {
       <header className="hidden md:flex items-center justify-between gap-5 px-7 py-4 bg-white/95 border-b border-brand-warm-sand/45 shrink-0 z-40 shadow-sm">
         <button
           onClick={() => setActiveTab('explore')}
-          className="h-13 w-[206px] min-w-[206px] rounded-2xl bg-brand-deep-slate px-3 py-1.5 text-left cursor-pointer shadow-sm shadow-brand-deep-slate/10"
+          className="h-14 w-[230px] min-w-[230px] rounded-2xl border border-brand-warm-sand/80 bg-white px-3.5 py-1.5 text-left cursor-pointer shadow-sm shadow-brand-deep-slate/5"
         >
           <img
             src="/route-longevity-logo.png"
             alt={t('routeLongevity')}
-            className="h-full w-full object-contain"
+            className="h-full w-full object-contain brightness-0"
           />
         </button>
 

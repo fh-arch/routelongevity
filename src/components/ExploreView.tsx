@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CATEGORIES, PARTNERS_DATA } from '../data';
 import { Partner } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { Search, MapPin, Star, ArrowRight, ShieldCheck, Heart, X, LogIn, UserPlus, Building2, ClipboardCheck, Megaphone, TrendingUp, BadgeCheck } from 'lucide-react';
+import { Search, MapPin, Star, ArrowRight, ShieldCheck, Heart, X, LogIn, UserPlus, Building2, ClipboardCheck, Leaf, Landmark, Flower2, Gem, Hourglass, Bookmark, CircleDot, Scale, UsersRound } from 'lucide-react';
 import Footer from './Footer';
 import { AuthMode, AuthRole, AuthSession } from './AuthModal';
 
@@ -153,27 +153,43 @@ export default function ExploreView({
   });
 
   const displayPartners = searchQuery ? matchedPartners : premiumPartners;
-  const sponsorSlots = [
+  const brandKeywords = [
+    { label: language === 'tr' ? 'Uzun Yaşam' : 'Longevity', icon: Leaf },
+    { label: language === 'tr' ? 'Miras' : 'Heritage', icon: Landmark },
+    { label: language === 'tr' ? 'Wellness' : 'Wellness', icon: Flower2 },
+    { label: 'Türkiye', icon: MapPin },
+    { label: language === 'tr' ? 'Doğal' : 'Natural', icon: Leaf },
+    { label: language === 'tr' ? 'Premium' : 'Premium', icon: Gem },
+    { label: language === 'tr' ? 'Zamansız' : 'Timeless', icon: Hourglass },
+    { label: language === 'tr' ? 'Kürasyon' : 'Curated', icon: Bookmark },
+    { label: language === 'tr' ? 'Holistik' : 'Holistic', icon: CircleDot },
+    { label: language === 'tr' ? 'Denge' : 'Balance', icon: Scale },
+  ];
+
+  const uiDirectionCards = [
     {
-      label: language === 'tr' ? 'Sponsorlu Rota' : 'Sponsored Route',
-      title: language === 'tr' ? 'Bursa Termal Hafta Sonu' : 'Bursa Thermal Weekend',
-      desc: language === 'tr' ? 'Premium kaplıca ortakları için sezonluk görünürlük alanı.' : 'Seasonal visibility slot for premium thermal partners.',
-      cta: language === 'tr' ? 'Reklam alanı' : 'Ad slot',
-      tone: 'bg-brand-deep-slate text-white border-brand-deep-slate',
+      tag: language === 'tr' ? 'Kıyı Ritüelleri' : 'Coastal Rituals',
+      title: language === 'tr' ? 'Ege Yenilenmesi' : 'Aegean Renewal',
+      desc: language === 'tr' ? 'Deniz kıyısı ritüelleri ve termal gelenekler.' : 'Seaside rituals and thermal traditions.',
+      image: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=600&q=85',
+      color: 'text-brand-med-teal',
+      tagTone: 'bg-brand-turquoise/20 text-brand-med-teal',
     },
     {
-      label: language === 'tr' ? 'Yerel Üretici' : 'Local Producer',
-      title: language === 'tr' ? 'Erken Hasat Zeytinyağı' : 'Early Harvest Olive Oil',
-      desc: language === 'tr' ? 'Ürün, atölye veya tadım deneyimi tanıtımı için.' : 'For product, workshop, or tasting experience promotion.',
-      cta: language === 'tr' ? 'Sponsor ol' : 'Sponsor',
-      tone: 'bg-white text-brand-deep-slate border-brand-warm-sand/50',
+      tag: language === 'tr' ? 'Doğa ve Denge' : 'Nature & Balance',
+      title: language === 'tr' ? 'Anadolu Harmonia' : 'Anatolian Harmonia',
+      desc: language === 'tr' ? 'Orman inzivaları ve bilinçli kaçışlar.' : 'Forest retreats and mindful escapes.',
+      image: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=85',
+      color: 'text-brand-med-teal',
+      tagTone: 'bg-brand-olive-sage/20 text-brand-med-teal',
     },
     {
-      label: language === 'tr' ? 'Etkinlik Tanıtımı' : 'Event Promotion',
-      title: language === 'tr' ? 'Longevity Klinik Günü' : 'Longevity Clinic Day',
-      desc: language === 'tr' ? 'Klinik tarama, inziva veya bilimsel etkinlik duyuruları.' : 'Promote screening days, retreats, or science events.',
-      cta: language === 'tr' ? 'Planla' : 'Plan',
-      tone: 'bg-white text-brand-deep-slate border-brand-warm-sand/50',
+      tag: language === 'tr' ? 'Kültürel Miras' : 'Cultural Heritage',
+      title: language === 'tr' ? 'Zamansız Miras' : 'Timeless Heritage',
+      desc: language === 'tr' ? 'Tarihi şehirler ve yaşayan gelenekler.' : 'Historic cities and living traditions.',
+      image: 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=600&q=85',
+      color: 'text-brand-support-purple',
+      tagTone: 'bg-brand-support-purple/12 text-brand-support-purple',
     },
   ];
 
@@ -255,58 +271,136 @@ export default function ExploreView({
         </div>
       </div>
 
-      <section className="space-y-4">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-2">
-          <div>
-            <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-brand-copper">
-              <Megaphone className="w-4 h-4" />
-              <span>{language === 'tr' ? 'Sponsorlu görünürlük alanları' : 'Sponsored visibility areas'}</span>
-            </div>
-            <h2 className="text-2xl font-extrabold text-brand-deep-slate tracking-normal mt-1">
-              {language === 'tr' ? 'Ana sayfa reklam ve ortaklık alanı' : 'Homepage ads and partner placements'}
+      <section className="bg-white rounded-3xl border border-brand-warm-sand/55 shadow-sm overflow-hidden">
+        <div className="px-5 md:px-8 pt-6">
+          <div className="flex items-center gap-4">
+            <div className="h-px flex-1 bg-brand-olive-sage/45" />
+            <h2 className="text-lg md:text-xl font-extrabold text-brand-deep-slate tracking-normal">
+              {language === 'tr' ? 'Marka Anahtarları' : 'Brand Keywords'}
             </h2>
-            <p className="text-sm text-brand-deep-slate/60 mt-1 max-w-2xl">
-              {language === 'tr'
-                ? 'Premium işletmeler, etkinlikler ve yerel üreticiler için ayrılmış tanıtım alanları. İçerikler sonradan yönetim panelinden değiştirilebilir.'
-                : 'Reserved placements for premium businesses, events, and local producers. These slots can later be managed from the partner console.'}
-            </p>
+            <div className="h-px flex-1 bg-brand-olive-sage/45" />
           </div>
-          <button
-            onClick={() => {
-              if (authSession) {
-                onTabChange('profile');
-              } else {
-                onOpenAuth('partner', 'signup');
-              }
-            }}
-            className="self-start md:self-auto px-4 py-2 rounded-xl bg-brand-deep-slate text-white text-xs font-bold hover:bg-brand-med-teal transition-colors flex items-center gap-2 cursor-pointer"
-          >
-            <TrendingUp className="w-4 h-4 text-brand-turquoise" />
-            <span>{language === 'tr' ? 'Reklam planla' : 'Plan an ad'}</span>
-          </button>
+          <div className="grid grid-cols-5 md:grid-cols-10 gap-y-5 mt-5 pb-6 border-b border-brand-olive-sage/35">
+            {brandKeywords.map((keyword) => {
+              const Icon = keyword.icon;
+              return (
+                <div key={keyword.label} className="flex flex-col items-center gap-2 px-2 md:border-r md:last:border-r-0 border-brand-warm-sand/70">
+                  <div className="w-10 h-10 rounded-full bg-brand-olive-sage/14 text-brand-deep-slate flex items-center justify-center">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] md:text-xs font-bold text-brand-deep-slate text-center leading-tight">
+                    {keyword.label}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {sponsorSlots.map((slot, index) => (
-            <article
-              key={slot.title}
-              className={`rounded-2xl border p-5 min-h-[150px] flex flex-col justify-between shadow-sm ${slot.tone}`}
-            >
-              <div>
-                <div className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wide ${index === 0 ? 'text-brand-turquoise' : 'text-brand-copper'}`}>
-                  <BadgeCheck className="w-3.5 h-3.5" />
-                  <span>{slot.label}</span>
-                </div>
-                <h3 className="text-lg font-extrabold tracking-normal mt-3">{slot.title}</h3>
-                <p className={`text-sm leading-6 mt-2 ${index === 0 ? 'text-white/68' : 'text-brand-deep-slate/62'}`}>
-                  {slot.desc}
+        <div className="px-5 md:px-8 py-6">
+          <div className="flex items-center gap-4 mb-5">
+            <div className="h-px flex-1 bg-brand-olive-sage/45" />
+            <h2 className="text-lg md:text-xl font-extrabold text-brand-deep-slate tracking-normal">
+              UI Direction
+            </h2>
+            <div className="h-px flex-1 bg-brand-olive-sage/45" />
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.62fr_1.45fr] gap-5 items-stretch">
+            <article className="relative min-h-[190px] rounded-2xl bg-brand-deep-slate text-white overflow-hidden p-6 flex flex-col justify-between shadow-lg shadow-brand-deep-slate/10">
+              <div className="absolute -right-10 -bottom-10 w-48 h-48 rounded-full bg-brand-olive-sage/15" />
+              <div className="absolute right-5 bottom-1 w-32 h-36 rounded-full bg-gradient-to-br from-brand-turquoise via-brand-med-teal to-brand-olive-sage rotate-35 opacity-90" />
+              <div className="absolute right-12 bottom-2 w-28 h-36 rounded-full border border-brand-turquoise/25 rotate-12" />
+              <div className="relative z-10">
+                <h3 className="text-2xl md:text-3xl font-extrabold leading-tight tracking-normal max-w-xs">
+                  {language === 'tr' ? 'Longevity bir yolculuktur. Miras yolun kendisidir.' : 'Longevity is a journey. Heritage is the path.'}
+                </h3>
+                <p className="text-xs text-white/70 leading-5 mt-4 max-w-xs">
+                  {language === 'tr'
+                    ? 'Türkiye’de doğal iyi yaşam ve zamansız yaşam deneyimleri için kürasyon.'
+                    : 'Curated experiences in Türkiye for natural well-being and timeless living.'}
                 </p>
               </div>
-              <div className={`mt-4 text-[11px] font-bold uppercase tracking-wide ${index === 0 ? 'text-white/75' : 'text-brand-med-teal'}`}>
-                {slot.cta}
-              </div>
+              <button
+                onClick={() => onTabChange('map')}
+                className="relative z-10 w-fit px-5 py-3 rounded-xl bg-brand-copper text-white text-xs font-black hover:bg-brand-copper/90 transition-colors flex items-center gap-3 cursor-pointer"
+              >
+                <span>{language === 'tr' ? 'Rotayı Keşfet' : 'Explore Route'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
             </article>
-          ))}
+
+            <div className="flex flex-col justify-center gap-4">
+              <button
+                onClick={() => onTabChange('map')}
+                className="w-full px-5 py-3.5 rounded-xl bg-brand-copper text-white text-xs font-black shadow-sm hover:bg-brand-copper/90 transition-colors flex items-center justify-between cursor-pointer"
+              >
+                <span>{language === 'tr' ? 'Rotayı Keşfet' : 'Explore Route'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => {
+                  if (authSession) {
+                    onTabChange('profile');
+                  } else {
+                    onOpenAuth('partner', 'signup');
+                  }
+                }}
+                className="w-full px-5 py-3.5 rounded-xl bg-brand-turquoise text-brand-deep-slate text-xs font-black shadow-sm hover:bg-brand-turquoise/85 transition-colors flex items-center justify-between cursor-pointer"
+              >
+                <span>{language === 'tr' ? 'Partner Ol' : 'Become a Partner'}</span>
+                <UsersRound className="w-4 h-4" />
+              </button>
+              <div className="grid grid-cols-3 gap-2 rounded-xl border border-brand-warm-sand/75 bg-white px-3 py-3">
+                {[
+                  [language === 'tr' ? 'Doğal' : 'Natural', Leaf],
+                  [language === 'tr' ? 'Holistik' : 'Holistic', Flower2],
+                  [language === 'tr' ? 'Premium' : 'Premium', Gem],
+                ].map(([label, Icon]) => {
+                  const KeywordIcon = Icon as typeof Leaf;
+                  return (
+                    <div key={label as string} className="flex flex-col items-center gap-1 text-brand-deep-slate">
+                      <KeywordIcon className="w-4 h-4 text-brand-med-teal" />
+                      <span className="text-[9px] font-bold">{label as string}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {uiDirectionCards.map((card) => (
+                <article key={card.title} className="rounded-2xl bg-white border border-brand-warm-sand/65 overflow-hidden shadow-md shadow-brand-deep-slate/5">
+                  <div className="h-28 overflow-hidden">
+                    <img
+                      src={card.image}
+                      alt={card.title}
+                      referrerPolicy="no-referrer"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="p-4">
+                    <span className={`inline-flex px-2 py-1 rounded-full text-[9px] font-black ${card.tagTone}`}>
+                      {card.tag}
+                    </span>
+                    <h3 className="mt-2 text-base font-extrabold text-brand-deep-slate leading-tight tracking-normal">
+                      {card.title}
+                    </h3>
+                    <p className="mt-2 text-[11px] leading-5 text-brand-deep-slate/62">
+                      {card.desc}
+                    </p>
+                    <button
+                      onClick={() => onTabChange('experiences')}
+                      className={`mt-3 flex items-center gap-2 text-[11px] font-black ${card.color} cursor-pointer`}
+                    >
+                      <span>{language === 'tr' ? 'Keşfet' : 'Explore'}</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
