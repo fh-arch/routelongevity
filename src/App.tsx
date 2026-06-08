@@ -191,10 +191,10 @@ export default function App() {
     <>
       {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
       
-      <div className="flex flex-col h-screen bg-[#FAF7F2] overflow-hidden font-sans">
+      <div className="flex flex-col h-screen bg-[#FAFAF8] overflow-hidden font-sans">
       
       {/* Mobile Top Header */}
-      <header className="flex md:hidden items-center justify-between px-5 py-4 bg-white border-b border-[#E6D9C2]/45 shrink-0 z-40">
+      <header className="flex md:hidden items-center justify-between px-5 py-4 bg-white border-b border-[#E5EDE1]/45 shrink-0 z-40">
         <button
           onClick={() => setActiveTab('explore')}
           className="h-11 w-[142px] shrink-0 cursor-pointer rounded-xl bg-brand-deep-slate px-2 py-1 shadow-sm"
@@ -211,14 +211,14 @@ export default function App() {
           <LanguageSwitcher />
           <button 
             onClick={openBlog}
-            className="p-1.5 px-3 rounded-xl text-[10px] font-bold text-white bg-[#C08240] hover:bg-[#C08240]/90 transition-all flex items-center gap-1 cursor-pointer"
+            className="p-1.5 px-3 rounded-xl text-[10px] font-bold text-white bg-[#FF6B4A] hover:bg-[#FF6B4A]/90 transition-all flex items-center gap-1 cursor-pointer"
           >
             <BookOpen className="w-3.5 h-3.5" />
             <span>{t('blog')}</span>
           </button>
           <button 
             onClick={openEvents}
-            className="p-1.5 px-3 rounded-xl text-[10px] font-bold text-[#faf7f2] bg-[#0E6F6D] hover:bg-[#0E6F6D]/90 transition-all flex items-center gap-1 cursor-pointer"
+            className="p-1.5 px-3 rounded-xl text-[10px] font-bold text-[#FAFAF8] bg-[#5A9D62] hover:bg-[#5A9D62]/90 transition-all flex items-center gap-1 cursor-pointer"
           >
             <Calendar className="w-3.5 h-3.5" />
             <span>{t('events')}</span>
@@ -238,7 +238,7 @@ export default function App() {
           />
         </button>
 
-        <nav className="flex items-center justify-center gap-1 rounded-2xl bg-[#FAF7F2] border border-brand-warm-sand/55 p-1">
+        <nav className="flex items-center justify-center gap-1 rounded-2xl bg-[#FAFAF8] border border-brand-warm-sand/55 p-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
@@ -411,7 +411,7 @@ export default function App() {
       </main>
 
       {/* Mobile Sticky Bottom Navigation */}
-      <nav className="flex md:hidden bg-white border-t border-[#E6D9C2]/45 py-2 px-1 items-center justify-around shrink-0 z-40 shadow-xl fixed bottom-0 left-0 right-0">
+      <nav className="flex md:hidden bg-white border-t border-[#E5EDE1]/45 py-2 px-1 items-center justify-around shrink-0 z-40 shadow-xl fixed bottom-0 left-0 right-0">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -420,13 +420,13 @@ export default function App() {
               key={item.id}
               onClick={() => setActiveTab(item.id)}
               className={`flex flex-col items-center justify-center py-1 px-3.5 rounded-xl transition-all relative cursor-pointer ${
-                isActive ? 'text-[#0E6F6D]' : 'text-[#0F2B2D]/55'
+                isActive ? 'text-[#5A9D62]' : 'text-[#122328]/55'
               }`}
             >
               <div className="relative">
                 <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5px]' : 'stroke-[1.5]'}`} />
                 {item.badge !== undefined && (
-                  <span className="absolute -top-1.5 -right-2.5 bg-[#C08240] text-white text-[8px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center border border-white">
+                  <span className="absolute -top-1.5 -right-2.5 bg-[#FF6B4A] text-white text-[8px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center border border-white">
                     {item.badge}
                   </span>
                 )}

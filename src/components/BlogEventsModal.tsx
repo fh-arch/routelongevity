@@ -564,15 +564,15 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
   const currentSelectedPost = selectedPost ? (posts.find(p => p.id === selectedPost.id) || selectedPost) : null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0F2B2D]/80 backdrop-blur-md p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#122328]/80 backdrop-blur-md p-4 animate-in fade-in duration-200">
       
       {/* Modal Container */}
-      <div className="bg-[#FAF7F2] w-full max-w-6xl h-[92vh] md:h-[84vh] rounded-2xl overflow-hidden border border-brand-warm-sand/50 shadow-2xl flex flex-col relative animate-in zoom-in-95 duration-200">
+      <div className="bg-[#FAFAF8] w-full max-w-6xl h-[92vh] md:h-[84vh] rounded-2xl overflow-hidden border border-brand-warm-sand/50 shadow-2xl flex flex-col relative animate-in zoom-in-95 duration-200">
         
         {/* Modal Top Header Bar */}
-        <div className="bg-[#0F2B2D] text-[#FAF7F2] p-6 flex flex-col md:flex-row items-baseline md:items-center justify-between gap-4 shrink-0 border-b border-brand-warm-sand/20">
+        <div className="bg-[#122328] text-[#FAFAF8] p-6 flex flex-col md:flex-row items-baseline md:items-center justify-between gap-4 shrink-0 border-b border-brand-warm-sand/20">
           <div className="space-y-1">
-            <span className="text-[10px] tracking-widest font-mono text-[#4FB8B1] uppercase font-bold">
+            <span className="text-[10px] tracking-widest font-mono text-[#64D2A2] uppercase font-bold">
               {language === 'tr' ? 'BİLİMSEL OKUMALAR VE ETKİNLİKLER' : 'Research & Practical Immersion'}
             </span>
             <h2 className="text-xl md:text-2xl font-extrabold tracking-tight select-none">
@@ -589,8 +589,8 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                 onClick={() => { setActiveSubTab('blog'); setBookEventId(null); }}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeSubTab === 'blog'
-                    ? 'bg-[#C08240] text-white shadow'
-                    : 'text-[#FAF7F2]/70 hover:text-white'
+                    ? 'bg-[#FF6B4A] text-white shadow'
+                    : 'text-[#FAFAF8]/70 hover:text-white'
                 }`}
               >
                 <BookOpen className="w-3.5 h-3.5" />
@@ -600,8 +600,8 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                 onClick={() => { setActiveSubTab('events'); setBookEventId(null); }}
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   activeSubTab === 'events'
-                    ? 'bg-[#4FB8B1] text-[#0F2B2D] shadow'
-                    : 'text-[#FAF7F2]/70 hover:text-white'
+                    ? 'bg-[#64D2A2] text-[#122328] shadow'
+                    : 'text-[#FAFAF8]/70 hover:text-white'
                 }`}
               >
                 <Calendar className="w-3.5 h-3.5" />
@@ -619,7 +619,7 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                 onClose();
               }
             }}
-            className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#FAF7F2] transition-colors cursor-pointer"
+            className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#FAFAF8] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -633,7 +633,7 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
             <div className="space-y-6 max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-6 duration-300">
               <button
                 onClick={() => setSelectedPost(null)}
-                className="text-xs font-bold text-[#0E6F6D] hover:underline flex items-center gap-1.5 mb-4"
+                className="text-xs font-bold text-[#5A9D62] hover:underline flex items-center gap-1.5 mb-4"
               >
                 {language === 'tr' ? '← Araştırma Yazılarına Geri Dön' : '← Back to Research Articles'}
               </button>
@@ -645,7 +645,7 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute top-4 left-4 bg-[#C08240] text-[#FAF7F2] text-[10px] font-bold px-2.5 py-1 rounded">
+                <div className="absolute top-4 left-4 bg-[#FF6B4A] text-[#FAFAF8] text-[10px] font-bold px-2.5 py-1 rounded">
                   {currentSelectedPost.category}
                 </div>
               </div>
@@ -659,7 +659,7 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                   <span className="font-semibold text-brand-deep-slate/75">{currentSelectedPost.author}</span>
                 </div>
 
-                <h3 className="text-2xl md:text-3xl font-extrabold text-[#0F2B2D] tracking-tight leading-tight">
+                <h3 className="text-2xl md:text-3xl font-extrabold text-[#122328] tracking-tight leading-tight">
                   {currentSelectedPost.title}
                 </h3>
               </div>
@@ -685,7 +685,7 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                       navigator.clipboard?.writeText?.(window.location.href);
                       alert(language === 'tr' ? 'Bağlantı kopyalandı!' : 'Copied studies article link!');
                     }}
-                    className="p-2 border border-brand-warm-sand rounded-xl hover:bg-brand-warm-sand/20 text-brand-deep-slate/60 hover:text-[#0F2B2D] text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
+                    className="p-2 border border-brand-warm-sand rounded-xl hover:bg-brand-warm-sand/20 text-brand-deep-slate/60 hover:text-[#122328] text-xs font-semibold flex items-center gap-1.5 cursor-pointer"
                   >
                     <Share2 className="w-3.5 h-3.5" />
                     <span>{language === 'tr' ? 'Makaleyi Paylaş' : 'Share Research'}</span>
@@ -720,7 +720,7 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                       <span>{post.readTime}</span>
                     </div>
 
-                    <h4 className="font-bold text-brand-deep-slate text-sm leading-snug line-clamp-2 hover:text-[#0E6F6D] transition-colors cursor-pointer font-sans" onClick={() => setSelectedPost(post)}>
+                    <h4 className="font-bold text-brand-deep-slate text-sm leading-snug line-clamp-2 hover:text-[#5A9D62] transition-colors cursor-pointer font-sans" onClick={() => setSelectedPost(post)}>
                       {post.title}
                     </h4>
 
@@ -731,7 +731,7 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
 
                   <button
                     onClick={() => setSelectedPost(post)}
-                    className="pt-2 text-[11px] font-bold text-[#0E6F6D] hover:text-brand-deep-slate flex items-center gap-1 cursor-pointer"
+                    className="pt-2 text-[11px] font-bold text-[#5A9D62] hover:text-brand-deep-slate flex items-center gap-1 cursor-pointer"
                   >
                     <span>{language === 'tr' ? 'Makaleyi Oku' : 'Read Full Studies'}</span>
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -744,9 +744,9 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
             
             /* EVENTS LIST VIEW */
             <div className="space-y-6">
-              <div className="bg-[#4FB8B1]/10 border border-[#4FB8B1]/20 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="bg-[#64D2A2]/10 border border-[#64D2A2]/20 rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="space-y-0.5 max-w-lg">
-                  <p className="text-xs font-bold text-[#0E6F6D] text-left">
+                  <p className="text-xs font-bold text-[#5A9D62] text-left">
                     {language === 'tr' ? 'Uygulamalı Yerel Gençleşme Kampları' : 'Physical Anatolian Rejuvenation Programs'}
                   </p>
                   <p className="text-[11px] text-brand-deep-slate/70 text-left">
@@ -755,16 +755,16 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                       : 'Connect with functional medical directors, olive growers, and contrast hydrotherapists in immersive experiential settings.'}
                   </p>
                 </div>
-                <div className="bg-white border border-[#4FB8B1]/30 text-[#0E6F6D] font-mono text-xs font-bold px-3 py-1.5 rounded-xl shrink-0">
+                <div className="bg-white border border-[#64D2A2]/30 text-[#5A9D62] font-mono text-xs font-bold px-3 py-1.5 rounded-xl shrink-0">
                   {language === 'tr' ? 'Epigenetik & Keşif' : 'Epigenetics & Immersion'} 
                 </div>
               </div>
 
               {bookingSuccessId && (
-                <div className="bg-[#7A8F6A]/10 border border-[#7A8F6A]/30 p-4 rounded-2xl flex items-center gap-3 text-xs text-brand-deep-slate animate-in slide-in-from-top-1">
-                  <CheckCircle className="w-5 h-5 text-[#7A8F6A]" />
+                <div className="bg-[#A6D26A]/10 border border-[#A6D26A]/30 p-4 rounded-2xl flex items-center gap-3 text-xs text-brand-deep-slate animate-in slide-in-from-top-1">
+                  <CheckCircle className="w-5 h-5 text-[#A6D26A]" />
                   <div>
-                    <h5 className="font-bold text-[#0F2B2D]">
+                    <h5 className="font-bold text-[#122328]">
                       {language === 'tr' ? 'Kaydınız Başarıyla Alındı!' : 'Registration Submitted Successfully!'}
                     </h5>
                       <p className="text-brand-deep-slate/70 mt-0.5">
@@ -788,10 +788,10 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                     >
                       <div className="space-y-3">
                         <div className="flex justify-between items-start gap-2">
-                          <span className="text-[9px] uppercase font-bold text-[#FAF7F2] bg-[#4FB8B1] px-2 py-0.5 rounded">
+                          <span className="text-[9px] uppercase font-bold text-[#FAFAF8] bg-[#64D2A2] px-2 py-0.5 rounded">
                             {ev.city}
                           </span>
-                          <span className="text-[10px] text-[#C08240] bg-[#C08240]/5 border border-[#C08240]/20 px-2.5 py-0.5 rounded-full font-bold">
+                          <span className="text-[10px] text-[#FF6B4A] bg-[#FF6B4A]/5 border border-[#FF6B4A]/20 px-2.5 py-0.5 rounded-full font-bold">
                             {ev.spotsLeft} {language === 'tr' ? 'boş koltuk kaldı' : 'seats remaining'}
                           </span>
                         </div>
@@ -832,7 +832,7 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                             placeholder={language === 'tr' ? 'Adınız soyadınız' : "Full name"}
                             value={bookingFormData.name}
                             onChange={(e) => setBookingFormData(prev => ({ ...prev, name: e.target.value }))}
-                            className="w-full text-xs p-2.5 bg-[#FAF7F2] border border-brand-warm-sand/60 rounded-xl focus:outline-none focus:border-[#4FB8B1]"
+                            className="w-full text-xs p-2.5 bg-[#FAFAF8] border border-brand-warm-sand/60 rounded-xl focus:outline-none focus:border-[#64D2A2]"
                           />
                           <input
                             type="email"
@@ -840,7 +840,7 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                             placeholder={language === 'tr' ? 'E-posta adresiniz' : "Email address"}
                             value={bookingFormData.email}
                             onChange={(e) => setBookingFormData(prev => ({ ...prev, email: e.target.value }))}
-                            className="w-full text-xs p-2.5 bg-[#FAF7F2] border border-brand-warm-sand/60 rounded-xl focus:outline-none focus:border-[#4FB8B1]"
+                            className="w-full text-xs p-2.5 bg-[#FAFAF8] border border-brand-warm-sand/60 rounded-xl focus:outline-none focus:border-[#64D2A2]"
                           />
                           {bookingError && (
                             <div className="text-[10px] font-semibold text-red-700 bg-red-50 border border-red-100 rounded-lg px-2.5 py-1.5">
@@ -859,7 +859,7 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                             <button
                               type="submit"
                               disabled={isBookingSubmitting}
-                              className="flex-1 py-1.5 bg-[#4FB8B1] hover:bg-[#4FB8B1]/90 disabled:opacity-50 text-brand-deep-slate font-bold text-xs rounded-lg cursor-pointer"
+                              className="flex-1 py-1.5 bg-[#64D2A2] hover:bg-[#64D2A2]/90 disabled:opacity-50 text-brand-deep-slate font-bold text-xs rounded-lg cursor-pointer"
                             >
                               {isBookingSubmitting
                                 ? (language === 'tr' ? 'Kaydediliyor...' : 'Saving...')
@@ -887,7 +887,7 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                             className={`px-4 py-2 font-bold text-xs rounded-xl transition-all cursor-pointer select-none ${
                               bookingSuccessId === ev.id
                                 ? 'bg-zinc-100 text-zinc-400 border border-zinc-200 cursor-not-allowed'
-                                : 'bg-brand-deep-slate hover:bg-[#0E6F6D] text-brand-soft-ivory'
+                                : 'bg-brand-deep-slate hover:bg-[#5A9D62] text-brand-soft-ivory'
                             }`}
                           >
                             {bookingSuccessId === ev.id 
@@ -905,7 +905,7 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
         </div>
 
         {/* Modal Footer */}
-        <div className="bg-[#FAF7F2] border-t border-brand-warm-sand/30 p-4 shrink-0 flex justify-between items-center text-[10px] text-brand-deep-slate/40 font-mono">
+        <div className="bg-[#FAFAF8] border-t border-brand-warm-sand/30 p-4 shrink-0 flex justify-between items-center text-[10px] text-brand-deep-slate/40 font-mono">
           <span>{language === 'tr' ? 'TÜM PROGRAMLAR BİLİMSEL KONTROL İLKELERİYLE UYUMLUDUR • 2026' : 'PROGRAMS ARE CURATED AGAINST EVIDENCE-BASED REVIEW PRINCIPLES • 2026'}</span>
           <span>© {language === 'tr' ? 'UZUN ÖMÜR ROTASI GAZETESİ' : 'ROUTE LONGEVITY GAZETTE'}</span>
         </div>

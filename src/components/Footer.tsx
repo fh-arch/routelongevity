@@ -45,10 +45,10 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
   };
 
   return (
-    <footer className="w-full bg-[#0F2B2D] text-[#FAF7F2] rounded-3xl mt-16 overflow-hidden border border-[#FAF7F2]/10 shadow-2xl relative z-10 animate-in fade-in duration-300">
+    <footer className="w-full bg-[#122328] text-[#FAFAF8] rounded-3xl mt-16 overflow-hidden border border-[#FAFAF8]/10 shadow-2xl relative z-10 animate-in fade-in duration-300">
       {/* Decorative Brand Overlay Ring */}
-      <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-[#0E6F6D]/15 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-[#C08240]/10 blur-[100px] pointer-events-none" />
+      <div className="absolute top-0 right-0 w-80 h-80 rounded-full bg-[#5A9D62]/15 blur-[100px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-[#FF6B4A]/10 blur-[100px] pointer-events-none" />
 
       {/* Primary Grid */}
       <div className="p-8 md:p-12 grid grid-cols-1 lg:grid-cols-12 gap-10 relative z-10">
@@ -63,11 +63,11 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
             />
           </div>
           
-          <p className="text-xs md:text-sm text-[#FAF7F2]/75 leading-relaxed font-serif max-w-sm">
+          <p className="text-xs md:text-sm text-[#FAFAF8]/75 leading-relaxed font-serif max-w-sm">
             {t('footerDesc')}
           </p>
 
-          <div className="flex items-center gap-2 text-[10px] text-[#4FB8B1] uppercase font-bold tracking-widest bg-white/5 py-1 px-2.5 rounded w-fit border border-white/10">
+          <div className="flex items-center gap-2 text-[10px] text-[#64D2A2] uppercase font-bold tracking-widest bg-white/5 py-1 px-2.5 rounded w-fit border border-white/10">
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>{t('scienceDatabase')}</span>
           </div>
@@ -75,7 +75,7 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
 
         {/* Middle Column: Resource Sections (Blog & Events Highlights) */}
         <div className="lg:col-span-4 space-y-5">
-          <p className="text-[10px] tracking-widest font-mono text-[#FAF7F2]/40 uppercase">
+          <p className="text-[10px] tracking-widest font-mono text-[#FAFAF8]/40 uppercase">
             {t('harnessingHeritage')}
           </p>
 
@@ -83,16 +83,16 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
             {/* Quick Blog Trigger */}
             <button
               onClick={onOpenBlog}
-              className="w-full text-left p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#C08240]/55 hover:bg-white/[0.08] transition-all duration-300 flex items-start gap-3.5 group cursor-pointer"
+              className="w-full text-left p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#FF6B4A]/55 hover:bg-white/[0.08] transition-all duration-300 flex items-start gap-3.5 group cursor-pointer"
             >
-              <div className="p-2 bg-[#C08240]/15 rounded-lg text-[#C08240]">
+              <div className="p-2 bg-[#FF6B4A]/15 rounded-lg text-[#FF6B4A]">
                 <BookOpen className="w-4 h-4" />
               </div>
               <div className="flex-1">
-                <h4 className="text-xs font-bold text-[#FAF7F2] group-hover:text-[#C08240] transition-colors">
+                <h4 className="text-xs font-bold text-[#FAFAF8] group-hover:text-[#FF6B4A] transition-colors">
                   {t('scientificGazette')}
                 </h4>
-                <p className="text-[10px] text-[#FAF7F2]/60 leading-normal mt-0.5">
+                <p className="text-[10px] text-[#FAFAF8]/60 leading-normal mt-0.5">
                   {t('scientificGazetteDesc')}
                 </p>
               </div>
@@ -101,16 +101,16 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
             {/* Quick Events Trigger */}
             <button
               onClick={onOpenEvents}
-              className="w-full text-left p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#4FB8B1]/55 hover:bg-white/[0.08] transition-all duration-300 flex items-start gap-3.5 group cursor-pointer"
+              className="w-full text-left p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#64D2A2]/55 hover:bg-white/[0.08] transition-all duration-300 flex items-start gap-3.5 group cursor-pointer"
             >
-              <div className="p-2 bg-[#4FB8B1]/15 rounded-lg text-[#4FB8B1]">
+              <div className="p-2 bg-[#64D2A2]/15 rounded-lg text-[#64D2A2]">
                 <Calendar className="w-4 h-4" />
               </div>
               <div className="flex-1">
-                <h4 className="text-xs font-bold text-[#FAF7F2] group-hover:text-[#4FB8B1] transition-colors">
+                <h4 className="text-xs font-bold text-[#FAFAF8] group-hover:text-[#64D2A2] transition-colors">
                   {t('workshopsEvents')}
                 </h4>
-                <p className="text-[10px] text-[#FAF7F2]/60 leading-normal mt-0.5">
+                <p className="text-[10px] text-[#FAFAF8]/60 leading-normal mt-0.5">
                   {t('workshopsEventsDesc')}
                 </p>
               </div>
@@ -120,19 +120,19 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
 
         {/* Right Column: Longevity Gazette Subscription */}
         <div className="lg:col-span-3 space-y-4">
-          <p className="text-[10px] tracking-widest font-mono text-[#FAF7F2]/40 uppercase">
+          <p className="text-[10px] tracking-widest font-mono text-[#FAFAF8]/40 uppercase">
             {t('longevityGazette')}
           </p>
-          <p className="text-xs text-[#FAF7F2]/75 font-serif leading-relaxed">
+          <p className="text-xs text-[#FAFAF8]/75 font-serif leading-relaxed">
             {t('gazetteDesc')}
           </p>
 
           {subscribed ? (
-            <div className="p-4 rounded-xl bg-[#7A8F6A]/20 border border-[#7A8F6A]/40 flex items-center gap-2.5 text-xs text-[#E6D9C2]">
-              <CheckCircle2 className="w-4.5 h-4.5 text-[#7A8F6A]" />
+            <div className="p-4 rounded-xl bg-[#A6D26A]/20 border border-[#A6D26A]/40 flex items-center gap-2.5 text-xs text-[#E5EDE1]">
+              <CheckCircle2 className="w-4.5 h-4.5 text-[#A6D26A]" />
               <div>
                 <p className="font-bold">{t('subConfirmed')}</p>
-                <p className="text-[10px] text-[#FAF7F2]/60 mt-0.5">{t('welcomeLongevity')}</p>
+                <p className="text-[10px] text-[#FAFAF8]/60 mt-0.5">{t('welcomeLongevity')}</p>
               </div>
             </div>
           ) : (
@@ -142,17 +142,17 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
                 placeholder="Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full py-2.5 px-3.5 bg-white/5 hover:bg-white/[0.08] rounded-xl border border-white/15 focus:outline-none focus:border-[#4FB8B1]/50 text-xs text-white placeholder-[#FAF7F2]/30 transition-all font-sans"
+                className="w-full py-2.5 px-3.5 bg-white/5 hover:bg-white/[0.08] rounded-xl border border-white/15 focus:outline-none focus:border-[#64D2A2]/50 text-xs text-white placeholder-[#FAFAF8]/30 transition-all font-sans"
               />
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FAF7F2]/40" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FAFAF8]/40" />
                 <input
                   type="email"
                   required
                   placeholder={t('enterEmail')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full py-2.5 pl-9 pr-3.5 bg-white/5 hover:bg-white/[0.08] rounded-xl border border-white/15 focus:outline-none focus:border-[#4FB8B1]/50 text-xs text-white placeholder-[#FAF7F2]/30 transition-all font-sans"
+                  className="w-full py-2.5 pl-9 pr-3.5 bg-white/5 hover:bg-white/[0.08] rounded-xl border border-white/15 focus:outline-none focus:border-[#64D2A2]/50 text-xs text-white placeholder-[#FAFAF8]/30 transition-all font-sans"
                 />
               </div>
               <textarea
@@ -160,7 +160,7 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 rows={3}
-                className="w-full py-2.5 px-3.5 bg-white/5 hover:bg-white/[0.08] rounded-xl border border-white/15 focus:outline-none focus:border-[#4FB8B1]/50 text-xs text-white placeholder-[#FAF7F2]/30 transition-all font-sans resize-none"
+                className="w-full py-2.5 px-3.5 bg-white/5 hover:bg-white/[0.08] rounded-xl border border-white/15 focus:outline-none focus:border-[#64D2A2]/50 text-xs text-white placeholder-[#FAFAF8]/30 transition-all font-sans resize-none"
               />
               {error && (
                 <div className="text-[10px] text-red-100 bg-red-500/20 border border-red-300/20 rounded-lg px-2.5 py-1.5">
@@ -170,7 +170,7 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-2.5 rounded-xl bg-[#C08240] hover:bg-[#C08240]/90 text-[#FAF7F2] font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                className="w-full py-2.5 rounded-xl bg-[#FF6B4A] hover:bg-[#FF6B4A]/90 text-[#FAFAF8] font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
               >
                 <span>{isSubmitting ? 'Sending...' : t('joinGazette')}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -182,14 +182,14 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
       </div>
 
       {/* Underbar Metadata */}
-      <div className="px-8 py-5 border-t border-white/5 bg-black/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-[#FAF7F2]/40 font-mono tracking-wider relative z-10 w-full">
+      <div className="px-8 py-5 border-t border-white/5 bg-black/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-[#FAFAF8]/40 font-mono tracking-wider relative z-10 w-full">
         <div>
           <span>© 2026 {t('routeLongevity')} • {t('royalties') || 'TRANSLATED MEDICINE'}</span>
         </div>
         <div className="flex gap-4">
-          <button onClick={onOpenBlog} className="hover:text-[#C08240] transition-colors cursor-pointer">{t('journalArticles')}</button>
+          <button onClick={onOpenBlog} className="hover:text-[#FF6B4A] transition-colors cursor-pointer">{t('journalArticles')}</button>
           <span>•</span>
-          <button onClick={onOpenEvents} className="hover:text-[#4FB8B1] transition-colors cursor-pointer">{t('epigeneticEvents')}</button>
+          <button onClick={onOpenEvents} className="hover:text-[#64D2A2] transition-colors cursor-pointer">{t('epigeneticEvents')}</button>
           <span>•</span>
           <span>{t('ancientRoots')}</span>
         </div>

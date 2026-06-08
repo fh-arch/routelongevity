@@ -1,17 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", system-ui, sans-serif;
-  --font-display: "Sora", "Inter", system-ui, sans-serif;
+  --font-sans: "Manrope", "Inter", system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", "Manrope", system-ui, sans-serif;
   --font-serif: "Lora", Georgia, serif;
 
-  --color-brand-deep-slate: #0F2B2D;
-  --color-brand-med-teal: #0E6F6D;
-  --color-brand-turquoise: #4FB8B1;
-  --color-brand-olive-sage: #7A8F6A;
-  --color-brand-warm-sand: #E6D9C2;
-  --color-brand-soft-ivory: #FAF7F2;
-  --color-brand-copper: #C08240;
+  --color-brand-deep-slate: #122328;
+  --color-brand-med-teal: #5A9D62;
+  --color-brand-turquoise: #64D2A2;
+  --color-brand-olive-sage: #A6D26A;
+  --color-brand-warm-sand: #E5EDE1;
+  --color-brand-soft-ivory: #FAFAF8;
+  --color-brand-copper: #FF6B4A;
+  --color-brand-highlight-lime: #D3F874;
+  --color-brand-support-purple: #8041F5;
 }
 
 /* Custom scrollbar and minor cleanups for Leaflet */
@@ -42,9 +44,9 @@ h3,
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #E6D9C2;
+  background: #E5EDE1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #CDBC9C;
+  background: #A6D26A;
 }

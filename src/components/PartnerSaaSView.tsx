@@ -94,12 +94,12 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#FAF7F2] p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
+    <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
       
       {/* Upper Mode Details */}
       <div className="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-2xl border border-brand-warm-sand/50 shadow-sm gap-4">
         <div className="flex items-center gap-2">
-          <Building className="w-5 h-5 text-[#0F2B2D]" />
+          <Building className="w-5 h-5 text-[#122328]" />
           <span className="font-bold text-xs text-brand-deep-slate uppercase tracking-wider">
             {language === 'tr' ? 'B2B Ortak Yönetim Portalı' : 'B2B Provider Management Portal'}
           </span>
@@ -168,7 +168,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                   placeholder={language === 'tr' ? 'Tesis veya marka adı' : 'Venue or brand name'}
                   value={listingForm.venueName}
                   onChange={(event) => setListingForm((prev) => ({ ...prev, venueName: event.target.value }))}
-                  className="w-full text-sm p-3 bg-[#FAF7F2] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
+                  className="w-full text-sm p-3 bg-[#FAFAF8] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
                 />
               )}
               <div className="relative">
@@ -178,7 +178,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                   placeholder={language === 'tr' ? 'E-posta adresi' : 'Email address'}
                   value={accessMode === 'listing' ? listingForm.email : undefined}
                   onChange={accessMode === 'listing' ? ((event) => setListingForm((prev) => ({ ...prev, email: event.target.value }))) : undefined}
-                  className="w-full text-sm pl-10 pr-3 py-3 bg-[#FAF7F2] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
+                  className="w-full text-sm pl-10 pr-3 py-3 bg-[#FAFAF8] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
                 />
               </div>
               {accessMode !== 'listing' ? (
@@ -187,14 +187,14 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                   <input
                     type="password"
                     placeholder={language === 'tr' ? 'Şifre' : 'Password'}
-                    className="w-full text-sm pl-10 pr-3 py-3 bg-[#FAF7F2] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
+                    className="w-full text-sm pl-10 pr-3 py-3 bg-[#FAFAF8] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
                   />
                 </div>
               ) : (
                 <select
                   value={listingForm.categoryId}
                   onChange={(event) => setListingForm((prev) => ({ ...prev, categoryId: event.target.value }))}
-                  className="w-full text-sm p-3 bg-[#FAF7F2] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
+                  className="w-full text-sm p-3 bg-[#FAFAF8] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
                 >
                   <option value="">{language === 'tr' ? 'Kategori seçin' : 'Select category'}</option>
                   <option value="thermal-spa">{language === 'tr' ? 'Kaplıca ve spa' : 'Thermal & spa'}</option>
@@ -223,7 +223,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                 disabled={isListingSubmitting}
                 className={`w-full py-3 rounded-xl text-white font-extrabold text-sm transition-colors cursor-pointer ${
                   listingSubmitted && accessMode === 'listing'
-                    ? 'bg-[#7A8F6A]'
+                    ? 'bg-[#A6D26A]'
                     : 'bg-brand-deep-slate hover:bg-brand-med-teal'
                 }`}
               >
@@ -246,7 +246,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                 </button>
               )}
               {authSession && (
-                <div className="rounded-xl bg-[#7A8F6A]/10 border border-[#7A8F6A]/25 px-3 py-2 text-xs">
+                <div className="rounded-xl bg-[#A6D26A]/10 border border-[#A6D26A]/25 px-3 py-2 text-xs">
                   <span className="text-brand-deep-slate/55 font-semibold">
                     {language === 'tr' ? 'Aktif demo oturum:' : 'Active demo session:'}
                   </span>
@@ -292,7 +292,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                 const partner = PARTNERS_DATA.find(p => p.id === e.target.value);
                 if (partner) setTier(partner.licenseType);
               }}
-              className="w-full text-xs font-bold bg-[#FAF7F2] border border-brand-warm-sand rounded-xl px-3 py-2.5 text-brand-deep-slate focus:outline-none cursor-pointer"
+              className="w-full text-xs font-bold bg-[#FAFAF8] border border-brand-warm-sand rounded-xl px-3 py-2.5 text-brand-deep-slate focus:outline-none cursor-pointer"
             >
               {PARTNERS_DATA.map(p => (
                 <option key={p.id} value={p.id}>
@@ -333,7 +333,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
               </div>
 
               {/* Map Clicks */}
-              <div className="bg-white border border-[#E6D9C2]/50 p-5 rounded-2xl shadow-sm space-y-3">
+              <div className="bg-white border border-[#E5EDE1]/50 p-5 rounded-2xl shadow-sm space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-bold text-brand-deep-slate/50 uppercase">{t('clicksMetric')}</span>
                   <div className="p-2 bg-brand-copper/10 text-brand-copper rounded-lg">
@@ -354,10 +354,10 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
               </div>
 
               {/* Direct Leads Generated */}
-              <div className="bg-white border border-[#E6D9C2]/50 p-5 rounded-2xl shadow-sm space-y-3">
+              <div className="bg-white border border-[#E5EDE1]/50 p-5 rounded-2xl shadow-sm space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-bold text-brand-deep-slate/50 uppercase">{t('leadsMetric')}</span>
-                  <div className="p-2 bg-[#7A8F6A]/15 text-[#7A8F6A] rounded-lg">
+                  <div className="p-2 bg-[#A6D26A]/15 text-[#A6D26A] rounded-lg">
                     <PhoneCall className="w-4 h-4" />
                   </div>
                 </div>
@@ -377,7 +377,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
             </div>
 
             {/* Traffic Trends SVG Chart (fully responsive) */}
-            <div className="bg-white border border-[#E6D9C2]/45 p-6 rounded-3xl shadow-sm space-y-4">
+            <div className="bg-white border border-[#E5EDE1]/45 p-6 rounded-3xl shadow-sm space-y-4">
               <div className="flex justify-between items-center pb-2">
                 <div>
                   <h3 className="text-sm font-bold text-brand-deep-slate uppercase tracking-wider">
@@ -387,7 +387,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                     {language === 'tr' ? 'Son 6 aya ait harita üzeri toplam görüntülenme istatistiği' : 'Historical map display views across past 6 months'}
                   </p>
                 </div>
-                <span className="text-xs font-bold text-brand-deep-slate bg-[#FAF7F2] border border-brand-warm-sand px-3 py-1 rounded-lg flex items-center gap-1">
+                <span className="text-xs font-bold text-brand-deep-slate bg-[#FAFAF8] border border-brand-warm-sand px-3 py-1 rounded-lg flex items-center gap-1">
                   <TrendingUp className="w-3.5 h-3.5 text-brand-turquoise" />
                   <span>{language === 'tr' ? '6 Aylık Özet' : '6-Month Summary'}</span>
                 </span>
@@ -397,14 +397,14 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
               <div className="relative pt-4 pl-4 pr-4">
                 <svg className="w-full h-32 overflow-visible" viewBox="0 0 500 120" preserveAspectRatio="none">
                   {/* Grid Lines */}
-                  <line x1="0" y1="10" x2="500" y2="10" stroke="#FAF7F2" strokeWidth="1" />
-                  <line x1="0" y1="60" x2="500" y2="60" stroke="#FAF7F2" strokeWidth="1" />
-                  <line x1="0" y1="110" x2="500" y2="110" stroke="#FAF7F2" strokeWidth="1" />
+                  <line x1="0" y1="10" x2="500" y2="10" stroke="#FAFAF8" strokeWidth="1" />
+                  <line x1="0" y1="60" x2="500" y2="60" stroke="#FAFAF8" strokeWidth="1" />
+                  <line x1="0" y1="110" x2="500" y2="110" stroke="#FAFAF8" strokeWidth="1" />
 
                   <defs>
                     <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#4FB8B1" stopOpacity="0.25" />
-                      <stop offset="100%" stopColor="#4FB8B1" stopOpacity="0.01" />
+                      <stop offset="0%" stopColor="#64D2A2" stopOpacity="0.25" />
+                      <stop offset="100%" stopColor="#64D2A2" stopOpacity="0.01" />
                     </linearGradient>
                   </defs>
 
@@ -418,7 +418,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                   <path
                     d={generateChartPath(currentPartner.analytics.monthlyTrafficTrend)}
                     fill="none"
-                    stroke="#4FB8B1"
+                    stroke="#64D2A2"
                     strokeWidth="3.5"
                     strokeLinecap="round"
                   />
@@ -431,8 +431,8 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                     const y = 120 - ((val - min) / (max - min)) * (120 - 20) - 10;
                     return (
                       <g key={idx}>
-                        <circle cx={x} cy={y} r="5" fill="#0F2B2D" stroke="#FAF7F2" strokeWidth="1.5" />
-                        <text x={x} y={y - 10} textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0F2B2D" fontFamily="monospace">
+                        <circle cx={x} cy={y} r="5" fill="#122328" stroke="#FAFAF8" strokeWidth="1.5" />
+                        <text x={x} y={y - 10} textAnchor="middle" fontSize="9" fontWeight="bold" fill="#122328" fontFamily="monospace">
                           {tier === 'Premium' ? Math.round(val * 1.5) : val}
                         </text>
                       </g>
@@ -441,7 +441,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                 </svg>
                 
                 {/* Chart X axis text */}
-                <div className="flex justify-between items-center text-[10px] text-brand-deep-slate/40 font-mono mt-3.5 pt-1 border-t border-[#FAF7F2]">
+                <div className="flex justify-between items-center text-[10px] text-brand-deep-slate/40 font-mono mt-3.5 pt-1 border-t border-[#FAFAF8]">
                   {trendMonths.map(month => (
                     <span key={month}>{month}</span>
                   ))}
@@ -473,7 +473,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
               )}
 
               <div className="space-y-4">
-                <div className="flex items-center gap-1.5 pb-2 border-b border-[#FAF7F2]">
+                <div className="flex items-center gap-1.5 pb-2 border-b border-[#FAFAF8]">
                   <Award className="w-5 h-5 text-brand-copper" />
                   <span className="text-xs font-extrabold text-brand-deep-slate uppercase tracking-wider">
                     {language === 'tr' ? 'Dinamik Lisans Portalı' : 'Dynamic License Portal'}
@@ -490,7 +490,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                           {language === 'tr' ? 'Aktif' : 'Active'}
                         </span>
                       </div>
-                      <p className="text-[10px] text-[#C08240]/80 mt-1.5 leading-relaxed font-serif">
+                      <p className="text-[10px] text-[#FF6B4A]/80 mt-1.5 leading-relaxed font-serif">
                         {language === 'tr' 
                           ? 'Markanız, harita üzerinde yayılan dalga animasyonlu özel pin yerleşimi ve aramalarda üstün öncelik ile öne çıkar.'
                           : 'Your business stands out globally with a custom glowing map pin, top search rating priority, and direct phone link.'}
@@ -539,7 +539,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                       className={`py-2 px-3 text-[11px] font-bold rounded-xl border transition-all cursor-pointer ${
                         tier === 'Standard'
                           ? 'bg-zinc-100 border-zinc-200 text-zinc-400'
-                          : 'bg-white border-brand-warm-sand hover:bg-[#FAF7F2] text-brand-deep-slate'
+                          : 'bg-white border-brand-warm-sand hover:bg-[#FAFAF8] text-brand-deep-slate'
                       }`}
                     >
                       {language === 'tr' ? 'Standart ($1.200)' : 'Standard ($1,200)'}

@@ -44,7 +44,7 @@ export default function ExperiencesView({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#FAF7F2] p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
+    <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
       
       {/* Header */}
       <div>
@@ -52,7 +52,7 @@ export default function ExperiencesView({
           <Activity className="w-3.5 h-3.5 animate-pulse" />
           <span>{language === 'tr' ? 'Zengin Polifenol ve Kaplıca Rotaları' : 'Polyphenol-rich & Thermal tracks'}</span>
         </div>
-        <h1 className="text-3xl font-extrabold text-[#0F2B2D] tracking-tight">
+        <h1 className="text-3xl font-extrabold text-[#122328] tracking-tight">
           {t('experiencesTitle')}
         </h1>
         <p className="text-sm text-brand-deep-slate/60 max-w-2xl font-serif">
@@ -101,7 +101,7 @@ export default function ExperiencesView({
                 <div className="space-y-3">
                   <div className="flex flex-wrap gap-1.5">
                     {journey.tags.map((tag) => (
-                      <span key={tag} className="text-[10px] uppercase font-bold text-brand-copper bg-[#FAF7F2] border border-brand-warm-sand/50 px-2.5 py-0.5 rounded-full">
+                      <span key={tag} className="text-[10px] uppercase font-bold text-brand-copper bg-[#FAFAF8] border border-brand-warm-sand/50 px-2.5 py-0.5 rounded-full">
                         {language === 'tr' 
                           ? (tag === 'Medical Cellular' ? 'Tıbbi Hücresel' : tag === 'Circadian Reset' ? 'Sirkadiyen Ayar' : tag === 'Epigenetic Diet' ? 'Epigenetik Beslenme' : tag === 'Hydrotherapy' ? 'Hidroterapi' : tag === 'Thermal Detox' ? 'Termal Toksin Arınma' : tag)
                           : tag}
@@ -131,7 +131,7 @@ export default function ExperiencesView({
                     {participants.map((p: any) => (
                       <div
                         key={p.id}
-                        className="bg-[#FAF7F2] hover:bg-brand-warm-sand/20 border border-brand-warm-sand/40 rounded-xl px-3.5 py-2.5 flex items-center gap-2.5 transition-colors"
+                        className="bg-[#FAFAF8] hover:bg-brand-warm-sand/20 border border-brand-warm-sand/40 rounded-xl px-3.5 py-2.5 flex items-center gap-2.5 transition-colors"
                       >
                         <MapPin className="w-4 h-4 text-brand-med-teal shrink-0" />
                         <div>
@@ -160,7 +160,7 @@ export default function ExperiencesView({
                         className={`px-4.5 py-2.5 rounded-xl border font-bold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer select-none ${
                           savedRouteIds.includes(journey.id)
                             ? 'bg-red-50/85 border-red-200 text-red-600 hover:bg-red-100/70'
-                            : 'bg-white border-brand-warm-sand/70 text-brand-deep-slate hover:bg-[#FAF7F2]'
+                            : 'bg-white border-brand-warm-sand/70 text-brand-deep-slate hover:bg-[#FAFAF8]'
                         }`}
                       >
                         <Heart className={`w-4 h-4 transition-transform duration-300 hover:scale-110 ${savedRouteIds.includes(journey.id) ? 'fill-red-500 text-red-500' : 'text-brand-deep-slate/60'}`} />

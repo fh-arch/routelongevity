@@ -6,50 +6,50 @@ export const CATEGORIES: Category[] = [
     key: 'hammams',
     label: 'Hammams',
     iconName: 'Droplets',
-    color: '#0F2B2D', // Deep Slate
+    color: '#122328', // Deep Longevity Navy
     borderColor: 'border-brand-deep-slate',
   },
   {
     key: 'thermal-spa',
     label: 'Thermal & Spa',
     iconName: 'Waves',
-    color: '#4FB8B1', // Thermal Turquoise
+    color: '#64D2A2', // Vital Mint
     borderColor: 'border-brand-turquoise',
   },
   {
     key: 'mediterranean-diet',
     label: 'Mediterranean Diet',
     iconName: 'Utensils',
-    color: '#0E6F6D', // Mediterranean Teal
+    color: '#5A9D62', // Herbal Green
     borderColor: 'border-brand-med-teal',
   },
   {
     key: 'longevity-clinics',
     label: 'Longevity Clinics',
     iconName: 'HeartPulse',
-    color: '#C08240', // Copper Accent
+    color: '#FF6B4A', // Warm Coral Accent
     borderColor: 'border-brand-copper',
   },
   {
     key: 'retreat-nature',
     label: 'Retreat & Nature',
     iconName: 'Trees',
-    color: '#7A8F6A', // Olive Sage
+    color: '#5A9D62', // Herbal Green
     borderColor: 'border-brand-olive-sage',
   },
   {
     key: 'traditional-med',
     label: 'Traditional Medicine',
     iconName: 'Leaf',
-    color: '#E6D9C2', // Slate/Warm sand tone
-    borderColor: 'border-brand-warm-sand',
+    color: '#8041F5', // Support Purple
+    borderColor: 'border-brand-support-purple',
   },
   {
     key: 'local-producers',
     label: 'Local Producers',
     iconName: 'Store',
-    color: '#9E672D', // Deep Earth or bronze
-    borderColor: 'border-brand-copper',
+    color: '#D3F874', // Bright Highlight Lime
+    borderColor: 'border-brand-highlight-lime',
   }
 ];
 
