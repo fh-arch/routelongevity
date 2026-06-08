@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BookOpen, Calendar, Mail, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { submitContactMessage } from '../api';
 
 interface FooterProps {
   onOpenBlog: () => void;
@@ -10,16 +11,36 @@ interface FooterProps {
 export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
   const { t } = useLanguage();
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [message, setMessage] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     if (email.trim().includes('@')) {
+      try {
+        setIsSubmitting(true);
+        await submitContactMessage({
+          name: name.trim() || 'Route Longevity contact',
+          email,
+          topic: 'footer-contact',
+          message: message.trim() || 'Please add me to the Route Longevity gazette and contact list.',
+        });
       setSubscribed(true);
       setTimeout(() => {
         setSubscribed(false);
         setEmail('');
+          setName('');
+          setMessage('');
       }, 5000);
+      } catch (submitError) {
+        setError(submitError instanceof Error ? submitError.message : 'Message could not be saved.');
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -125,6 +146,13 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
             </div>
           ) : (
             <form onSubmit={handleSubscribe} className="space-y-2">
+              <input
+                type="text"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full py-2.5 px-3.5 bg-white/5 hover:bg-white/[0.08] rounded-xl border border-white/15 focus:outline-none focus:border-[#4FB8B1]/50 text-xs text-white placeholder-[#FAF7F2]/30 transition-all font-sans"
+              />
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#FAF7F2]/40" />
                 <input
@@ -136,11 +164,24 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
                   className="w-full py-2.5 pl-9 pr-3.5 bg-white/5 hover:bg-white/[0.08] rounded-xl border border-white/15 focus:outline-none focus:border-[#4FB8B1]/50 text-xs text-white placeholder-[#FAF7F2]/30 transition-all font-sans"
                 />
               </div>
+              <textarea
+                placeholder="Message or partnership note"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={3}
+                className="w-full py-2.5 px-3.5 bg-white/5 hover:bg-white/[0.08] rounded-xl border border-white/15 focus:outline-none focus:border-[#4FB8B1]/50 text-xs text-white placeholder-[#FAF7F2]/30 transition-all font-sans resize-none"
+              />
+              {error && (
+                <div className="text-[10px] text-red-100 bg-red-500/20 border border-red-300/20 rounded-lg px-2.5 py-1.5">
+                  {error}
+                </div>
+              )}
               <button
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full py-2.5 rounded-xl bg-[#C08240] hover:bg-[#C08240]/90 text-[#FAF7F2] font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                <span>{t('joinGazette')}</span>
+                <span>{isSubmitting ? 'Sending...' : t('joinGazette')}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </form>

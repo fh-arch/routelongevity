@@ -102,6 +102,32 @@ const eventRegistrationSchema = z.object({
   email: z.string().email().max(180).transform((email) => email.toLowerCase()),
 });
 
+const contactMessageSchema = z.object({
+  name: z.string().min(2).max(120),
+  email: z.string().email().max(180).transform((email) => email.toLowerCase()),
+  topic: z.string().min(2).max(80).default('general'),
+  message: z.string().min(4).max(2000),
+});
+
+const listingApplicationSchema = z.object({
+  venueName: z.string().min(2).max(180),
+  contactName: z.string().max(120).optional(),
+  email: z.string().email().max(180).transform((email) => email.toLowerCase()),
+  categoryId: z.string().min(1).max(80).optional(),
+  city: z.string().max(120).optional(),
+  website: z.string().url().optional(),
+  message: z.string().max(2000).optional(),
+});
+
+const partnerApplicationSchema = z.object({
+  businessName: z.string().min(2).max(180),
+  contactName: z.string().max(120).optional(),
+  email: z.string().email().max(180).transform((email) => email.toLowerCase()),
+  website: z.string().url().optional(),
+  partnerType: z.string().max(80).optional(),
+  message: z.string().max(2000).optional(),
+});
+
 const externalIdSchema = z.object({
   id: z.string().min(1).max(120),
 });
@@ -632,6 +658,84 @@ app.post('/api/ad-applications', async (req, res, next) => {
     );
 
     res.status(201).json({ application: applicationResult.rows[0] });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.post('/api/contact-messages', async (req, res, next) => {
+  try {
+    const body = validate(contactMessageSchema, req, res);
+    if (!body) return;
+
+    const result = await query(
+      `INSERT INTO contact_messages (name, email, topic, message)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, name, email, topic, status, created_at`,
+      [body.name, body.email, body.topic, body.message],
+    );
+
+    console.info(`New contact message from ${body.email} on topic "${body.topic}".`);
+    return res.status(201).json({ message: result.rows[0] });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.post('/api/listing-applications', async (req, res, next) => {
+  try {
+    const body = validate(listingApplicationSchema, req, res);
+    if (!body) return;
+
+    const result = await query(
+      `INSERT INTO listing_applications (
+         user_id, venue_name, contact_name, email, category_id, city, website, message
+       )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+       RETURNING id, venue_name, email, category_id, status, created_at`,
+      [
+        req.user?.id || null,
+        body.venueName,
+        body.contactName,
+        body.email,
+        body.categoryId,
+        body.city,
+        body.website,
+        body.message,
+      ],
+    );
+
+    console.info(`New listing application: ${body.venueName} <${body.email}>.`);
+    return res.status(201).json({ application: result.rows[0] });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.post('/api/partner-applications', async (req, res, next) => {
+  try {
+    const body = validate(partnerApplicationSchema, req, res);
+    if (!body) return;
+
+    const result = await query(
+      `INSERT INTO partner_applications (
+         user_id, business_name, contact_name, email, website, partner_type, message
+       )
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id, business_name, email, partner_type, status, created_at`,
+      [
+        req.user?.id || null,
+        body.businessName,
+        body.contactName,
+        body.email,
+        body.website,
+        body.partnerType,
+        body.message,
+      ],
+    );
+
+    console.info(`New partner application: ${body.businessName} <${body.email}>.`);
+    return res.status(201).json({ application: result.rows[0] });
   } catch (error) {
     return next(error);
   }

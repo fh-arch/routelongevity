@@ -102,3 +102,60 @@ export async function registerEvent(input: {
     body: JSON.stringify(input),
   });
 }
+
+export async function submitContactMessage(input: {
+  name: string;
+  email: string;
+  topic: string;
+  message: string;
+}) {
+  return request<{ message: unknown }>('/api/contact-messages', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function submitListingApplication(input: {
+  venueName: string;
+  contactName?: string;
+  email: string;
+  categoryId?: string;
+  city?: string;
+  website?: string;
+  message?: string;
+}) {
+  return request<{ application: unknown }>('/api/listing-applications', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function submitPartnerApplication(input: {
+  businessName: string;
+  contactName?: string;
+  email: string;
+  website?: string;
+  partnerType?: string;
+  message?: string;
+}) {
+  return request<{ application: unknown }>('/api/partner-applications', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function submitAdApplication(input: {
+  businessName: string;
+  contactName: string;
+  email: string;
+  phone?: string;
+  website?: string;
+  requestedSlot?: string;
+  campaignGoal?: string;
+  budgetRange?: string;
+}) {
+  return request<{ application: unknown }>('/api/ad-applications', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}

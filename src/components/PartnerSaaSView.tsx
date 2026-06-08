@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Footer from './Footer';
 import { AuthMode, AuthRole, AuthSession } from './AuthModal';
+import { submitListingApplication } from '../api';
 
 interface PartnerSaaSViewProps {
   onOpenBlog: () => void;
@@ -27,6 +28,13 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [accessMode, setAccessMode] = useState<'user' | 'partner' | 'listing'>('listing');
   const [listingSubmitted, setListingSubmitted] = useState(false);
+  const [listingError, setListingError] = useState('');
+  const [isListingSubmitting, setIsListingSubmitting] = useState(false);
+  const [listingForm, setListingForm] = useState({
+    venueName: '',
+    email: '',
+    categoryId: '',
+  });
 
   const handleTierChange = (newTier: LicenseType) => {
     setIsChangingTier(true);
@@ -60,6 +68,30 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
   const trendMonths = language === 'tr' 
     ? ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz'] 
     : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+
+  const handleListingApplication = async () => {
+    setListingError('');
+    if (!listingForm.venueName.trim() || !listingForm.email.trim() || !listingForm.categoryId) {
+      setListingError(language === 'tr' ? 'Lütfen tesis adı, e-posta ve kategori girin.' : 'Please enter venue name, email, and category.');
+      return;
+    }
+
+    try {
+      setIsListingSubmitting(true);
+      await submitListingApplication({
+        venueName: listingForm.venueName,
+        email: listingForm.email,
+        categoryId: listingForm.categoryId,
+        message: authSession ? `Submitted from signed-in account: ${authSession.email}` : 'Submitted from public B2B portal.',
+      });
+      setListingSubmitted(true);
+      setListingForm({ venueName: '', email: '', categoryId: '' });
+    } catch (error) {
+      setListingError(error instanceof Error ? error.message : 'Application could not be saved.');
+    } finally {
+      setIsListingSubmitting(false);
+    }
+  };
 
   return (
     <div className="flex-1 overflow-y-auto bg-[#FAF7F2] p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
@@ -134,6 +166,8 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                 <input
                   type="text"
                   placeholder={language === 'tr' ? 'Tesis veya marka adı' : 'Venue or brand name'}
+                  value={listingForm.venueName}
+                  onChange={(event) => setListingForm((prev) => ({ ...prev, venueName: event.target.value }))}
                   className="w-full text-sm p-3 bg-[#FAF7F2] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
                 />
               )}
@@ -142,6 +176,8 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                 <input
                   type="email"
                   placeholder={language === 'tr' ? 'E-posta adresi' : 'Email address'}
+                  value={accessMode === 'listing' ? listingForm.email : undefined}
+                  onChange={accessMode === 'listing' ? ((event) => setListingForm((prev) => ({ ...prev, email: event.target.value }))) : undefined}
                   className="w-full text-sm pl-10 pr-3 py-3 bg-[#FAF7F2] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
                 />
               </div>
@@ -155,13 +191,24 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                   />
                 </div>
               ) : (
-                <select className="w-full text-sm p-3 bg-[#FAF7F2] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal">
-                  <option>{language === 'tr' ? 'Kategori seçin' : 'Select category'}</option>
-                  <option>{language === 'tr' ? 'Kaplıca ve spa' : 'Thermal & spa'}</option>
-                  <option>{language === 'tr' ? 'Uzun ömür kliniği' : 'Longevity clinic'}</option>
-                  <option>{language === 'tr' ? 'Yerel üretici' : 'Local producer'}</option>
-                  <option>{language === 'tr' ? 'İnziva ve doğa' : 'Retreat & nature'}</option>
+                <select
+                  value={listingForm.categoryId}
+                  onChange={(event) => setListingForm((prev) => ({ ...prev, categoryId: event.target.value }))}
+                  className="w-full text-sm p-3 bg-[#FAF7F2] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
+                >
+                  <option value="">{language === 'tr' ? 'Kategori seçin' : 'Select category'}</option>
+                  <option value="thermal-spa">{language === 'tr' ? 'Kaplıca ve spa' : 'Thermal & spa'}</option>
+                  <option value="longevity-clinics">{language === 'tr' ? 'Uzun ömür kliniği' : 'Longevity clinic'}</option>
+                  <option value="local-producers">{language === 'tr' ? 'Yerel üretici' : 'Local producer'}</option>
+                  <option value="retreat-nature">{language === 'tr' ? 'İnziva ve doğa' : 'Retreat & nature'}</option>
+                  <option value="hammams">{language === 'tr' ? 'Hamam' : 'Hammam'}</option>
+                  <option value="traditional-med">{language === 'tr' ? 'Geleneksel tıp' : 'Traditional medicine'}</option>
                 </select>
+              )}
+              {listingError && accessMode === 'listing' && (
+                <div className="text-xs font-semibold text-red-700 bg-red-50 border border-red-100 rounded-xl px-3 py-2">
+                  {listingError}
+                </div>
               )}
               <button
                 onClick={() => {
@@ -170,9 +217,10 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                   } else if (accessMode === 'partner') {
                     onOpenAuth('partner', 'signin');
                   } else {
-                    setListingSubmitted(true);
+                    handleListingApplication();
                   }
                 }}
+                disabled={isListingSubmitting}
                 className={`w-full py-3 rounded-xl text-white font-extrabold text-sm transition-colors cursor-pointer ${
                   listingSubmitted && accessMode === 'listing'
                     ? 'bg-[#7A8F6A]'
@@ -182,7 +230,9 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                 {listingSubmitted && accessMode === 'listing'
                   ? (language === 'tr' ? 'Başvuru alındı' : 'Application Started')
                   : accessMode === 'listing'
-                  ? (language === 'tr' ? 'Başvuruyu Başlat' : 'Start Application')
+                  ? isListingSubmitting
+                    ? (language === 'tr' ? 'Kaydediliyor...' : 'Saving...')
+                    : (language === 'tr' ? 'Başvuruyu Başlat' : 'Start Application')
                   : (language === 'tr' ? 'Giriş Yap' : 'Login')}
               </button>
               {accessMode !== 'listing' && (
@@ -208,7 +258,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
               <p className="text-[11px] text-brand-deep-slate/50 leading-5">
                 {accessMode === 'listing'
                   ? (language === 'tr' ? 'Başvuru sonrası doğrulama ekibi lisans, konum, kategori ve bilimsel uygunluk bilgilerini kontrol eder.' : 'After submission, the verification team reviews license, location, category, and evidence-fit details.')
-                  : (language === 'tr' ? 'Demo arayüzüdür; kimlik doğrulama bağlantısı daha sonra bağlanabilir.' : 'Demo interface; authentication can be connected later.')}
+                  : (language === 'tr' ? 'Gerçek kimlik doğrulama API ve veritabanına bağlıdır.' : 'Authentication is connected to the API and database.')}
               </p>
             </div>
           </section>
