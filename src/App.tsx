@@ -195,22 +195,13 @@ export default function App() {
       
       {/* Mobile Top Header */}
       <header className="flex md:hidden items-center justify-between px-5 py-4 bg-white border-b border-[#E6D9C2]/45 shrink-0 z-40">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#0F2B2D] flex items-center justify-center shadow-md shrink-0">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="#faf7f2" />
-              <path d="M12 6.5C13 5.5 14.5 5 16 5.5" stroke="#4FB8B1" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-          </div>
-          <div>
-            <span className="font-sans font-black text-[#0F2B2D] tracking-wide text-xs block leading-none">
-              {t('routeLongevity')}
-            </span>
-            <span className="font-mono text-[8px] text-[#7A8F6A] tracking-[0.1em] block uppercase mt-0.5">
-              {t('scienceAntiquity')}
-            </span>
-          </div>
-        </div>
+        <button onClick={() => setActiveTab('explore')} className="h-10 w-[132px] shrink-0 cursor-pointer">
+          <img
+            src="/route-longevity-logo.png"
+            alt={t('routeLongevity')}
+            className="h-full w-full object-contain object-left"
+          />
+        </button>
 
         {/* Quick Gazette Dialog Actions & Switcher */}
         <div className="flex items-center gap-1.5">
@@ -235,22 +226,13 @@ export default function App() {
       <header className="hidden md:flex items-center justify-between gap-5 px-7 py-4 bg-white/95 border-b border-brand-warm-sand/45 shrink-0 z-40 shadow-sm">
         <button
           onClick={() => setActiveTab('explore')}
-          className="flex items-center gap-3 min-w-[220px] text-left cursor-pointer"
+          className="h-12 w-[190px] min-w-[190px] text-left cursor-pointer"
         >
-          <div className="w-10 h-10 rounded-xl bg-brand-deep-slate flex items-center justify-center shadow-md shadow-brand-deep-slate/10 shrink-0">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="#faf7f2" />
-              <path d="M12 6.5C13 5.5 14.5 5 16 5.5" stroke="#4FB8B1" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
-          </div>
-          <div>
-            <span className="font-extrabold text-[#0F2B2D] tracking-tight text-lg block leading-tight">
-              ROUTE
-            </span>
-            <span className="font-medium text-[#7A8F6A] text-xs tracking-[0.18em] block uppercase -mt-0.5">
-              Longevity
-            </span>
-          </div>
+          <img
+            src="/route-longevity-logo.png"
+            alt={t('routeLongevity')}
+            className="h-full w-full object-contain object-left"
+          />
         </button>
 
         <nav className="flex items-center justify-center gap-1 rounded-2xl bg-[#FAF7F2] border border-brand-warm-sand/55 p-1">

@@ -55,21 +55,12 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
         
         {/* Left Side: Brand Summary */}
         <div className="lg:col-span-5 space-y-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] flex items-center justify-center shadow-md shrink-0">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="#0F2B2D" />
-                <path d="M12 6.5C13 5.5 14.5 5 16 5.5" stroke="#C08240" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-            </div>
-            <div>
-              <span className="font-sans font-extrabold text-[#FAF7F2] tracking-wider text-base block leading-none">
-                {t('routeLongevity')}
-              </span>
-              <span className="font-mono text-[9px] text-[#C08240] tracking-widest block uppercase mt-0.5">
-                {t('scienceAntiquity')}
-              </span>
-            </div>
+          <div className="h-20 w-[210px]">
+            <img
+              src="/route-longevity-logo.png"
+              alt={t('routeLongevity')}
+              className="h-full w-full object-contain object-left"
+            />
           </div>
           
           <p className="text-xs md:text-sm text-[#FAF7F2]/75 leading-relaxed font-serif max-w-sm">
