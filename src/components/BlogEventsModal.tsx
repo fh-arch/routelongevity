@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 import { X, BookOpen, Calendar, MapPin, Tag, Clock, ArrowRight, CheckCircle2, CheckCircle, Share2, Clipboard, User } from 'lucide-react';
+import { getBlogPosts, getEvents, registerEvent } from '../api';
 
 interface BlogEventsModalProps {
   isOpen: boolean;
@@ -497,9 +498,15 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
   const [bookEventId, setBookEventId] = useState<string | null>(null);
   const [bookingFormData, setBookingFormData] = useState({ name: '', email: '' });
   const [bookingSuccessId, setBookingSuccessId] = useState<string | null>(null);
+  const [databasePosts, setDatabasePosts] = useState<BlogPost[] | null>(null);
+  const [databaseEvents, setDatabaseEvents] = useState<LongevityEvent[] | null>(null);
+  const [bookingError, setBookingError] = useState('');
+  const [isBookingSubmitting, setIsBookingSubmitting] = useState(false);
 
-  const posts = language === 'tr' ? MOCK_POSTS_TR : MOCK_POSTS_EN;
-  const events = language === 'tr' ? MOCK_EVENTS_TR : MOCK_EVENTS_EN;
+  const fallbackPosts = language === 'tr' ? MOCK_POSTS_TR : MOCK_POSTS_EN;
+  const fallbackEvents = language === 'tr' ? MOCK_EVENTS_TR : MOCK_EVENTS_EN;
+  const posts = databasePosts?.length ? databasePosts : fallbackPosts;
+  const events = databaseEvents?.length ? databaseEvents : fallbackEvents;
 
   // Sync state with open tab if changed from outside
   React.useEffect(() => {
@@ -508,17 +515,49 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
     setBookEventId(null);
   }, [initialTab]);
 
+  React.useEffect(() => {
+    if (!isOpen) return;
+
+    getBlogPosts(language)
+      .then(({ posts: loadedPosts }) => setDatabasePosts(loadedPosts))
+      .catch((error) => {
+        console.warn('Could not load database blog posts.', error);
+        setDatabasePosts(null);
+      });
+
+    getEvents(language)
+      .then(({ events: loadedEvents }) => setDatabaseEvents(loadedEvents))
+      .catch((error) => {
+        console.warn('Could not load database events.', error);
+        setDatabaseEvents(null);
+      });
+  }, [isOpen, language]);
+
   if (!isOpen) return null;
 
-  const handleBookingSubmit = (e: React.FormEvent, eventId: string) => {
+  const handleBookingSubmit = async (e: React.FormEvent, eventId: string) => {
     e.preventDefault();
     if (bookingFormData.name && bookingFormData.email) {
+      setBookingError('');
+      setIsBookingSubmitting(true);
+      try {
+        await registerEvent({
+          eventId,
+          name: bookingFormData.name,
+          email: bookingFormData.email,
+        });
+
       setBookingSuccessId(eventId);
       setBookEventId(null);
       setTimeout(() => {
         setBookingSuccessId(null);
         setBookingFormData({ name: '', email: '' });
       }, 7000);
+      } catch (error) {
+        setBookingError(error instanceof Error ? error.message : 'Registration could not be saved.');
+      } finally {
+        setIsBookingSubmitting(false);
+      }
     }
   };
 
@@ -803,19 +842,28 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                             onChange={(e) => setBookingFormData(prev => ({ ...prev, email: e.target.value }))}
                             className="w-full text-xs p-2.5 bg-[#FAF7F2] border border-brand-warm-sand/60 rounded-xl focus:outline-none focus:border-[#4FB8B1]"
                           />
+                          {bookingError && (
+                            <div className="text-[10px] font-semibold text-red-700 bg-red-50 border border-red-100 rounded-lg px-2.5 py-1.5">
+                              {bookingError}
+                            </div>
+                          )}
                           <div className="flex gap-2 pt-1">
                             <button
                               type="button"
                               onClick={() => setBookEventId(null)}
+                              disabled={isBookingSubmitting}
                               className="flex-1 py-1.5 border border-brand-warm-sand text-xs font-semibold rounded-lg hover:bg-brand-warm-sand/25 cursor-pointer"
                             >
                               {language === 'tr' ? 'İptal' : 'Cancel'}
                             </button>
                             <button
                               type="submit"
-                              className="flex-1 py-1.5 bg-[#4FB8B1] hover:bg-[#4FB8B1]/90 text-brand-deep-slate font-bold text-xs rounded-lg cursor-pointer"
+                              disabled={isBookingSubmitting}
+                              className="flex-1 py-1.5 bg-[#4FB8B1] hover:bg-[#4FB8B1]/90 disabled:opacity-50 text-brand-deep-slate font-bold text-xs rounded-lg cursor-pointer"
                             >
-                              {language === 'tr' ? 'Kaydı Tamamla' : 'Complete Booking'}
+                              {isBookingSubmitting
+                                ? (language === 'tr' ? 'Kaydediliyor...' : 'Saving...')
+                                : (language === 'tr' ? 'Kaydı Tamamla' : 'Complete Booking')}
                             </button>
                           </div>
                         </form>

@@ -1,5 +1,6 @@
 import type { AuthRole, AuthSession } from './components/AuthModal';
 import type { RouteJourney } from './types';
+import type { BlogPost, LongevityEvent } from './components/BlogEventsModal';
 
 const API_BASE = import.meta.env.VITE_API_BASE || '';
 
@@ -81,4 +82,23 @@ export async function setFavoriteJourney(id: string, isFavorite: boolean) {
 
 export async function getExperiences() {
   return request<{ journeys: RouteJourney[] }>('/api/experiences');
+}
+
+export async function getBlogPosts(language: 'en' | 'tr') {
+  return request<{ posts: BlogPost[] }>(`/api/blog-posts?lang=${language}`);
+}
+
+export async function getEvents(language: 'en' | 'tr') {
+  return request<{ events: LongevityEvent[] }>(`/api/events?lang=${language}`);
+}
+
+export async function registerEvent(input: {
+  eventId: string;
+  name: string;
+  email: string;
+}) {
+  return request<{ registration: unknown }>('/api/event-registrations', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
 }

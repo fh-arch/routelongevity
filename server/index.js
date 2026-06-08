@@ -96,6 +96,12 @@ const adApplicationSchema = z.object({
   budgetRange: z.string().max(80).optional(),
 });
 
+const eventRegistrationSchema = z.object({
+  eventId: z.string().min(1).max(120),
+  name: z.string().min(2).max(120),
+  email: z.string().email().max(180).transform((email) => email.toLowerCase()),
+});
+
 const externalIdSchema = z.object({
   id: z.string().min(1).max(120),
 });
@@ -328,9 +334,11 @@ app.post('/api/auth/reset-password', authLimiter, async (req, res, next) => {
 app.get('/api/listings', async (req, res, next) => {
   try {
     const listingResult = await query(
-      `SELECT l.id, l.name, l.description, l.city, l.region, l.country, l.address,
+      `SELECT l.id, l.external_id, l.name, l.description, l.city, l.region, l.country, l.address,
               l.latitude, l.longitude, l.image_url, l.website, l.phone,
               l.is_premium, l.status, l.source, l.category_id,
+              l.category_label, l.rating, l.review_count, l.license_type,
+              l.annual_fee, l.specialty, l.email, l.featured, l.analytics,
               c.name_en AS category_name_en, c.name_tr AS category_name_tr
        FROM listings l
        LEFT JOIN listing_categories c ON c.id = l.category_id
@@ -340,6 +348,84 @@ app.get('/api/listings', async (req, res, next) => {
     );
 
     res.json({ listings: listingResult.rows });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.get('/api/blog-posts', async (req, res, next) => {
+  try {
+    const language = req.query.lang === 'tr' ? 'tr' : 'en';
+    const postResult = await query(
+      `SELECT id, title, subtitle, category, read_time, date_label, author,
+              image_url, content, tags
+       FROM blog_posts
+       WHERE status = 'published'
+       ORDER BY sort_order, created_at DESC`,
+    );
+
+    const posts = postResult.rows.map((post) => ({
+      id: post.id,
+      title: post.title?.[language] || post.title?.en || '',
+      subtitle: post.subtitle?.[language] || post.subtitle?.en || '',
+      category: post.category?.[language] || post.category?.en || '',
+      readTime: post.read_time?.[language] || post.read_time?.en || '',
+      date: post.date_label?.[language] || post.date_label?.en || '',
+      author: post.author?.[language] || post.author?.en || '',
+      imageUrl: post.image_url,
+      content: post.content?.[language] || post.content?.en || '',
+      tags: post.tags?.[language] || post.tags?.en || [],
+    }));
+
+    return res.json({ posts });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.get('/api/events', async (req, res, next) => {
+  try {
+    const language = req.query.lang === 'tr' ? 'tr' : 'en';
+    const eventResult = await query(
+      `SELECT id, title, date_label, time_label, location, city, description,
+              spots_left, tags, image_url
+       FROM events
+       WHERE status = 'published'
+       ORDER BY sort_order, created_at DESC`,
+    );
+
+    const events = eventResult.rows.map((event) => ({
+      id: event.id,
+      title: event.title?.[language] || event.title?.en || '',
+      date: event.date_label?.[language] || event.date_label?.en || '',
+      time: event.time_label?.[language] || event.time_label?.en || '',
+      location: event.location?.[language] || event.location?.en || '',
+      city: event.city?.[language] || event.city?.en || '',
+      description: event.description?.[language] || event.description?.en || '',
+      spotsLeft: event.spots_left,
+      tags: event.tags?.[language] || event.tags?.en || [],
+      imageUrl: event.image_url,
+    }));
+
+    return res.json({ events });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.post('/api/event-registrations', async (req, res, next) => {
+  try {
+    const body = validate(eventRegistrationSchema, req, res);
+    if (!body) return;
+
+    const registrationResult = await query(
+      `INSERT INTO event_registrations (event_id, user_id, name, email)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, event_id, name, email, status, created_at`,
+      [body.eventId, req.user?.id || null, body.name, body.email],
+    );
+
+    return res.status(201).json({ registration: registrationResult.rows[0] });
   } catch (error) {
     return next(error);
   }

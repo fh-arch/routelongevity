@@ -4,6 +4,7 @@ import { RouteJourney } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 import { Map, Clock, MapPin, ArrowRight, Compass, Activity, Star, Heart } from 'lucide-react';
 import Footer from './Footer';
+import { getExperiences } from '../api';
 
 interface ExperiencesViewProps {
   onTabChange: (tab: any) => void;
@@ -23,6 +24,17 @@ export default function ExperiencesView({
   toggleSavedRoute
 }: ExperiencesViewProps) {
   const { language, t, translatePartner, translateJourney } = useLanguage();
+  const [databaseJourneys, setDatabaseJourneys] = React.useState<RouteJourney[] | null>(null);
+  const journeys = databaseJourneys?.length ? databaseJourneys : WELLNESS_JOURNEYS;
+
+  React.useEffect(() => {
+    getExperiences()
+      .then(({ journeys: loadedJourneys }) => setDatabaseJourneys(loadedJourneys))
+      .catch((error) => {
+        console.warn('Could not load database experiences.', error);
+        setDatabaseJourneys(null);
+      });
+  }, []);
   
   const handleStartRoute = (journey: RouteJourney) => {
     // Pass translated title to trigger the map panel active banner correctly
@@ -50,7 +62,7 @@ export default function ExperiencesView({
 
       {/* Journeys List */}
       <div className="space-y-6">
-        {WELLNESS_JOURNEYS.map((journey) => {
+        {journeys.map((journey) => {
           // Gather partners for metadata
           const participants = journey.partnerIds
             .map(id => PARTNERS_DATA.find(p => p.id === id))

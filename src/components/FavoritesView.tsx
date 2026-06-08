@@ -4,6 +4,7 @@ import { PARTNERS_DATA, WELLNESS_JOURNEYS } from '../data';
 import { useLanguage } from '../context/LanguageContext';
 import { Heart, Star, MapPin, Search, ArrowRight, Map, Clock, Activity } from 'lucide-react';
 import Footer from './Footer';
+import { getExperiences } from '../api';
 
 interface FavoritesViewProps {
   favorites: string[];
@@ -30,10 +31,21 @@ export default function FavoritesView({
 }: FavoritesViewProps) {
   const { language, t, translateCategory, translatePartner, translateJourney } = useLanguage();
   const [activeSubTab, setActiveSubTab] = useState<'hubs' | 'routes'>('hubs');
+  const [databaseJourneys, setDatabaseJourneys] = useState<RouteJourney[] | null>(null);
+  const journeys = databaseJourneys?.length ? databaseJourneys : WELLNESS_JOURNEYS;
+
+  React.useEffect(() => {
+    getExperiences()
+      .then(({ journeys: loadedJourneys }) => setDatabaseJourneys(loadedJourneys))
+      .catch((error) => {
+        console.warn('Could not load database experiences for favorites.', error);
+        setDatabaseJourneys(null);
+      });
+  }, []);
 
   // Find matching saved partners & wellness routes
   const savedPartners = PARTNERS_DATA.filter((p) => favorites.includes(p.id));
-  const savedJourneys = WELLNESS_JOURNEYS.filter((j) => savedRouteIds.includes(j.id));
+  const savedJourneys = journeys.filter((j) => savedRouteIds.includes(j.id));
 
   const handleShowOnMap = (partnerId: string) => {
     onFocusPartner(partnerId);
