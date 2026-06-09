@@ -94,7 +94,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
+    <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
       
       {/* Upper Mode Details */}
       <div className="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-2xl border border-brand-warm-sand/50 shadow-sm gap-4">
@@ -248,7 +248,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
               {authSession && (
                 <div className="rounded-xl bg-[#A6D26A]/10 border border-[#A6D26A]/25 px-3 py-2 text-xs">
                   <span className="text-brand-deep-slate/55 font-semibold">
-                    {language === 'tr' ? 'Aktif demo oturum:' : 'Active demo session:'}
+                    {language === 'tr' ? 'Aktif oturum:' : 'Signed in as:'}
                   </span>
                   <span className="text-brand-deep-slate font-black ml-1">
                     {authSession.email}

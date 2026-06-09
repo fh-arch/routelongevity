@@ -619,6 +619,7 @@ export default function BlogEventsModal({ isOpen, onClose, initialTab = 'blog' }
                 onClose();
               }
             }}
+            aria-label={language === 'tr' ? 'Pencereyi kapat' : 'Close dialog'}
             className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-[#FAFAF8] transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />

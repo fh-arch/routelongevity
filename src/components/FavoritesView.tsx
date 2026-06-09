@@ -59,7 +59,7 @@ export default function FavoritesView({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-8 max-w-7xl mx-auto w-full space-y-6 animate-in fade-in duration-300">
+    <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6 animate-in fade-in duration-300">
       
       {/* Title */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-brand-warm-sand/20 pb-4">
@@ -140,6 +140,7 @@ export default function FavoritesView({
                     />
                     <button
                       onClick={() => toggleFavorite(p.id)}
+                      aria-label={language === 'tr' ? 'Favorilerden çıkar' : 'Remove from favorites'}
                       className="absolute top-3 right-3 p-2 rounded-full bg-white/90 hover:bg-white text-red-500 shadow-sm cursor-pointer"
                     >
                       <Heart className="w-4.5 h-4.5 fill-red-500 text-red-500" />
@@ -241,6 +242,7 @@ export default function FavoritesView({
 
                     <button
                       onClick={() => toggleSavedRoute(journey.id)}
+                      aria-label={language === 'tr' ? 'Rotayı favorilerden çıkar' : 'Remove route from favorites'}
                       className="absolute top-3 right-3 p-2 rounded-full bg-white/95 hover:bg-white text-red-500 shadow-sm cursor-pointer z-10 transition-transform duration-300 active:scale-95"
                       title={language === 'tr' ? 'Listeden Kaldır' : 'Remove Route'}
                     >

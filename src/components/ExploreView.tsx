@@ -332,10 +332,10 @@ export default function ExploreView({
 
             <div className="flex flex-col justify-center gap-4">
               <button
-                onClick={() => onTabChange('map')}
+                onClick={() => onTabChange('experiences')}
                 className="w-full px-5 py-3.5 rounded-xl bg-brand-copper text-white text-xs font-black shadow-sm hover:bg-brand-copper/90 transition-colors flex items-center justify-between cursor-pointer"
               >
-                <span>{language === 'tr' ? 'Rotayı Keşfet' : 'Explore Route'}</span>
+                <span>{language === 'tr' ? 'Deneyimleri Gör' : 'View Experiences'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
               <button
@@ -454,7 +454,7 @@ export default function ExploreView({
           {authSession && (
             <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-[#A6D26A]/10 border border-[#A6D26A]/25 px-3 py-2">
               <span className="text-xs font-semibold text-brand-deep-slate/70">
-                {language === 'tr' ? 'Aktif demo oturum' : 'Active demo session'}
+                {language === 'tr' ? 'Aktif oturum' : 'Signed in'}
               </span>
               <span className="text-xs font-black text-brand-deep-slate truncate">
                 {authSession.name} · {authSession.role === 'partner' ? (language === 'tr' ? 'İş Ortağı' : 'Partner') : (language === 'tr' ? 'Gezgin' : 'Traveler')}
@@ -514,6 +514,7 @@ export default function ExploreView({
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
+                aria-label={language === 'tr' ? 'Aramayı temizle' : 'Clear search'}
                 className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-brand-deep-slate/45 hover:text-brand-deep-slate transition-colors hover:bg-brand-warm-sand/25 rounded-full cursor-pointer"
               >
                 <X className="w-4 h-4" />
@@ -647,6 +648,11 @@ export default function ExploreView({
                     {/* Favorite Toggle button */}
                     <button
                       onClick={() => toggleFavorite(p.id)}
+                      aria-label={
+                        isFav
+                          ? language === 'tr' ? 'Favorilerden çıkar' : 'Remove from favorites'
+                          : language === 'tr' ? 'Favorilere ekle' : 'Add to favorites'
+                      }
                       className="absolute top-3 right-3 p-1.5 rounded-full bg-white/85 hover:bg-white text-brand-deep-slate transition-colors shadow-sm cursor-pointer"
                     >
                       <Heart className={`w-4 h-4 ${isFav ? 'text-red-500 fill-red-500' : ''}`} />

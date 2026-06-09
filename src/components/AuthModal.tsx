@@ -158,7 +158,7 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 18, scale: 0.98 }}
           transition={{ duration: 0.18 }}
-          className="w-full max-w-4xl bg-[#FAFAF8] border border-brand-warm-sand/60 rounded-2xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-[0.9fr_1.1fr]"
+          className="w-full max-w-4xl max-h-[92vh] bg-[#FAFAF8] border border-brand-warm-sand/60 rounded-2xl shadow-2xl overflow-y-auto grid grid-cols-1 md:grid-cols-[0.9fr_1.1fr]"
         >
           <aside className="bg-brand-deep-slate text-white p-6 md:p-8 flex flex-col justify-between gap-8">
             <div>
@@ -194,6 +194,7 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
           <section className="p-6 md:p-8 relative">
             <button
               onClick={onClose}
+              aria-label={language === 'tr' ? 'Pencereyi kapat' : 'Close dialog'}
               className="absolute top-4 right-4 p-2 rounded-full hover:bg-brand-warm-sand/25 text-brand-deep-slate/55 hover:text-brand-deep-slate transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
@@ -220,7 +221,7 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
                   <CheckCircle2 className="w-9 h-9" />
                 </div>
                 <h3 className="text-xl font-black text-brand-deep-slate">
-                  {language === 'tr' ? 'Oturum hazır' : 'Session ready'}
+                  {language === 'tr' ? 'Giriş yapıldı' : 'Signed in'}
                 </h3>
                 <p className="text-sm text-brand-deep-slate/65 leading-6 mt-2 max-w-sm">
                   {language === 'tr'

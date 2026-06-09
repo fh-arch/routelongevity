@@ -368,7 +368,7 @@ export default function MapContainer({
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-screen md:h-[calc(100vh-0px)] w-full relative">
+    <div className="flex flex-col md:flex-row h-full min-h-0 w-full relative">
       {/* Search and Listing Left Panel */}
       <div className={`absolute md:relative inset-y-0 left-0 w-80 sm:w-96 bg-white border-r border-[#E5EDE1]/40 flex flex-col z-30 md:z-10 shrink-0 shadow-lg transition-transform duration-300 ${showMobileList ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         
@@ -642,6 +642,7 @@ export default function MapContainer({
         {/* Floating Mobile Toggle Button */}
         <button
           onClick={() => setShowMobileList(!showMobileList)}
+          aria-label={showMobileList ? (language === 'tr' ? 'Listeyi kapat' : 'Close list') : (language === 'tr' ? 'Listeyi aç' : 'Open list')}
           className="md:hidden absolute bottom-24 right-4 z-20 bg-brand-deep-slate text-brand-soft-ivory p-3.5 rounded-full shadow-2xl border border-white/10 flex items-center justify-center cursor-pointer transition-transform hover:scale-105 active:scale-95"
           style={{ backgroundColor: '#122328' }}
         >
@@ -660,6 +661,7 @@ export default function MapContainer({
               />
               <button
                 onClick={() => setSelectedPartner(null)}
+                aria-label={language === 'tr' ? 'Detay kartını kapat' : 'Close detail card'}
                 className="absolute top-3 right-3 bg-[#FAFAF8] hover:bg-white text-brand-deep-slate p-1.5 rounded-full shadow-lg border border-brand-warm-sand/30 transition-all cursor-pointer z-20"
               >
                 <X className="w-4.5 h-4.5" />
@@ -667,6 +669,11 @@ export default function MapContainer({
 
               <button
                 onClick={() => toggleFavorite(selectedPartner.id)}
+                aria-label={
+                  favorites.includes(selectedPartner.id)
+                    ? language === 'tr' ? 'Favorilerden çıkar' : 'Remove from favorites'
+                    : language === 'tr' ? 'Favorilere ekle' : 'Add to favorites'
+                }
                 className="absolute top-3 left-3 bg-[#FAFAF8] hover:bg-white text-brand-deep-slate p-2 rounded-full shadow-lg border border-brand-warm-sand/30 transition-all cursor-pointer z-20"
               >
                 <Heart className={`w-4.5 h-4.5 transition-colors ${
@@ -719,7 +726,7 @@ export default function MapContainer({
                 </p>
               </div>
 
-              <div className="space-y-1.5 border-t border-brand-warm-sand/30 pt-3.5 text-xs text-brand-deep-slate/75 space-y-1">
+              <div className="space-y-1.5 border-t border-brand-warm-sand/30 pt-3.5 text-xs text-brand-deep-slate/75">
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] text-brand-deep-slate/40 font-bold w-16">
                     {language === 'tr' ? 'UZMANLIK:' : 'SPECIALTY:'}

@@ -44,7 +44,7 @@ export default function ExperiencesView({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
+    <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
       
       {/* Header */}
       <div>
