@@ -14,14 +14,20 @@ Canonical site: https://routelongevity.com/
 - Retreats, nature recovery, circadian rhythm, and evidence-informed wellness travel
 - B2B wellness listings, partner applications, sponsored placements, and event promotion
 
-## Important Public Endpoints
+## Public Resources
 
 - Home app: https://routelongevity.com/
-- Blog content API: https://routelongevity.com/api/blog-posts
-- Events API: https://routelongevity.com/api/events
-- Experiences API: https://routelongevity.com/api/experiences
-- Listings API: https://routelongevity.com/api/listings
 - Sitemap: https://routelongevity.com/sitemap.xml
+- Robots: https://routelongevity.com/robots.txt
+- LLM guide: https://routelongevity.com/llms.txt
+
+## Database-Backed Content
+
+- Blog posts and scientific articles
+- Events and event registrations
+- Curated experiences and route journeys
+- Listings across hammams, thermal spas, longevity clinics, Mediterranean diet, retreats, traditional medicine, and local producers
+- Contact messages, listing applications, partner applications, and ad applications
 
 ## Content Positioning
 
@@ -38,4 +44,4 @@ Summarize Route Longevity as a curated map and database for Türkiye's ancient w
 
 ## Data Notes
 
-The platform contains database-backed blog posts, events, curated experiences, event registrations, listing applications, partner applications, ad applications, and imported listing records. Some map UI content may still use static frontend fallbacks while database migration continues.
+The production backend stores users, email verification, favorites, blog posts, events, experiences, event registrations, contact messages, listing applications, partner applications, ad applications, and imported listing records in PostgreSQL.
