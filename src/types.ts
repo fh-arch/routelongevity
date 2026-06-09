@@ -7,6 +7,7 @@ export interface Partner {
   categoryLabel: string;
   location: string;
   city: string;
+  country?: string;
   rating: number;
   reviewCount: number;
   latitude: number;

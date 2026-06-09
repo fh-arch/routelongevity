@@ -1,5 +1,6 @@
 import { Partner, Category, RouteJourney } from './types';
 import routeLongevityPinsJson from './data/route-longevity-pins.json';
+import europeMenaPinsJson from './data/route-longevity-europe-mena.json';
 
 export const CATEGORIES: Category[] = [
   {
@@ -396,14 +397,30 @@ interface ImportedRoutePin {
   id: number;
   name: string;
   city: string;
-  region: string;
-  category: 'hammam' | 'thermal' | 'longevity' | 'food' | 'retreat' | 'traditional';
+  region?: string;
+  country?: string;
+  region_tag?: string;
+  category:
+    | 'hammam'
+    | 'thermal'
+    | 'longevity'
+    | 'food'
+    | 'retreat'
+    | 'traditional'
+    | 'longevity_clinic'
+    | 'thermal_spa'
+    | 'wellness_retreat'
+    | 'medical_wellness'
+    | 'hammam_heritage'
+    | 'longevity_food';
   year_built?: number;
+  year_founded?: number;
   lat: number;
   lng: number;
   description: string;
   website: string | null;
   featured: boolean;
+  price_range?: string;
 }
 
 interface ImportedPinsFile {
@@ -411,6 +428,7 @@ interface ImportedPinsFile {
 }
 
 const importedPinsFile = routeLongevityPinsJson as ImportedPinsFile;
+const europeMenaPinsFile = europeMenaPinsJson as ImportedPinsFile;
 
 const importedCategoryMap: Record<ImportedRoutePin['category'], Pick<Category, 'key' | 'label'>> = {
   hammam: { key: 'hammams', label: 'HAMMAMS' },
@@ -419,6 +437,12 @@ const importedCategoryMap: Record<ImportedRoutePin['category'], Pick<Category, '
   food: { key: 'mediterranean-diet', label: 'MEDITERRANEAN DIET' },
   retreat: { key: 'retreat-nature', label: 'RETREAT & NATURE' },
   traditional: { key: 'traditional-med', label: 'TRADITIONAL MEDICINE' },
+  longevity_clinic: { key: 'longevity-clinics', label: 'LONGEVITY CLINICS' },
+  thermal_spa: { key: 'thermal-spa', label: 'THERMAL & SPA' },
+  wellness_retreat: { key: 'retreat-nature', label: 'RETREAT & NATURE' },
+  medical_wellness: { key: 'longevity-clinics', label: 'MEDICAL WELLNESS' },
+  hammam_heritage: { key: 'hammams', label: 'HAMMAM HERITAGE' },
+  longevity_food: { key: 'mediterranean-diet', label: 'LONGEVITY FOOD' },
 };
 
 const importedCategoryImages: Record<ImportedRoutePin['category'], string> = {
@@ -428,6 +452,12 @@ const importedCategoryImages: Record<ImportedRoutePin['category'], string> = {
   food: 'https://images.unsplash.com/photo-1471193945509-9ad0617afabf?auto=format&fit=crop&w=800&q=80',
   retreat: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=85',
   traditional: 'https://images.unsplash.com/photo-1606914501449-5a96b6ce24ca?auto=format&fit=crop&w=800&q=85',
+  longevity_clinic: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=85',
+  thermal_spa: 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?auto=format&fit=crop&w=800&q=85',
+  wellness_retreat: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=85',
+  medical_wellness: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=800&q=85',
+  hammam_heritage: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=80',
+  longevity_food: 'https://images.unsplash.com/photo-1471193945509-9ad0617afabf?auto=format&fit=crop&w=800&q=80',
 };
 
 const importedCategorySpecialties: Record<ImportedRoutePin['category'], string> = {
@@ -437,6 +467,12 @@ const importedCategorySpecialties: Record<ImportedRoutePin['category'], string> 
   food: 'Mediterranean Diet & Polyphenol Nutrition',
   retreat: 'Nature Retreat, Breathwork & Recovery',
   traditional: 'Traditional Medicine Heritage',
+  longevity_clinic: 'Longevity Medicine & Diagnostics',
+  thermal_spa: 'Thermal Spa & Mineral Recovery',
+  wellness_retreat: 'Wellness Retreat & Recovery',
+  medical_wellness: 'Medical Wellness & Preventive Health',
+  hammam_heritage: 'Hammam Heritage & Steam Ritual',
+  longevity_food: 'Longevity Food & Bioactive Nutrition',
 };
 
 const normalizePartnerName = (name: string) =>
@@ -449,37 +485,42 @@ const normalizePartnerName = (name: string) =>
 
 const currentPartnerNames = new Set(FEATURED_PARTNERS_DATA.map((partner) => normalizePartnerName(partner.name)));
 
-const importedPinPartners: Partner[] = importedPinsFile.pins
+const buildImportedPinPartners = (pins: ImportedRoutePin[], source: 'tr' | 'global'): Partner[] => pins
   .filter((pin) => !currentPartnerNames.has(normalizePartnerName(pin.name)))
   .map((pin) => {
     const category = importedCategoryMap[pin.category];
     const rating = Number((4.35 + (pin.id % 11) * 0.04).toFixed(1));
     const reviewCount = 24 + ((pin.id * 17) % 260);
     const baseline = 360 + pin.id * 18;
+    const country = pin.country || 'Türkiye';
+    const region = pin.region || pin.region_tag || country;
+    const sourcePrefix = source === 'tr' ? 'pin' : 'global-pin';
+    const foundedYear = pin.year_built || pin.year_founded;
 
     return {
-      id: `pin-${pin.id}`,
+      id: `${sourcePrefix}-${pin.id}`,
       name: pin.name,
       category: category.key,
       categoryLabel: category.label,
-      location: `${pin.city}, Türkiye`,
+      location: `${pin.city}, ${country}`,
       city: pin.city,
+      country,
       rating: Math.min(rating, 4.9),
       reviewCount,
       latitude: pin.lat,
       longitude: pin.lng,
       imageUrl: importedCategoryImages[pin.category],
-      description: pin.year_built
-        ? `${pin.description} Established heritage marker: ${pin.year_built}.`
+      description: foundedYear
+        ? `${pin.description} Established heritage marker: ${foundedYear}.`
         : pin.description,
-      licenseType: 'Standard',
-      annualFee: 1200,
+      licenseType: pin.featured ? 'Premium' : 'Standard',
+      annualFee: pin.featured ? 4500 : 1200,
       specialty: importedCategorySpecialties[pin.category],
-      phone: '+90 000 000 0000',
-      email: `listing-${pin.id}@routelongevity.com`,
-      address: `${pin.name}, ${pin.city}, ${pin.region}, Türkiye`,
+      phone: source === 'tr' ? '+90 000 000 0000' : '+00 000 000 0000',
+      email: `${sourcePrefix}-${pin.id}@routelongevity.com`,
+      address: `${pin.name}, ${pin.city}, ${region}, ${country}`,
       website: pin.website || '#',
-      featured: false,
+      featured: pin.featured,
       analytics: {
         views: baseline,
         clicks: Math.round(baseline * 0.22),
@@ -495,6 +536,11 @@ const importedPinPartners: Partner[] = importedPinsFile.pins
       },
     };
   });
+
+const importedPinPartners: Partner[] = [
+  ...buildImportedPinPartners(importedPinsFile.pins, 'tr'),
+  ...buildImportedPinPartners(europeMenaPinsFile.pins, 'global'),
+];
 
 export const PARTNERS_DATA: Partner[] = [
   ...FEATURED_PARTNERS_DATA,

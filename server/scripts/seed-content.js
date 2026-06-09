@@ -180,9 +180,9 @@ async function seedListings() {
        )
        VALUES (
          $1, $2, $3, $4, $5, $6, $7,
-         'Türkiye', $8, $9, $10, $11, $12, $13, $14,
-         $15, 'approved', 'seed', $16, $17, $18, $19,
-         $20, $21, $22
+         $8, $9, $10, $11, $12, $13, $14, $15,
+         $16, 'approved', 'seed', $17, $18, $19, $20,
+         $21, $22, $23
        )
        ON CONFLICT (external_id) DO UPDATE SET
          category_id = EXCLUDED.category_id,
@@ -216,6 +216,7 @@ async function seedListings() {
         partner.description,
         partner.city,
         partner.location,
+        partner.country || 'Türkiye',
         partner.address,
         partner.latitude,
         partner.longitude,
