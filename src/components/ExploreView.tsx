@@ -276,7 +276,7 @@ export default function ExploreView({
           <div className="flex items-center gap-4">
             <div className="h-px flex-1 bg-brand-olive-sage/45" />
             <h2 className="text-lg md:text-xl font-extrabold text-brand-deep-slate tracking-normal">
-              {language === 'tr' ? 'Marka Anahtarları' : 'Brand Keywords'}
+              {language === 'tr' ? 'Uzun Yaşam İşaretleri' : 'Longevity Signals'}
             </h2>
             <div className="h-px flex-1 bg-brand-olive-sage/45" />
           </div>
@@ -301,7 +301,7 @@ export default function ExploreView({
           <div className="flex items-center gap-4 mb-5">
             <div className="h-px flex-1 bg-brand-olive-sage/45" />
             <h2 className="text-lg md:text-xl font-extrabold text-brand-deep-slate tracking-normal">
-              UI Direction
+              {language === 'tr' ? 'Öne Çıkan Rota Hikayeleri' : 'Curated Route Stories'}
             </h2>
             <div className="h-px flex-1 bg-brand-olive-sage/45" />
           </div>
