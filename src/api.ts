@@ -9,7 +9,8 @@ export interface UserProfileSummary {
   partnerProfile: {
     business_name: string;
     approval_status: string;
-    license_type: string;
+    contact_phone?: string | null;
+    website?: string | null;
     created_at: string;
     updated_at: string;
   } | null;

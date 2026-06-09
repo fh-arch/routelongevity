@@ -38,7 +38,7 @@ export interface Category {
   borderColor: string;
 }
 
-export type ActiveTab = 'explore' | 'map' | 'experiences' | 'favorites' | 'profile';
+export type ActiveTab = 'explore' | 'map' | 'experiences' | 'favorites' | 'blog' | 'events' | 'profile';
 
 export interface RouteJourney {
   id: string;

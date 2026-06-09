@@ -5,7 +5,8 @@ import ExperiencesView from './components/ExperiencesView';
 import FavoritesView from './components/FavoritesView';
 import PartnerSaaSView from './components/PartnerSaaSView';
 import SplashScreen from './components/SplashScreen';
-import BlogEventsModal from './components/BlogEventsModal';
+import BlogPage from './components/BlogPage';
+import EventsPage from './components/EventsPage';
 import AuthModal, { AuthMode, AuthRole, AuthSession } from './components/AuthModal';
 import { PARTNERS_DATA } from './data';
 import { ActiveTab } from './types';
@@ -35,17 +36,12 @@ export default function App() {
   });
   
   // Blog and Events state
-  const [isBlogEventsOpen, setIsBlogEventsOpen] = useState(false);
-  const [blogEventsInitialTab, setBlogEventsInitialTab] = useState<'blog' | 'events'>('blog');
-
   const openBlog = () => {
-    setBlogEventsInitialTab('blog');
-    setIsBlogEventsOpen(true);
+    setActiveTab('blog');
   };
 
   const openEvents = () => {
-    setBlogEventsInitialTab('events');
-    setIsBlogEventsOpen(true);
+    setActiveTab('events');
   };
 
   const openAuth = (role: AuthRole, mode: AuthMode) => {
@@ -281,6 +277,22 @@ export default function App() {
             <span>{t('blog')}</span>
           </button>
           <button
+            onClick={openEvents}
+            className="px-3 py-2 rounded-xl text-xs font-bold text-brand-deep-slate hover:bg-brand-warm-sand/20 transition-colors flex items-center gap-1.5 cursor-pointer"
+          >
+            <Calendar className="w-4 h-4 text-brand-med-teal" />
+            <span>{t('events')}</span>
+          </button>
+          {!authSession && (
+            <button
+              onClick={() => openAuth('user', 'signin')}
+              className="px-3 py-2 rounded-xl text-xs font-bold text-brand-deep-slate/75 hover:text-brand-deep-slate hover:bg-brand-warm-sand/20 transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              <User className="w-4 h-4" />
+              <span>{language === 'tr' ? 'Giriş' : 'Sign in'}</span>
+            </button>
+          )}
+          <button
             onClick={() => {
               if (authSession) {
                 setActiveTab('profile');
@@ -398,6 +410,32 @@ export default function App() {
             </motion.div>
           )}
 
+          {activeTab === 'blog' && (
+            <motion.div
+              key="blog"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="flex-1 flex flex-col overflow-hidden w-full h-full"
+            >
+              <BlogPage onOpenBlog={openBlog} onOpenEvents={openEvents} />
+            </motion.div>
+          )}
+
+          {activeTab === 'events' && (
+            <motion.div
+              key="events"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              className="flex-1 flex flex-col overflow-hidden w-full h-full"
+            >
+              <EventsPage onOpenBlog={openBlog} onOpenEvents={openEvents} />
+            </motion.div>
+          )}
+
           {activeTab === 'profile' && (
             <motion.div
               key="profile"
@@ -450,12 +488,6 @@ export default function App() {
 
       </div>
 
-      {/* Elegant Immersive Gazette Modal Overlay */}
-      <BlogEventsModal
-        isOpen={isBlogEventsOpen}
-        onClose={() => setIsBlogEventsOpen(false)}
-        initialTab={blogEventsInitialTab}
-      />
       <AuthModal
         isOpen={authModal.isOpen}
         initialRole={authModal.role}

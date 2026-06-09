@@ -466,7 +466,7 @@ app.get('/api/profile', requireAuth, async (req, res, next) => {
         [req.user.id],
       ),
       query(
-        `SELECT business_name, approval_status, license_type, created_at, updated_at
+        `SELECT business_name, approval_status, contact_phone, website, created_at, updated_at
          FROM partner_profiles
          WHERE user_id = $1`,
         [req.user.id],

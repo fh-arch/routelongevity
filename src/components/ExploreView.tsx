@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CATEGORIES, PARTNERS_DATA } from '../data';
 import { Partner } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { Search, MapPin, Star, ArrowRight, ShieldCheck, Heart, X, LogIn, UserPlus, Building2, ClipboardCheck, Leaf, Landmark, Flower2, Gem, Hourglass, Bookmark, CircleDot, Scale, UsersRound } from 'lucide-react';
+import { Search, MapPin, Star, ArrowRight, ShieldCheck, Heart, X, Building2, ClipboardCheck, Leaf, Landmark, Flower2, Gem, Hourglass, Bookmark, CircleDot, Scale, UsersRound, BookOpen, Clock } from 'lucide-react';
 import Footer from './Footer';
 import { AuthMode, AuthRole, AuthSession } from './AuthModal';
+import { getBlogPosts } from '../api';
+import type { BlogPost } from './BlogEventsModal';
 
 interface ExploreViewProps {
   onTabChange: (tab: any) => void;
@@ -125,7 +127,15 @@ export default function ExploreView({
   const premiumPartners = PARTNERS_DATA.filter((p) => p.licenseType === 'Premium');
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [accountMode, setAccountMode] = useState<'user' | 'partner'>('user');
+  const [latestPosts, setLatestPosts] = useState<BlogPost[]>([]);
+
+  useEffect(() => {
+    getBlogPosts(language)
+      .then(({ posts }) => setLatestPosts(posts.slice(0, 4)))
+      .catch((error) => console.warn('Latest articles could not be loaded.', error));
+  }, [language]);
+
+  const leadArticle = latestPosts[0];
 
   // Live filter logic. Matches by name, city, specialty, description, categoryLabel (supporting dual languages!)
   const matchedPartners = PARTNERS_DATA.filter((p) => {
@@ -252,21 +262,29 @@ export default function ExploreView({
 
         <div className="w-full min-h-[260px] rounded-2xl overflow-hidden relative border border-white/10 shadow-lg">
           <img
-            src="https://images.unsplash.com/photo-1602002418082-a4443e081dd1?auto=format&fit=crop&w=1000&q=85"
-            alt={language === 'tr' ? 'Bursa termal spa havuzu' : 'Bursa thermal spa pool'}
+            src={leadArticle?.imageUrl || 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?auto=format&fit=crop&w=1000&q=85'}
+            alt={leadArticle?.title || (language === 'tr' ? 'Bursa termal spa havuzu' : 'Bursa thermal spa pool')}
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#122328]/92 via-[#122328]/20 to-transparent flex flex-col justify-end p-5">
             <p className="text-[10px] font-bold text-[#64D2A2] uppercase tracking-wide">
-              {language === 'tr' ? 'Bursa termal odağı' : 'Bursa thermal highlight'}
+              {leadArticle ? (language === 'tr' ? 'Son bilimsel inceleme' : 'Latest article review') : (language === 'tr' ? 'Bursa termal odağı' : 'Bursa thermal highlight')}
             </p>
             <p className="text-xl font-black text-white leading-tight mt-1">
-              {language === 'tr' ? '16. Yüzyıl Termal Kaynakları' : '16th Century Thermal Springs'}
+              {leadArticle?.title || (language === 'tr' ? '16. Yüzyıl Termal Kaynakları' : '16th Century Thermal Springs')}
             </p>
             <p className="text-xs text-white/70 mt-2 max-w-xs leading-relaxed">
-              {language === 'tr' ? 'Mineral su, buhar ritüeli ve modern hidroterapi protokolü tek rotada.' : 'Mineral water, steam ritual, and modern hydrotherapy protocol in one route.'}
+              {leadArticle?.subtitle || (language === 'tr' ? 'Mineral su, buhar ritüeli ve modern hidroterapi protokolü tek rotada.' : 'Mineral water, steam ritual, and modern hydrotherapy protocol in one route.')}
             </p>
+            {leadArticle && (
+              <button
+                onClick={() => onTabChange('blog')}
+                className="mt-4 w-fit rounded-xl bg-brand-coral px-4 py-2 text-xs font-black text-white hover:bg-brand-coral/90 transition-colors"
+              >
+                {language === 'tr' ? 'Makaleyi oku' : 'Read review'}
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -406,61 +424,50 @@ export default function ExploreView({
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-5">
         <section className="bg-white border border-brand-warm-sand/45 rounded-2xl p-5 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wide text-brand-copper">
-                {language === 'tr' ? 'Hesap erişimi' : 'Account access'}
+              <p className="text-[11px] font-bold uppercase tracking-wide text-brand-coral flex items-center gap-1.5">
+                <BookOpen className="w-3.5 h-3.5" />
+                {language === 'tr' ? 'Son makaleler' : 'Latest articles'}
               </p>
               <h2 className="text-xl font-extrabold text-brand-deep-slate tracking-normal mt-1">
-                {language === 'tr' ? 'Gezginler ve iş ortakları için tek giriş' : 'One access point for travelers and partners'}
+                {language === 'tr' ? 'Bilimsel incelemeler ve rota notları' : 'Scientific reviews and route notes'}
               </h2>
-              <p className="text-sm text-brand-deep-slate/65 mt-2 leading-6 max-w-2xl">
-                {language === 'tr'
-                  ? 'Gezgin hesabınızla favori rotaları kaydedin. İş ortağı hesabıyla tesis profilinizi, görünürlük verilerinizi ve başvuru durumunuzu yönetin.'
-                  : 'Traveler accounts save favorite routes. Partner accounts manage venue profiles, visibility analytics, and listing applications.'}
-              </p>
             </div>
-            <div className="flex bg-[#FAFAF8] border border-brand-warm-sand/60 rounded-xl p-1 shrink-0">
-              <button
-                onClick={() => setAccountMode('user')}
-                className={`px-3 py-2 rounded-lg text-xs font-bold cursor-pointer ${accountMode === 'user' ? 'bg-brand-deep-slate text-white' : 'text-brand-deep-slate/60'}`}
-              >
-                {language === 'tr' ? 'Gezgin' : 'Traveler'}
-              </button>
-              <button
-                onClick={() => setAccountMode('partner')}
-                className={`px-3 py-2 rounded-lg text-xs font-bold cursor-pointer ${accountMode === 'partner' ? 'bg-brand-deep-slate text-white' : 'text-brand-deep-slate/60'}`}
-              >
-                {language === 'tr' ? 'İş Ortağı' : 'Partner'}
-              </button>
-            </div>
-          </div>
-          <div className="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
-              onClick={() => onOpenAuth(accountMode === 'user' ? 'user' : 'partner', 'signin')}
-              className="flex items-center justify-center gap-2 rounded-xl bg-brand-deep-slate text-white py-3 text-sm font-bold hover:bg-brand-med-teal transition-colors cursor-pointer"
+              onClick={() => onTabChange('blog')}
+              className="text-xs font-black text-brand-med-teal hover:text-brand-deep-slate flex items-center gap-1 cursor-pointer"
             >
-              <LogIn className="w-4 h-4 text-brand-turquoise" />
-              <span>{accountMode === 'user' ? (language === 'tr' ? 'Gezgin Girişi' : 'Traveler Login') : (language === 'tr' ? 'Ortak Girişi' : 'Partner Login')}</span>
-            </button>
-            <button
-              onClick={() => onOpenAuth(accountMode === 'user' ? 'user' : 'partner', 'signup')}
-              className="flex items-center justify-center gap-2 rounded-xl border border-brand-warm-sand bg-[#FAFAF8] text-brand-deep-slate py-3 text-sm font-bold hover:border-brand-med-teal transition-colors cursor-pointer"
-            >
-              <UserPlus className="w-4 h-4 text-brand-med-teal" />
-              <span>{accountMode === 'user' ? (language === 'tr' ? 'Gezgin Hesabı Aç' : 'Create Traveler Account') : (language === 'tr' ? 'Ortak Hesabı Aç' : 'Create Partner Account')}</span>
+              <span>{language === 'tr' ? 'Tüm makaleler' : 'All articles'}</span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-          {authSession && (
-            <div className="mt-4 flex items-center justify-between gap-3 rounded-xl bg-[#A6D26A]/10 border border-[#A6D26A]/25 px-3 py-2">
-              <span className="text-xs font-semibold text-brand-deep-slate/70">
-                {language === 'tr' ? 'Aktif oturum' : 'Signed in'}
-              </span>
-              <span className="text-xs font-black text-brand-deep-slate truncate">
-                {authSession.name} · {authSession.role === 'partner' ? (language === 'tr' ? 'İş Ortağı' : 'Partner') : (language === 'tr' ? 'Gezgin' : 'Traveler')}
-              </span>
-            </div>
-          )}
+          <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-3">
+            {latestPosts.slice(0, 4).map((post) => (
+              <button
+                key={post.id}
+                onClick={() => onTabChange('blog')}
+                className="rounded-2xl border border-brand-warm-sand/55 bg-[#FAFAF8] p-3 text-left hover:border-brand-med-teal transition-colors"
+              >
+                <div className="flex gap-3">
+                  <img
+                    src={post.imageUrl}
+                    alt={post.title}
+                    referrerPolicy="no-referrer"
+                    className="h-20 w-24 rounded-xl object-cover"
+                  />
+                  <div className="min-w-0">
+                    <div className="text-[10px] font-black uppercase tracking-wider text-brand-coral truncate">{post.category}</div>
+                    <h3 className="mt-1 text-sm font-black leading-snug text-brand-deep-slate line-clamp-2">{post.title}</h3>
+                    <div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-brand-deep-slate/45">
+                      <Clock className="w-3 h-3" />
+                      {post.readTime}
+                    </div>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
         </section>
 
         <section className="bg-brand-deep-slate text-white rounded-2xl p-5 shadow-sm flex flex-col justify-between gap-5">
