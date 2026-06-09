@@ -519,7 +519,7 @@ const buildImportedPinPartners = (pins: ImportedRoutePin[], source: 'tr' | 'glob
       phone: source === 'tr' ? '+90 000 000 0000' : '+00 000 000 0000',
       email: `${sourcePrefix}-${pin.id}@routelongevity.com`,
       address: `${pin.name}, ${pin.city}, ${region}, ${country}`,
-      website: pin.website || '#',
+      website: pin.website,
       featured: pin.featured,
       analytics: {
         views: baseline,

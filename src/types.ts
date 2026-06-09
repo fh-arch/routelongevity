@@ -20,7 +20,7 @@ export interface Partner {
   phone: string;
   email: string;
   address: string;
-  website: string;
+  website: string | null;
   featured: boolean;
   // SaaS Analytics Metrics
   analytics: {

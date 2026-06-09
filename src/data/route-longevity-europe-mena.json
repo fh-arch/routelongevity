@@ -53,7 +53,7 @@
       "lat": 47.7200,
       "lng": 11.7500,
       "description": "Global benchmark for preventive medicine and diagnostics. Based on Dr. F.X. Mayr's 1901 gut health cure. Brain Health Centre, INUSpheresis blood-washing therapy removing microplastics. Guests test an average 7 biological years younger after a stay.",
-      "website": "https://www.lanserhof.com",
+      "website": "https://lanserhof.com/en/lanserhof-tegernsee/",
       "featured": true,
       "price_range": "$$$$$"
     },
@@ -98,7 +98,7 @@
       "lat": 47.2350,
       "lng": 11.4200,
       "description": "The original Lanserhof — birthplace of the Mayr method revival. Austrian Alpine setting near Innsbruck. Comprehensive diagnostics, gut health protocols, naturopathy. Cost from $5,000 to $20,000/week. The flagship that started the Lanserhof longevity empire.",
-      "website": "https://www.lanserhof.com/lans",
+      "website": "https://lanserhof.com/en/lanserhof-lans/",
       "featured": false,
       "price_range": "$$$$$"
     },
@@ -428,7 +428,7 @@
       "lat": 31.5810,
       "lng": 35.6120,
       "description": "Geothermal mineral waterfalls cascading into natural pools at 45-60°C — impossible to replicate. Biblical healing waters mentioned in ancient texts. Combined with Dead Sea minerals 30 minutes away. Jordan's wild thermal paradise inside a dramatic canyon.",
-      "website": "https://www.sixsenses.com/en/resorts/maain-hot-springs",
+      "website": "https://www.mainhotsprings.jo/",
       "featured": true,
       "price_range": "$$$"
     },
@@ -623,7 +623,7 @@
       "lat": 48.7630,
       "lng": 8.2360,
       "description": "Named after Roman Emperor Caracalla who bathed in Baden-Baden's thermal springs in 213 AD. 1,800-year thermal tradition. 900 m² indoor/outdoor thermal pools, 8 saunas, Roman-Irish bath ritual. Germany's most visited thermal spa complex.",
-      "website": "https://www.carasana.de/en/caracalla-therme",
+      "website": "https://caracalla.eu/",
       "featured": false,
       "price_range": "$$"
     },

@@ -758,12 +758,14 @@ export default function MapContainer({
                   <Mail className="w-3.5 h-3.5 text-brand-deep-slate/40" />
                   <span>{selectedPartner.email}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Globe className="w-3.5 h-3.5 text-brand-deep-slate/40" />
-                  <a href={selectedPartner.website} target="_blank" rel="noopener noreferrer" className="text-brand-med-teal hover:underline font-medium">
-                    {language === 'tr' ? 'Resmi Sayfayı Ziyaret Et' : 'Visit Official Site'}
-                  </a>
-                </div>
+                {selectedPartner.website && (
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-3.5 h-3.5 text-brand-deep-slate/40" />
+                    <a href={selectedPartner.website} target="_blank" rel="noopener noreferrer" className="text-brand-med-teal hover:underline font-medium">
+                      {language === 'tr' ? 'Resmi Sayfayı Ziyaret Et' : 'Visit Official Site'}
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </div>
