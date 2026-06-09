@@ -4,6 +4,50 @@ import type { BlogPost, LongevityEvent } from './components/BlogEventsModal';
 
 const API_BASE = import.meta.env.VITE_API_BASE || '';
 
+export interface UserProfileSummary {
+  user: AuthSession;
+  partnerProfile: {
+    business_name: string;
+    approval_status: string;
+    license_type: string;
+    created_at: string;
+    updated_at: string;
+  } | null;
+  stats: {
+    favoriteListings: number;
+    favoriteJourneys: number;
+    listingApplications: number;
+    partnerApplications: number;
+    adApplications: number;
+    eventRegistrations: number;
+  };
+  applications: {
+    listings: Array<Record<string, unknown>>;
+    partners: Array<Record<string, unknown>>;
+    ads: Array<Record<string, unknown>>;
+    events: Array<Record<string, unknown>>;
+  };
+}
+
+export interface AdminOverview {
+  stats: {
+    users: number;
+    listings: number;
+    contacts: number;
+    listingApplications: number;
+    partnerApplications: number;
+    adApplications: number;
+    eventRegistrations: number;
+  };
+  queues: {
+    contacts: Array<Record<string, unknown>>;
+    listingApplications: Array<Record<string, unknown>>;
+    partnerApplications: Array<Record<string, unknown>>;
+    adApplications: Array<Record<string, unknown>>;
+    eventRegistrations: Array<Record<string, unknown>>;
+  };
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
     ...options,
@@ -24,7 +68,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 }
 
 export async function signup(input: {
-  role: AuthRole;
+  role: Exclude<AuthRole, 'admin'>;
   name: string;
   businessName?: string;
   email: string;
@@ -62,6 +106,21 @@ export async function getCurrentUser() {
 
 export async function signout() {
   return request<{ ok: true }>('/api/auth/signout', { method: 'POST' });
+}
+
+export async function getProfile() {
+  return request<UserProfileSummary>('/api/profile');
+}
+
+export async function getAdminOverview() {
+  return request<AdminOverview>('/api/admin/overview');
+}
+
+export async function updateAdminApplicationStatus(type: 'contact' | 'listing' | 'partner' | 'ad' | 'event', id: string, status: string) {
+  return request<{ item: Record<string, unknown> }>(`/api/admin/applications/${type}/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
+  });
 }
 
 export async function getFavorites() {

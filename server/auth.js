@@ -12,6 +12,7 @@ export function publicUser(user) {
     role: user.role,
     name: user.name,
     email: user.email,
+    emailVerifiedAt: user.email_verified_at || user.emailVerifiedAt || null,
   };
 }
 
@@ -59,9 +60,33 @@ export function requireAuth(req, res, next) {
   }
 }
 
+export function optionalAuth(req, res, next) {
+  const token = req.cookies?.[cookieName] || req.headers.authorization?.replace(/^Bearer\s+/i, '');
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    req.user = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    req.user = null;
+  }
+
+  return next();
+}
+
 export function requirePartner(req, res, next) {
   if (!['partner', 'admin'].includes(req.user?.role)) {
     return res.status(403).json({ error: 'Partner account required.' });
+  }
+
+  return next();
+}
+
+export function requireAdmin(req, res, next) {
+  if (req.user?.role !== 'admin') {
+    return res.status(403).json({ error: 'Admin account required.' });
   }
 
   return next();

@@ -1,23 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { PARTNERS_DATA } from '../data';
-import { Partner, LicenseType } from '../types';
+import { ActiveTab, LicenseType } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 import { 
   Building, ShieldCheck, DollarSign, TrendingUp, Eye, 
-  MousePointerClick, PhoneCall, CheckCircle2, Award, LogIn, UserPlus, ClipboardCheck, Mail, Lock, BriefcaseBusiness
+  MousePointerClick, PhoneCall, CheckCircle2, Award, LogIn, UserPlus, ClipboardCheck, Mail, Lock, BriefcaseBusiness,
+  Heart, Route, CalendarCheck, Inbox, Users, ListChecks, Megaphone, Loader2, AlertCircle
 } from 'lucide-react';
 import Footer from './Footer';
 import { AuthMode, AuthRole, AuthSession } from './AuthModal';
-import { submitListingApplication } from '../api';
+import { AdminOverview, getAdminOverview, getProfile, submitListingApplication, updateAdminApplicationStatus, UserProfileSummary } from '../api';
 
 interface PartnerSaaSViewProps {
   onOpenBlog: () => void;
   onOpenEvents: () => void;
   onOpenAuth: (role: AuthRole, mode: AuthMode) => void;
   authSession: AuthSession | null;
+  onTabChange?: (tab: ActiveTab) => void;
 }
 
-export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, authSession }: PartnerSaaSViewProps) {
+const getText = (item: Record<string, unknown>, key: string) => {
+  const value = item[key];
+  return typeof value === 'string' && value.trim() ? value : '-';
+};
+
+const formatDate = (value: unknown) => {
+  if (typeof value !== 'string') return '-';
+  return new Date(value).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+};
+
+export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, authSession, onTabChange }: PartnerSaaSViewProps) {
   const { language, t, translatePartner } = useLanguage();
   
   // B2B state
@@ -35,6 +47,38 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
     email: '',
     categoryId: '',
   });
+  const [profile, setProfile] = useState<UserProfileSummary | null>(null);
+  const [adminOverview, setAdminOverview] = useState<AdminOverview | null>(null);
+  const [panelError, setPanelError] = useState('');
+  const [isPanelLoading, setIsPanelLoading] = useState(Boolean(authSession));
+
+  const loadAccountData = async () => {
+    if (!authSession) {
+      setProfile(null);
+      setAdminOverview(null);
+      setIsPanelLoading(false);
+      return;
+    }
+
+    try {
+      setPanelError('');
+      setIsPanelLoading(true);
+      const [profileResponse, adminResponse] = await Promise.all([
+        getProfile(),
+        authSession.role === 'admin' ? getAdminOverview() : Promise.resolve(null),
+      ]);
+      setProfile(profileResponse);
+      setAdminOverview(adminResponse);
+    } catch (error) {
+      setPanelError(error instanceof Error ? error.message : 'Account data could not be loaded.');
+    } finally {
+      setIsPanelLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadAccountData();
+  }, [authSession?.id, authSession?.role]);
 
   const handleTierChange = (newTier: LicenseType) => {
     setIsChangingTier(true);
@@ -92,6 +136,200 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
       setIsListingSubmitting(false);
     }
   };
+
+  const handleStatusChange = async (type: 'contact' | 'listing' | 'partner' | 'ad' | 'event', id: string, status: string) => {
+    try {
+      await updateAdminApplicationStatus(type, id, status);
+      await loadAccountData();
+    } catch (error) {
+      setPanelError(error instanceof Error ? error.message : 'Status could not be updated.');
+    }
+  };
+
+  const statusPill = (status: unknown) => (
+    <span className="rounded-full bg-[#F1F7EA] px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#5A9D62]">
+      {typeof status === 'string' ? status : 'new'}
+    </span>
+  );
+
+  const renderQueue = (
+    title: string,
+    type: 'contact' | 'listing' | 'partner' | 'ad' | 'event',
+    items: Array<Record<string, unknown>>,
+    primaryKey: string,
+    secondaryKey: string,
+    allowedStatuses: string[],
+  ) => (
+    <section className="rounded-3xl border border-brand-warm-sand/45 bg-white p-5 shadow-sm">
+      <div className="flex items-center justify-between gap-3 border-b border-[#E5EDE1]/70 pb-3">
+        <h3 className="text-sm font-black text-brand-deep-slate">{title}</h3>
+        <span className="text-[10px] font-black text-brand-deep-slate/45">{items.length} items</span>
+      </div>
+      <div className="mt-4 space-y-3">
+        {items.length === 0 ? (
+          <p className="text-xs text-brand-deep-slate/55">{language === 'tr' ? 'Henüz kayıt yok.' : 'No records yet.'}</p>
+        ) : items.map((item) => (
+          <article key={String(item.id)} className="rounded-2xl border border-[#E5EDE1]/70 bg-[#FAFAF8] p-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <div className="font-black text-brand-deep-slate text-sm truncate">{getText(item, primaryKey)}</div>
+                <div className="mt-1 text-xs text-brand-deep-slate/55">{getText(item, secondaryKey)} • {formatDate(item.created_at)}</div>
+              </div>
+              {statusPill(item.status)}
+            </div>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {allowedStatuses.map((status) => (
+                <button
+                  key={status}
+                  onClick={() => handleStatusChange(type, String(item.id), status)}
+                  className="rounded-xl border border-brand-warm-sand bg-white px-3 py-1.5 text-[11px] font-bold text-brand-deep-slate/70 hover:border-brand-med-teal hover:text-brand-deep-slate"
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+
+  if (authSession?.role === 'admin') {
+    return (
+      <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
+        <section className="rounded-3xl bg-brand-deep-slate p-6 text-white shadow-sm">
+          <span className="text-[10px] uppercase font-extrabold tracking-widest text-brand-coral bg-brand-coral/10 px-2.5 py-1 rounded">
+            {language === 'tr' ? 'Yönetim' : 'Admin'}
+          </span>
+          <h2 className="mt-3 text-3xl font-black tracking-normal">
+            {language === 'tr' ? 'Route Longevity yönetim paneli' : 'Route Longevity management panel'}
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-white/70">
+            {language === 'tr'
+              ? 'Formlar, başvurular ve kayıtlar PostgreSQL üzerinden izlenir. E-posta bildirimleri Resend aktif edildiğinde otomatik gider.'
+              : 'Forms, applications, and registrations are tracked through PostgreSQL. Email notifications send automatically when Resend is enabled.'}
+          </p>
+        </section>
+
+        {isPanelLoading && (
+          <div className="flex items-center gap-2 rounded-2xl border border-brand-warm-sand/50 bg-white p-4 text-sm font-bold text-brand-deep-slate">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            {language === 'tr' ? 'Veriler yükleniyor...' : 'Loading account data...'}
+          </div>
+        )}
+
+        {panelError && (
+          <div className="flex items-center gap-2 rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-bold text-red-700">
+            <AlertCircle className="h-4 w-4" />
+            {panelError}
+          </div>
+        )}
+
+        {adminOverview && (
+          <>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-7">
+              {[
+                { label: 'Users', value: adminOverview.stats.users, icon: Users },
+                { label: 'Listings', value: adminOverview.stats.listings, icon: ListChecks },
+                { label: 'Contact', value: adminOverview.stats.contacts, icon: Inbox },
+                { label: 'Listing apps', value: adminOverview.stats.listingApplications, icon: ClipboardCheck },
+                { label: 'Partners', value: adminOverview.stats.partnerApplications, icon: Building },
+                { label: 'Ads', value: adminOverview.stats.adApplications, icon: Megaphone },
+                { label: 'Events', value: adminOverview.stats.eventRegistrations, icon: CalendarCheck },
+              ].map((stat) => {
+                const Icon = stat.icon;
+                return (
+                  <div key={stat.label} className="rounded-2xl border border-brand-warm-sand/45 bg-white p-4 shadow-sm">
+                    <Icon className="h-4 w-4 text-brand-med-teal" />
+                    <div className="mt-3 text-2xl font-black text-brand-deep-slate">{stat.value}</div>
+                    <div className="text-[10px] font-black uppercase tracking-wider text-brand-deep-slate/45">{stat.label}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+              {renderQueue('Contact messages', 'contact', adminOverview.queues.contacts, 'name', 'email', ['new', 'read', 'archived'])}
+              {renderQueue('Listing applications', 'listing', adminOverview.queues.listingApplications, 'venue_name', 'email', ['pending', 'approved', 'rejected'])}
+              {renderQueue('Partner applications', 'partner', adminOverview.queues.partnerApplications, 'business_name', 'email', ['pending', 'approved', 'rejected'])}
+              {renderQueue('Ad applications', 'ad', adminOverview.queues.adApplications, 'business_name', 'email', ['pending', 'approved', 'rejected'])}
+              {renderQueue('Event registrations', 'event', adminOverview.queues.eventRegistrations, 'name', 'event_id', ['pending', 'confirmed', 'cancelled'])}
+            </div>
+          </>
+        )}
+
+        <Footer onOpenBlog={onOpenBlog} onOpenEvents={onOpenEvents} />
+      </div>
+    );
+  }
+
+  if (authSession?.role === 'user') {
+    return (
+      <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
+        <section className="rounded-3xl bg-brand-deep-slate p-6 text-white shadow-sm">
+          <span className="text-[10px] uppercase font-extrabold tracking-widest text-brand-turquoise bg-brand-turquoise/10 px-2.5 py-1 rounded">
+            {language === 'tr' ? 'Profil' : 'Profile'}
+          </span>
+          <h2 className="mt-3 text-3xl font-black tracking-normal">
+            {language === 'tr' ? `Merhaba, ${authSession.name}` : `Welcome, ${authSession.name}`}
+          </h2>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-white/70">
+            {language === 'tr'
+              ? 'Favorileriniz, deneyim kayıtlarınız ve başvurularınız artık gerçek veritabanı kayıtlarından okunur.'
+              : 'Your favorites, experience registrations, and applications now load from real database records.'}
+          </p>
+        </section>
+
+        {isPanelLoading && (
+          <div className="flex items-center gap-2 rounded-2xl border border-brand-warm-sand/50 bg-white p-4 text-sm font-bold text-brand-deep-slate">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            {language === 'tr' ? 'Profil yükleniyor...' : 'Loading profile...'}
+          </div>
+        )}
+
+        {profile && (
+          <>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+              {[
+                { label: language === 'tr' ? 'Favori merkezler' : 'Favorite hubs', value: profile.stats.favoriteListings, icon: Heart },
+                { label: language === 'tr' ? 'Kayıtlı rotalar' : 'Saved journeys', value: profile.stats.favoriteJourneys, icon: Route },
+                { label: language === 'tr' ? 'Etkinlik kayıtları' : 'Event bookings', value: profile.stats.eventRegistrations, icon: CalendarCheck },
+                { label: language === 'tr' ? 'Başvurular' : 'Applications', value: profile.stats.listingApplications + profile.stats.partnerApplications + profile.stats.adApplications, icon: ClipboardCheck },
+              ].map((stat) => {
+                const Icon = stat.icon;
+                return (
+                  <div key={stat.label} className="rounded-2xl border border-brand-warm-sand/45 bg-white p-5 shadow-sm">
+                    <Icon className="h-5 w-5 text-brand-med-teal" />
+                    <div className="mt-4 text-3xl font-black text-brand-deep-slate">{stat.value}</div>
+                    <div className="text-xs font-bold text-brand-deep-slate/55">{stat.label}</div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <section className="rounded-3xl border border-brand-warm-sand/45 bg-white p-6 shadow-sm">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h3 className="text-xl font-black text-brand-deep-slate">{language === 'tr' ? 'Hesap bilgileri' : 'Account details'}</h3>
+                  <p className="mt-1 text-sm text-brand-deep-slate/55">{authSession.email}</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button onClick={() => onTabChange?.('favorites')} className="rounded-xl bg-brand-deep-slate px-4 py-2 text-xs font-black text-white">
+                    {language === 'tr' ? 'Favorilere git' : 'Open favorites'}
+                  </button>
+                  <button onClick={() => onTabChange?.('experiences')} className="rounded-xl border border-brand-warm-sand px-4 py-2 text-xs font-black text-brand-deep-slate">
+                    {language === 'tr' ? 'Deneyimleri gör' : 'View experiences'}
+                  </button>
+                </div>
+              </div>
+            </section>
+          </>
+        )}
+
+        <Footer onOpenBlog={onOpenBlog} onOpenEvents={onOpenEvents} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">

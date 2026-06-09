@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useLanguage } from '../context/LanguageContext';
 import { signin, signup, verifyEmail } from '../api';
 
-export type AuthRole = 'user' | 'partner';
+export type AuthRole = 'user' | 'partner' | 'admin';
 export type AuthMode = 'signin' | 'signup';
 
 export interface AuthSession {
@@ -12,6 +12,7 @@ export interface AuthSession {
   role: AuthRole;
   email: string;
   name: string;
+  emailVerifiedAt?: string | null;
 }
 
 interface AuthModalProps {

@@ -184,7 +184,15 @@ export default function App() {
     { id: 'map' as ActiveTab, label: t('map'), icon: MapIcon },
     { id: 'experiences' as ActiveTab, label: t('experiences'), icon: Activity },
     { id: 'favorites' as ActiveTab, label: t('favorites'), icon: Heart, badge: (favorites.length + savedRouteIds.length) > 0 ? (favorites.length + savedRouteIds.length) : undefined },
-    ...(authSession ? [{ id: 'profile' as ActiveTab, label: t('saasHub'), icon: User }] : []),
+    ...(authSession ? [{
+      id: 'profile' as ActiveTab,
+      label: authSession.role === 'admin'
+        ? 'Admin'
+        : authSession.role === 'partner'
+          ? (language === 'tr' ? 'Ortak Paneli' : 'Partner Hub')
+          : (language === 'tr' ? 'Profil' : 'Profile'),
+      icon: User,
+    }] : []),
   ];
 
   return (
@@ -404,6 +412,7 @@ export default function App() {
                 onOpenEvents={openEvents}
                 onOpenAuth={openAuth}
                 authSession={authSession}
+                onTabChange={setActiveTab}
               />
             </motion.div>
           )}

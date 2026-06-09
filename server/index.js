@@ -11,7 +11,9 @@ import {
   hashPassword,
   hashResetToken,
   hashVerificationCode,
+  optionalAuth,
   publicUser,
+  requireAdmin,
   requireAuth,
   requirePartner,
   setSessionCookie,
@@ -23,6 +25,8 @@ import { query } from './db.js';
 const app = express();
 const port = Number(process.env.PORT || 4000);
 const appUrl = process.env.APP_URL || 'http://localhost:3000';
+const emailFrom = process.env.AUTH_EMAIL_FROM || 'Route Longevity <notifications@routelongevity.com>';
+const adminNotifyEmail = process.env.ADMIN_NOTIFY_EMAIL || '';
 
 if (!process.env.DATABASE_URL || !process.env.JWT_SECRET) {
   console.error('DATABASE_URL and JWT_SECRET are required.');
@@ -132,6 +136,15 @@ const externalIdSchema = z.object({
   id: z.string().min(1).max(120),
 });
 
+const adminStatusSchema = z.object({
+  status: z.string().min(2).max(40),
+});
+
+const adminApplicationParamsSchema = z.object({
+  type: z.enum(['contact', 'listing', 'partner', 'ad', 'event']),
+  id: z.string().uuid(),
+});
+
 function validate(schema, req, res) {
   const result = schema.safeParse(req.body);
   if (!result.success) {
@@ -143,8 +156,19 @@ function validate(schema, req, res) {
 }
 
 async function sendVerificationCode(email, code) {
-  if (!process.env.RESEND_API_KEY || !process.env.AUTH_EMAIL_FROM) {
-    console.info(`Route Longevity verification code for ${email}: ${code}`);
+  await sendEmail({
+    to: email,
+    subject: 'Your Route Longevity verification code',
+    text: `Your Route Longevity verification code is ${code}. It expires in 15 minutes.`,
+    fallbackLog: `Route Longevity verification code for ${email}: ${code}`,
+  });
+}
+
+async function sendEmail({ to, subject, text, html, fallbackLog }) {
+  if (!to) return;
+
+  if (!process.env.RESEND_API_KEY) {
+    console.info(fallbackLog || `Email not sent because RESEND_API_KEY is not set. To: ${to}; subject: ${subject}; body: ${text}`);
     return;
   }
 
@@ -155,17 +179,32 @@ async function sendVerificationCode(email, code) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: process.env.AUTH_EMAIL_FROM,
-      to: email,
-      subject: 'Your Route Longevity verification code',
-      text: `Your Route Longevity verification code is ${code}. It expires in 15 minutes.`,
+      from: emailFrom,
+      to,
+      subject,
+      text,
+      html,
     }),
   });
 
   if (!response.ok) {
     const details = await response.text();
-    console.error(`Verification email failed for ${email}: ${details}`);
+    console.error(`Email failed for ${to}: ${details}`);
   }
+}
+
+async function notifyAdmin(subject, lines) {
+  if (!adminNotifyEmail) {
+    console.info(`Admin notification skipped: ${subject}\n${lines.join('\n')}`);
+    return;
+  }
+
+  await sendEmail({
+    to: adminNotifyEmail,
+    subject,
+    text: lines.filter(Boolean).join('\n'),
+    fallbackLog: `Admin notification: ${subject}\n${lines.join('\n')}`,
+  });
 }
 
 app.get('/api/health', (req, res) => {
@@ -185,7 +224,7 @@ app.post('/api/auth/signup', authLimiter, async (req, res, next) => {
     const userResult = await query(
       `INSERT INTO users (role, name, email, password_hash)
        VALUES ($1, $2, $3, $4)
-       RETURNING id, role, name, email`,
+       RETURNING id, role, name, email, email_verified_at`,
       [body.role, body.name.trim(), body.email, passwordHash],
     );
 
@@ -257,7 +296,7 @@ app.post('/api/auth/signin', authLimiter, async (req, res, next) => {
     if (!body) return;
 
     const userResult = await query(
-      `SELECT id, role, name, email, password_hash
+      `SELECT id, role, name, email, password_hash, email_verified_at
        FROM users
        WHERE email = $1`,
       [body.email],
@@ -268,12 +307,7 @@ app.post('/api/auth/signin', authLimiter, async (req, res, next) => {
       return res.status(401).json({ error: 'Invalid email or password.' });
     }
 
-    const verifiedResult = await query(
-      'SELECT email_verified_at FROM users WHERE id = $1',
-      [user.id],
-    );
-
-    if (!verifiedResult.rows[0]?.email_verified_at) {
+    if (!user.email_verified_at) {
       const code = await createEmailVerification(user.id);
       await sendVerificationCode(user.email, code);
       return res.status(403).json({
@@ -300,6 +334,222 @@ app.get('/api/auth/me', requireAuth, (req, res) => {
   res.json({ user: req.user });
 });
 
+app.get('/api/profile', requireAuth, async (req, res, next) => {
+  try {
+    const [
+      userResult,
+      partnerProfileResult,
+      favoriteListingsResult,
+      favoriteJourneysResult,
+      listingApplicationsResult,
+      partnerApplicationsResult,
+      adApplicationsResult,
+      eventRegistrationsResult,
+    ] = await Promise.all([
+      query(
+        `SELECT id, role, name, email, email_verified_at, created_at
+         FROM users
+         WHERE id = $1`,
+        [req.user.id],
+      ),
+      query(
+        `SELECT business_name, approval_status, license_type, created_at, updated_at
+         FROM partner_profiles
+         WHERE user_id = $1`,
+        [req.user.id],
+      ),
+      query(
+        `SELECT count(*)::int AS count
+         FROM user_favorite_listings
+         WHERE user_id = $1`,
+        [req.user.id],
+      ),
+      query(
+        `SELECT count(*)::int AS count
+         FROM user_favorite_journeys
+         WHERE user_id = $1`,
+        [req.user.id],
+      ),
+      query(
+        `SELECT id, venue_name, email, category_id, city, website, status, created_at
+         FROM listing_applications
+         WHERE user_id = $1 OR email = $2
+         ORDER BY created_at DESC
+         LIMIT 10`,
+        [req.user.id, req.user.email],
+      ),
+      query(
+        `SELECT id, business_name, email, partner_type, website, status, created_at
+         FROM partner_applications
+         WHERE user_id = $1 OR email = $2
+         ORDER BY created_at DESC
+         LIMIT 10`,
+        [req.user.id, req.user.email],
+      ),
+      query(
+        `SELECT id, business_name, email, requested_slot, budget_range, status, created_at
+         FROM ad_applications
+         WHERE user_id = $1 OR email = $2
+         ORDER BY created_at DESC
+         LIMIT 10`,
+        [req.user.id, req.user.email],
+      ),
+      query(
+        `SELECT id, event_id, name, email, status, created_at
+         FROM event_registrations
+         WHERE user_id = $1 OR email = $2
+         ORDER BY created_at DESC
+         LIMIT 10`,
+        [req.user.id, req.user.email],
+      ),
+    ]);
+
+    return res.json({
+      user: publicUser(userResult.rows[0]),
+      partnerProfile: partnerProfileResult.rows[0] || null,
+      stats: {
+        favoriteListings: favoriteListingsResult.rows[0]?.count || 0,
+        favoriteJourneys: favoriteJourneysResult.rows[0]?.count || 0,
+        listingApplications: listingApplicationsResult.rows.length,
+        partnerApplications: partnerApplicationsResult.rows.length,
+        adApplications: adApplicationsResult.rows.length,
+        eventRegistrations: eventRegistrationsResult.rows.length,
+      },
+      applications: {
+        listings: listingApplicationsResult.rows,
+        partners: partnerApplicationsResult.rows,
+        ads: adApplicationsResult.rows,
+        events: eventRegistrationsResult.rows,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.get('/api/admin/overview', requireAuth, requireAdmin, async (req, res, next) => {
+  try {
+    const [
+      usersCount,
+      listingsCount,
+      contacts,
+      listingApplications,
+      partnerApplications,
+      adApplications,
+      eventRegistrations,
+    ] = await Promise.all([
+      query('SELECT count(*)::int AS count FROM users'),
+      query('SELECT count(*)::int AS count FROM listings'),
+      query(
+        `SELECT id, name, email, topic, message, status, created_at
+         FROM contact_messages
+         ORDER BY created_at DESC
+         LIMIT 25`,
+      ),
+      query(
+        `SELECT id, venue_name, contact_name, email, category_id, city, website, status, created_at
+         FROM listing_applications
+         ORDER BY created_at DESC
+         LIMIT 25`,
+      ),
+      query(
+        `SELECT id, business_name, contact_name, email, partner_type, website, status, created_at
+         FROM partner_applications
+         ORDER BY created_at DESC
+         LIMIT 25`,
+      ),
+      query(
+        `SELECT id, business_name, contact_name, email, requested_slot, budget_range, status, created_at
+         FROM ad_applications
+         ORDER BY created_at DESC
+         LIMIT 25`,
+      ),
+      query(
+        `SELECT id, event_id, name, email, status, created_at
+         FROM event_registrations
+         ORDER BY created_at DESC
+         LIMIT 25`,
+      ),
+    ]);
+
+    return res.json({
+      stats: {
+        users: usersCount.rows[0]?.count || 0,
+        listings: listingsCount.rows[0]?.count || 0,
+        contacts: contacts.rows.length,
+        listingApplications: listingApplications.rows.length,
+        partnerApplications: partnerApplications.rows.length,
+        adApplications: adApplications.rows.length,
+        eventRegistrations: eventRegistrations.rows.length,
+      },
+      queues: {
+        contacts: contacts.rows,
+        listingApplications: listingApplications.rows,
+        partnerApplications: partnerApplications.rows,
+        adApplications: adApplications.rows,
+        eventRegistrations: eventRegistrations.rows,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.patch('/api/admin/applications/:type/:id', requireAuth, requireAdmin, async (req, res, next) => {
+  try {
+    const params = adminApplicationParamsSchema.safeParse(req.params);
+    if (!params.success) {
+      return res.status(400).json({ error: 'Invalid application type or id.' });
+    }
+
+    const body = validate(adminStatusSchema, req, res);
+    if (!body) return;
+
+    const config = {
+      contact: {
+        table: 'contact_messages',
+        allowedStatuses: ['new', 'read', 'archived'],
+      },
+      listing: {
+        table: 'listing_applications',
+        allowedStatuses: ['pending', 'approved', 'rejected'],
+      },
+      partner: {
+        table: 'partner_applications',
+        allowedStatuses: ['pending', 'approved', 'rejected'],
+      },
+      ad: {
+        table: 'ad_applications',
+        allowedStatuses: ['pending', 'approved', 'rejected'],
+      },
+      event: {
+        table: 'event_registrations',
+        allowedStatuses: ['pending', 'confirmed', 'cancelled'],
+      },
+    }[params.data.type];
+
+    if (!config.allowedStatuses.includes(body.status)) {
+      return res.status(400).json({ error: 'Invalid status for this queue.' });
+    }
+
+    const result = await query(
+      `UPDATE ${config.table}
+       SET status = $1${['contact', 'event'].includes(params.data.type) ? '' : ', updated_at = now()'}
+       WHERE id = $2
+       RETURNING *`,
+      [body.status, params.data.id],
+    );
+
+    if (!result.rows[0]) {
+      return res.status(404).json({ error: 'Application not found.' });
+    }
+
+    return res.json({ item: result.rows[0] });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 app.post('/api/auth/forgot-password', authLimiter, async (req, res, next) => {
   try {
     const body = validate(forgotPasswordSchema, req, res);
@@ -314,7 +564,12 @@ app.post('/api/auth/forgot-password', authLimiter, async (req, res, next) => {
     if (userResult.rows[0]) {
       const token = await createPasswordReset(userResult.rows[0].id);
       resetUrl = `${appUrl}/reset-password?token=${token}`;
-      console.info(`Password reset URL for ${body.email}: ${resetUrl}`);
+      await sendEmail({
+        to: body.email,
+        subject: 'Reset your Route Longevity password',
+        text: `Use this secure link to reset your Route Longevity password: ${resetUrl}\n\nThis link expires in 1 hour.`,
+        fallbackLog: `Password reset URL for ${body.email}: ${resetUrl}`,
+      });
     }
 
     res.json({
@@ -439,7 +694,7 @@ app.get('/api/events', async (req, res, next) => {
   }
 });
 
-app.post('/api/event-registrations', async (req, res, next) => {
+app.post('/api/event-registrations', optionalAuth, async (req, res, next) => {
   try {
     const body = validate(eventRegistrationSchema, req, res);
     if (!body) return;
@@ -450,6 +705,13 @@ app.post('/api/event-registrations', async (req, res, next) => {
        RETURNING id, event_id, name, email, status, created_at`,
       [body.eventId, req.user?.id || null, body.name, body.email],
     );
+
+    await notifyAdmin('Route Longevity event registration', [
+      `Event: ${body.eventId}`,
+      `Name: ${body.name}`,
+      `Email: ${body.email}`,
+      `User ID: ${req.user?.id || 'guest'}`,
+    ]);
 
     return res.status(201).json({ registration: registrationResult.rows[0] });
   } catch (error) {
@@ -632,7 +894,7 @@ app.post('/api/listings', requireAuth, requirePartner, async (req, res, next) =>
   }
 });
 
-app.post('/api/ad-applications', async (req, res, next) => {
+app.post('/api/ad-applications', optionalAuth, async (req, res, next) => {
   try {
     const body = validate(adApplicationSchema, req, res);
     if (!body) return;
@@ -657,6 +919,17 @@ app.post('/api/ad-applications', async (req, res, next) => {
       ],
     );
 
+    await notifyAdmin('Route Longevity ad application', [
+      `Business: ${body.businessName}`,
+      `Contact: ${body.contactName}`,
+      `Email: ${body.email}`,
+      `Phone: ${body.phone || '-'}`,
+      `Website: ${body.website || '-'}`,
+      `Slot: ${body.requestedSlot || '-'}`,
+      `Budget: ${body.budgetRange || '-'}`,
+      `Goal: ${body.campaignGoal || '-'}`,
+    ]);
+
     res.status(201).json({ application: applicationResult.rows[0] });
   } catch (error) {
     return next(error);
@@ -675,14 +948,20 @@ app.post('/api/contact-messages', async (req, res, next) => {
       [body.name, body.email, body.topic, body.message],
     );
 
-    console.info(`New contact message from ${body.email} on topic "${body.topic}".`);
+    await notifyAdmin('Route Longevity contact message', [
+      `Name: ${body.name}`,
+      `Email: ${body.email}`,
+      `Topic: ${body.topic}`,
+      `Message: ${body.message}`,
+    ]);
+
     return res.status(201).json({ message: result.rows[0] });
   } catch (error) {
     return next(error);
   }
 });
 
-app.post('/api/listing-applications', async (req, res, next) => {
+app.post('/api/listing-applications', optionalAuth, async (req, res, next) => {
   try {
     const body = validate(listingApplicationSchema, req, res);
     if (!body) return;
@@ -705,14 +984,23 @@ app.post('/api/listing-applications', async (req, res, next) => {
       ],
     );
 
-    console.info(`New listing application: ${body.venueName} <${body.email}>.`);
+    await notifyAdmin('Route Longevity listing application', [
+      `Venue: ${body.venueName}`,
+      `Contact: ${body.contactName || '-'}`,
+      `Email: ${body.email}`,
+      `Category: ${body.categoryId || '-'}`,
+      `City: ${body.city || '-'}`,
+      `Website: ${body.website || '-'}`,
+      `Message: ${body.message || '-'}`,
+    ]);
+
     return res.status(201).json({ application: result.rows[0] });
   } catch (error) {
     return next(error);
   }
 });
 
-app.post('/api/partner-applications', async (req, res, next) => {
+app.post('/api/partner-applications', optionalAuth, async (req, res, next) => {
   try {
     const body = validate(partnerApplicationSchema, req, res);
     if (!body) return;
@@ -734,7 +1022,15 @@ app.post('/api/partner-applications', async (req, res, next) => {
       ],
     );
 
-    console.info(`New partner application: ${body.businessName} <${body.email}>.`);
+    await notifyAdmin('Route Longevity partner application', [
+      `Business: ${body.businessName}`,
+      `Contact: ${body.contactName || '-'}`,
+      `Email: ${body.email}`,
+      `Type: ${body.partnerType || '-'}`,
+      `Website: ${body.website || '-'}`,
+      `Message: ${body.message || '-'}`,
+    ]);
+
     return res.status(201).json({ application: result.rows[0] });
   } catch (error) {
     return next(error);
