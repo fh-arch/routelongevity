@@ -10,6 +10,7 @@ import {
 import Footer from './Footer';
 import { AuthMode, AuthRole, AuthSession } from './AuthModal';
 import { AdminOverview, getAdminOverview, getProfile, submitListingApplication, updateAdminApplicationStatus, UserProfileSummary } from '../api';
+import AdminDashboard from './AdminDashboard';
 
 interface PartnerSaaSViewProps {
   onOpenBlog: () => void;
@@ -137,6 +138,16 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
     }
   };
 
+  if (authSession?.role === 'admin') {
+    return (
+      <AdminDashboard
+        authSession={authSession}
+        onOpenBlog={onOpenBlog}
+        onOpenEvents={onOpenEvents}
+      />
+    );
+  }
+
   const handleStatusChange = async (type: 'contact' | 'listing' | 'partner' | 'ad' | 'event', id: string, status: string) => {
     try {
       await updateAdminApplicationStatus(type, id, status);
@@ -193,75 +204,6 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
       </div>
     </section>
   );
-
-  if (authSession?.role === 'admin') {
-    return (
-      <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
-        <section className="rounded-3xl bg-brand-deep-slate p-6 text-white shadow-sm">
-          <span className="text-[10px] uppercase font-extrabold tracking-widest text-brand-coral bg-brand-coral/10 px-2.5 py-1 rounded">
-            {language === 'tr' ? 'Yönetim' : 'Admin'}
-          </span>
-          <h2 className="mt-3 text-3xl font-black tracking-normal">
-            {language === 'tr' ? 'Route Longevity yönetim paneli' : 'Route Longevity management panel'}
-          </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-white/70">
-            {language === 'tr'
-              ? 'Formlar, başvurular ve kayıtlar PostgreSQL üzerinden izlenir. E-posta bildirimleri Resend aktif edildiğinde otomatik gider.'
-              : 'Forms, applications, and registrations are tracked through PostgreSQL. Email notifications send automatically when Resend is enabled.'}
-          </p>
-        </section>
-
-        {isPanelLoading && (
-          <div className="flex items-center gap-2 rounded-2xl border border-brand-warm-sand/50 bg-white p-4 text-sm font-bold text-brand-deep-slate">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            {language === 'tr' ? 'Veriler yükleniyor...' : 'Loading account data...'}
-          </div>
-        )}
-
-        {panelError && (
-          <div className="flex items-center gap-2 rounded-2xl border border-red-100 bg-red-50 p-4 text-sm font-bold text-red-700">
-            <AlertCircle className="h-4 w-4" />
-            {panelError}
-          </div>
-        )}
-
-        {adminOverview && (
-          <>
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-7">
-              {[
-                { label: 'Users', value: adminOverview.stats.users, icon: Users },
-                { label: 'Listings', value: adminOverview.stats.listings, icon: ListChecks },
-                { label: 'Contact', value: adminOverview.stats.contacts, icon: Inbox },
-                { label: 'Listing apps', value: adminOverview.stats.listingApplications, icon: ClipboardCheck },
-                { label: 'Partners', value: adminOverview.stats.partnerApplications, icon: Building },
-                { label: 'Ads', value: adminOverview.stats.adApplications, icon: Megaphone },
-                { label: 'Events', value: adminOverview.stats.eventRegistrations, icon: CalendarCheck },
-              ].map((stat) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={stat.label} className="rounded-2xl border border-brand-warm-sand/45 bg-white p-4 shadow-sm">
-                    <Icon className="h-4 w-4 text-brand-med-teal" />
-                    <div className="mt-3 text-2xl font-black text-brand-deep-slate">{stat.value}</div>
-                    <div className="text-[10px] font-black uppercase tracking-wider text-brand-deep-slate/45">{stat.label}</div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
-              {renderQueue('Contact messages', 'contact', adminOverview.queues.contacts, 'name', 'email', ['new', 'read', 'archived'])}
-              {renderQueue('Listing applications', 'listing', adminOverview.queues.listingApplications, 'venue_name', 'email', ['pending', 'approved', 'rejected'])}
-              {renderQueue('Partner applications', 'partner', adminOverview.queues.partnerApplications, 'business_name', 'email', ['pending', 'approved', 'rejected'])}
-              {renderQueue('Ad applications', 'ad', adminOverview.queues.adApplications, 'business_name', 'email', ['pending', 'approved', 'rejected'])}
-              {renderQueue('Event registrations', 'event', adminOverview.queues.eventRegistrations, 'name', 'event_id', ['pending', 'confirmed', 'cancelled'])}
-            </div>
-          </>
-        )}
-
-        <Footer onOpenBlog={onOpenBlog} onOpenEvents={onOpenEvents} />
-      </div>
-    );
-  }
 
   if (authSession?.role === 'user') {
     return (

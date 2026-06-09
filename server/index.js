@@ -145,6 +145,91 @@ const adminApplicationParamsSchema = z.object({
   id: z.string().uuid(),
 });
 
+const nullableUrl = z.string().url().or(z.literal('')).optional().transform((value) => value || null);
+const optionalText = (max = 2000) => z.string().max(max).optional().transform((value) => value?.trim() || null);
+const optionalNumber = z.coerce.number().optional().nullable();
+
+const adminListingSchema = z.object({
+  externalId: z.string().min(1).max(120).optional(),
+  categoryId: z.string().min(1).max(80),
+  name: z.string().min(2).max(180),
+  description: optionalText(2500),
+  city: optionalText(120),
+  region: optionalText(120),
+  address: optionalText(260),
+  latitude: optionalNumber,
+  longitude: optionalNumber,
+  imageUrl: nullableUrl,
+  website: nullableUrl,
+  phone: optionalText(60),
+  email: z.string().email().or(z.literal('')).optional().transform((value) => value || null),
+  specialty: optionalText(180),
+  rating: z.coerce.number().min(0).max(5).optional().nullable(),
+  reviewCount: z.coerce.number().int().min(0).optional().nullable(),
+  licenseType: z.enum(['Premium', 'Standard']).default('Standard'),
+  annualFee: z.coerce.number().int().min(0).optional().nullable(),
+  isPremium: z.boolean().default(false),
+  featured: z.boolean().default(false),
+  status: z.enum(['draft', 'pending', 'approved', 'rejected']).default('approved'),
+});
+
+const adminContentIdSchema = z.object({
+  id: z.string().min(1).max(120),
+});
+
+const adminUserParamsSchema = z.object({
+  id: z.string().uuid(),
+});
+
+const adminUserRoleSchema = z.object({
+  role: z.enum(['user', 'partner', 'admin']),
+});
+
+const adminBlogSchema = z.object({
+  id: z.string().min(1).max(120).optional(),
+  titleEn: z.string().min(2).max(240),
+  titleTr: z.string().max(240).optional(),
+  subtitleEn: z.string().max(500).optional(),
+  subtitleTr: z.string().max(500).optional(),
+  categoryEn: z.string().max(80).optional(),
+  categoryTr: z.string().max(80).optional(),
+  readTimeEn: z.string().max(80).optional(),
+  readTimeTr: z.string().max(80).optional(),
+  dateEn: z.string().max(120).optional(),
+  dateTr: z.string().max(120).optional(),
+  authorEn: z.string().max(120).optional(),
+  authorTr: z.string().max(120).optional(),
+  imageUrl: nullableUrl,
+  contentEn: z.string().min(20).max(20000),
+  contentTr: z.string().max(20000).optional(),
+  tagsEn: z.string().max(500).optional(),
+  tagsTr: z.string().max(500).optional(),
+  status: z.enum(['draft', 'published']).default('published'),
+  sortOrder: z.coerce.number().int().default(0),
+});
+
+const adminEventSchema = z.object({
+  id: z.string().min(1).max(120).optional(),
+  titleEn: z.string().min(2).max(240),
+  titleTr: z.string().max(240).optional(),
+  dateEn: z.string().max(120).optional(),
+  dateTr: z.string().max(120).optional(),
+  timeEn: z.string().max(120).optional(),
+  timeTr: z.string().max(120).optional(),
+  locationEn: z.string().max(180).optional(),
+  locationTr: z.string().max(180).optional(),
+  cityEn: z.string().max(120).optional(),
+  cityTr: z.string().max(120).optional(),
+  descriptionEn: z.string().min(10).max(4000),
+  descriptionTr: z.string().max(4000).optional(),
+  spotsLeft: z.coerce.number().int().min(0).default(0),
+  tagsEn: z.string().max(500).optional(),
+  tagsTr: z.string().max(500).optional(),
+  imageUrl: nullableUrl,
+  status: z.enum(['draft', 'published']).default('published'),
+  sortOrder: z.coerce.number().int().default(0),
+});
+
 function validate(schema, req, res) {
   const result = schema.safeParse(req.body);
   if (!result.success) {
@@ -153,6 +238,34 @@ function validate(schema, req, res) {
   }
 
   return result.data;
+}
+
+function slugify(value) {
+  return value
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
+}
+
+function makeContentId(prefix, title) {
+  return `${prefix}-${slugify(title) || Date.now()}`;
+}
+
+function localized(en, tr) {
+  return {
+    en: en?.trim() || '',
+    tr: tr?.trim() || en?.trim() || '',
+  };
+}
+
+function tagList(value) {
+  return (value || '')
+    .split(',')
+    .map((tag) => tag.trim())
+    .filter(Boolean);
 }
 
 async function sendVerificationCode(email, code) {
@@ -437,6 +550,10 @@ app.get('/api/admin/overview', requireAuth, requireAdmin, async (req, res, next)
       partnerApplications,
       adApplications,
       eventRegistrations,
+      users,
+      listings,
+      blogPosts,
+      events,
     ] = await Promise.all([
       query('SELECT count(*)::int AS count FROM users'),
       query('SELECT count(*)::int AS count FROM listings'),
@@ -470,6 +587,30 @@ app.get('/api/admin/overview', requireAuth, requireAdmin, async (req, res, next)
          ORDER BY created_at DESC
          LIMIT 25`,
       ),
+      query(
+        `SELECT id, role, name, email, email_verified_at, created_at
+         FROM users
+         ORDER BY created_at DESC
+         LIMIT 100`,
+      ),
+      query(
+        `SELECT id, external_id, name, category_id, city, region, website, is_premium, status, created_at
+         FROM listings
+         ORDER BY created_at DESC
+         LIMIT 100`,
+      ),
+      query(
+        `SELECT id, title, category, status, sort_order, created_at
+         FROM blog_posts
+         ORDER BY sort_order, created_at DESC
+         LIMIT 100`,
+      ),
+      query(
+        `SELECT id, title, date_label, city, status, spots_left, sort_order, created_at
+         FROM events
+         ORDER BY sort_order, created_at DESC
+         LIMIT 100`,
+      ),
     ]);
 
     return res.json({
@@ -488,6 +629,12 @@ app.get('/api/admin/overview', requireAuth, requireAdmin, async (req, res, next)
         partnerApplications: partnerApplications.rows,
         adApplications: adApplications.rows,
         eventRegistrations: eventRegistrations.rows,
+      },
+      content: {
+        users: users.rows.map((user) => publicUser(user)),
+        listings: listings.rows,
+        blogPosts: blogPosts.rows,
+        events: events.rows,
       },
     });
   } catch (error) {
@@ -545,6 +692,226 @@ app.patch('/api/admin/applications/:type/:id', requireAuth, requireAdmin, async 
     }
 
     return res.json({ item: result.rows[0] });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.post('/api/admin/listings', requireAuth, requireAdmin, async (req, res, next) => {
+  try {
+    const body = validate(adminListingSchema, req, res);
+    if (!body) return;
+
+    const externalId = body.externalId || `admin-${Date.now()}`;
+    const result = await query(
+      `INSERT INTO listings (
+         external_id, category_id, name, description, city, region, address,
+         latitude, longitude, image_url, website, phone, email, specialty,
+         rating, review_count, license_type, annual_fee, is_premium, featured,
+         status, source
+       )
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,
+               $15, $16, $17, $18, $19, $20, $21, 'admin')
+       RETURNING *`,
+      [
+        externalId,
+        body.categoryId,
+        body.name.trim(),
+        body.description,
+        body.city,
+        body.region,
+        body.address,
+        body.latitude,
+        body.longitude,
+        body.imageUrl,
+        body.website,
+        body.phone,
+        body.email,
+        body.specialty,
+        body.rating,
+        body.reviewCount,
+        body.licenseType,
+        body.annualFee,
+        body.isPremium,
+        body.featured,
+        body.status,
+      ],
+    );
+
+    return res.status(201).json({ listing: result.rows[0] });
+  } catch (error) {
+    if (error.code === '23505') {
+      return res.status(409).json({ error: 'A listing with this external id already exists.' });
+    }
+    return next(error);
+  }
+});
+
+app.patch('/api/admin/listings/:id', requireAuth, requireAdmin, async (req, res, next) => {
+  try {
+    const params = adminContentIdSchema.safeParse(req.params);
+    if (!params.success) return res.status(400).json({ error: 'Invalid listing id.' });
+
+    const body = validate(adminListingSchema, req, res);
+    if (!body) return;
+
+    const result = await query(
+      `UPDATE listings
+       SET category_id = $1, name = $2, description = $3, city = $4, region = $5,
+           address = $6, latitude = $7, longitude = $8, image_url = $9, website = $10,
+           phone = $11, email = $12, specialty = $13, rating = $14, review_count = $15,
+           license_type = $16, annual_fee = $17, is_premium = $18, featured = $19,
+           status = $20, updated_at = now()
+       WHERE id::text = $21 OR external_id = $21
+       RETURNING *`,
+      [
+        body.categoryId,
+        body.name.trim(),
+        body.description,
+        body.city,
+        body.region,
+        body.address,
+        body.latitude,
+        body.longitude,
+        body.imageUrl,
+        body.website,
+        body.phone,
+        body.email,
+        body.specialty,
+        body.rating,
+        body.reviewCount,
+        body.licenseType,
+        body.annualFee,
+        body.isPremium,
+        body.featured,
+        body.status,
+        params.data.id,
+      ],
+    );
+
+    if (!result.rows[0]) return res.status(404).json({ error: 'Listing not found.' });
+    return res.json({ listing: result.rows[0] });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.post('/api/admin/blog-posts', requireAuth, requireAdmin, async (req, res, next) => {
+  try {
+    const body = validate(adminBlogSchema, req, res);
+    if (!body) return;
+
+    const id = body.id || makeContentId('blog', body.titleEn);
+    const result = await query(
+      `INSERT INTO blog_posts (
+         id, title, subtitle, category, read_time, date_label, author,
+         image_url, content, tags, status, sort_order
+       )
+       VALUES ($1, $2::jsonb, $3::jsonb, $4::jsonb, $5::jsonb, $6::jsonb, $7::jsonb,
+               $8, $9::jsonb, $10::jsonb, $11, $12)
+       ON CONFLICT (id) DO UPDATE SET
+         title = EXCLUDED.title,
+         subtitle = EXCLUDED.subtitle,
+         category = EXCLUDED.category,
+         read_time = EXCLUDED.read_time,
+         date_label = EXCLUDED.date_label,
+         author = EXCLUDED.author,
+         image_url = EXCLUDED.image_url,
+         content = EXCLUDED.content,
+         tags = EXCLUDED.tags,
+         status = EXCLUDED.status,
+         sort_order = EXCLUDED.sort_order,
+         updated_at = now()
+       RETURNING *`,
+      [
+        id,
+        JSON.stringify(localized(body.titleEn, body.titleTr)),
+        JSON.stringify(localized(body.subtitleEn, body.subtitleTr)),
+        JSON.stringify(localized(body.categoryEn, body.categoryTr)),
+        JSON.stringify(localized(body.readTimeEn, body.readTimeTr)),
+        JSON.stringify(localized(body.dateEn, body.dateTr)),
+        JSON.stringify(localized(body.authorEn || 'Route Longevity Editorial', body.authorTr)),
+        body.imageUrl,
+        JSON.stringify(localized(body.contentEn, body.contentTr)),
+        JSON.stringify({ en: tagList(body.tagsEn), tr: tagList(body.tagsTr || body.tagsEn) }),
+        body.status,
+        body.sortOrder,
+      ],
+    );
+
+    return res.status(201).json({ post: result.rows[0] });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.post('/api/admin/events', requireAuth, requireAdmin, async (req, res, next) => {
+  try {
+    const body = validate(adminEventSchema, req, res);
+    if (!body) return;
+
+    const id = body.id || makeContentId('event', body.titleEn);
+    const result = await query(
+      `INSERT INTO events (
+         id, title, date_label, time_label, location, city, description,
+         spots_left, tags, image_url, status, sort_order
+       )
+       VALUES ($1, $2::jsonb, $3::jsonb, $4::jsonb, $5::jsonb, $6::jsonb,
+               $7::jsonb, $8, $9::jsonb, $10, $11, $12)
+       ON CONFLICT (id) DO UPDATE SET
+         title = EXCLUDED.title,
+         date_label = EXCLUDED.date_label,
+         time_label = EXCLUDED.time_label,
+         location = EXCLUDED.location,
+         city = EXCLUDED.city,
+         description = EXCLUDED.description,
+         spots_left = EXCLUDED.spots_left,
+         tags = EXCLUDED.tags,
+         image_url = EXCLUDED.image_url,
+         status = EXCLUDED.status,
+         sort_order = EXCLUDED.sort_order,
+         updated_at = now()
+       RETURNING *`,
+      [
+        id,
+        JSON.stringify(localized(body.titleEn, body.titleTr)),
+        JSON.stringify(localized(body.dateEn, body.dateTr)),
+        JSON.stringify(localized(body.timeEn, body.timeTr)),
+        JSON.stringify(localized(body.locationEn, body.locationTr)),
+        JSON.stringify(localized(body.cityEn, body.cityTr)),
+        JSON.stringify(localized(body.descriptionEn, body.descriptionTr)),
+        body.spotsLeft,
+        JSON.stringify({ en: tagList(body.tagsEn), tr: tagList(body.tagsTr || body.tagsEn) }),
+        body.imageUrl,
+        body.status,
+        body.sortOrder,
+      ],
+    );
+
+    return res.status(201).json({ event: result.rows[0] });
+  } catch (error) {
+    return next(error);
+  }
+});
+
+app.patch('/api/admin/users/:id/role', requireAuth, requireAdmin, async (req, res, next) => {
+  try {
+    const params = adminUserParamsSchema.safeParse(req.params);
+    if (!params.success) return res.status(400).json({ error: 'Invalid user id.' });
+
+    const body = validate(adminUserRoleSchema, req, res);
+    if (!body) return;
+
+    const result = await query(
+      `UPDATE users
+       SET role = $1, updated_at = now()
+       WHERE id = $2
+       RETURNING id, role, name, email, email_verified_at`,
+      [body.role, params.data.id],
+    );
+
+    if (!result.rows[0]) return res.status(404).json({ error: 'User not found.' });
+    return res.json({ user: publicUser(result.rows[0]) });
   } catch (error) {
     return next(error);
   }

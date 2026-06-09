@@ -46,6 +46,81 @@ export interface AdminOverview {
     adApplications: Array<Record<string, unknown>>;
     eventRegistrations: Array<Record<string, unknown>>;
   };
+  content: {
+    users: Array<Record<string, unknown>>;
+    listings: Array<Record<string, unknown>>;
+    blogPosts: Array<Record<string, unknown>>;
+    events: Array<Record<string, unknown>>;
+  };
+}
+
+export interface AdminListingInput {
+  externalId?: string;
+  categoryId: string;
+  name: string;
+  description?: string;
+  city?: string;
+  region?: string;
+  address?: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  imageUrl?: string;
+  website?: string;
+  phone?: string;
+  email?: string;
+  specialty?: string;
+  rating?: number | null;
+  reviewCount?: number | null;
+  licenseType?: 'Premium' | 'Standard';
+  annualFee?: number | null;
+  isPremium?: boolean;
+  featured?: boolean;
+  status?: 'draft' | 'pending' | 'approved' | 'rejected';
+}
+
+export interface AdminBlogInput {
+  id?: string;
+  titleEn: string;
+  titleTr?: string;
+  subtitleEn?: string;
+  subtitleTr?: string;
+  categoryEn?: string;
+  categoryTr?: string;
+  readTimeEn?: string;
+  readTimeTr?: string;
+  dateEn?: string;
+  dateTr?: string;
+  authorEn?: string;
+  authorTr?: string;
+  imageUrl?: string;
+  contentEn: string;
+  contentTr?: string;
+  tagsEn?: string;
+  tagsTr?: string;
+  status?: 'draft' | 'published';
+  sortOrder?: number;
+}
+
+export interface AdminEventInput {
+  id?: string;
+  titleEn: string;
+  titleTr?: string;
+  dateEn?: string;
+  dateTr?: string;
+  timeEn?: string;
+  timeTr?: string;
+  locationEn?: string;
+  locationTr?: string;
+  cityEn?: string;
+  cityTr?: string;
+  descriptionEn: string;
+  descriptionTr?: string;
+  spotsLeft?: number;
+  tagsEn?: string;
+  tagsTr?: string;
+  imageUrl?: string;
+  status?: 'draft' | 'published';
+  sortOrder?: number;
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -120,6 +195,41 @@ export async function updateAdminApplicationStatus(type: 'contact' | 'listing' |
   return request<{ item: Record<string, unknown> }>(`/api/admin/applications/${type}/${id}`, {
     method: 'PATCH',
     body: JSON.stringify({ status }),
+  });
+}
+
+export async function createAdminListing(input: AdminListingInput) {
+  return request<{ listing: Record<string, unknown> }>('/api/admin/listings', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function updateAdminListing(id: string, input: AdminListingInput) {
+  return request<{ listing: Record<string, unknown> }>(`/api/admin/listings/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function saveAdminBlogPost(input: AdminBlogInput) {
+  return request<{ post: Record<string, unknown> }>('/api/admin/blog-posts', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function saveAdminEvent(input: AdminEventInput) {
+  return request<{ event: Record<string, unknown> }>('/api/admin/events', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function updateAdminUserRole(id: string, role: AuthRole) {
+  return request<{ user: AuthSession }>(`/api/admin/users/${encodeURIComponent(id)}/role`, {
+    method: 'PATCH',
+    body: JSON.stringify({ role }),
   });
 }
 
