@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Partner, Category } from '../types';
-import { PARTNERS_DATA, CATEGORIES, TURKISH_CITIES } from '../data';
+import { PARTNERS_DATA, CATEGORIES } from '../data';
 import { useLanguage } from '../context/LanguageContext';
 import { MapPin, Star, Phone, Mail, Globe, Search, Filter, X, Heart, ShieldCheck, Compass } from 'lucide-react';
 
@@ -38,23 +38,31 @@ export default function MapContainer({
 
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [cityFilter, setCityFilter] = useState('');
+  const [countryFilter, setCountryFilter] = useState('');
   const [showMobileList, setShowMobileList] = useState(false);
   const [showDensityLayer, setShowDensityLayer] = useState(false);
 
-  // Keep the list of all 81 cities sorted alphabetically based on active language
-  const sortedCities = [...TURKISH_CITIES].sort((a, b) => {
-    const nameA = language === 'tr' ? a.nameTr : a.nameEn;
-    const nameB = language === 'tr' ? b.nameTr : b.nameEn;
-    return nameA.localeCompare(nameB, language);
-  });
+  const mapHomeCenter: [number, number] = [38, 24];
+  const mapHomeZoom = 4;
+  const getPartnerCountry = (partner: Partner) => partner.country || 'Türkiye';
+  const formatPartnerLocation = (partner: Partner) => {
+    const city = translatePartner(partner.id, 'city', partner.city);
+    const country = getPartnerCountry(partner);
+    return city && city !== country ? `${city}, ${country}` : country;
+  };
 
-  // Filter partners based on state (category + search + city) supporting dual language searching!
+  const availableCountries = Array.from(new Set(partners.map(getPartnerCountry))).sort((a, b) =>
+    a.localeCompare(b, language)
+  );
+
+  // Filter partners based on state (category + search + country) supporting dual language searching.
   const filteredPartners = partners.filter(p => {
     const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
     
     const nameTR = translatePartner(p.id, 'name', p.name).toLowerCase();
     const cityTR = translatePartner(p.id, 'city', p.city).toLowerCase();
+    const country = getPartnerCountry(p);
+    const countryText = country.toLowerCase();
     const specialtyTR = translatePartner(p.id, 'specialty', p.specialty).toLowerCase();
     const descTR = translatePartner(p.id, 'description', p.description).toLowerCase();
     const catLabelTR = translateCategory(p.category, p.categoryLabel).toLowerCase();
@@ -69,11 +77,12 @@ export default function MapContainer({
                           descTR.includes(sq) ||
                           p.city.toLowerCase().includes(sq) ||
                           cityTR.includes(sq) ||
+                          countryText.includes(sq) ||
                           p.categoryLabel.toLowerCase().includes(sq) ||
                           catLabelTR.includes(sq);
 
-    const matchesCity = cityFilter === '' || p.city === cityFilter;
-    return matchesCategory && matchesSearch && matchesCity;
+    const matchesCountry = countryFilter === '' || country === countryFilter;
+    return matchesCategory && matchesSearch && matchesCountry;
   });
 
   // Re-sort to put Premium licensing partners at top of side list (SaaS value!)
@@ -93,15 +102,13 @@ export default function MapContainer({
       return;
     }
 
-    // Centered specifically over Türkiye (Ankara/Central coordinate)
-    const turkeyCenter = [38.9637, 35.2433];
     const map = L.map(mapRef.current, {
-      center: turkeyCenter,
-      zoom: 6,
+      center: mapHomeCenter,
+      zoom: mapHomeZoom,
       zoomControl: false,
       scrollWheelZoom: true,
-      maxBounds: L.latLngBounds(L.latLng(35, 25), L.latLng(43, 45)),
-      minZoom: 5,
+      maxBounds: L.latLngBounds(L.latLng(10, -25), L.latLng(66, 75)),
+      minZoom: 3,
     });
 
     // Elegant Light Canvas Layer: Voyager Map style
@@ -417,30 +424,37 @@ export default function MapContainer({
           </div>
 
           <div className="flex gap-2">
-            {/* City Selector */}
+            {/* Country Selector */}
             <div className="flex-1 relative">
               <select
-                value={cityFilter}
+                value={countryFilter}
                 onChange={(e) => {
-                  const selectedCityId = e.target.value;
-                  setCityFilter(selectedCityId);
-                  if (selectedCityId) {
-                    const cityObj = TURKISH_CITIES.find(c => c.id === selectedCityId);
-                    if (cityObj && mapInstanceRef.current) {
-                      mapInstanceRef.current.setView([cityObj.latitude, cityObj.longitude], 9, { animate: true });
-                    }
-                  } else {
-                    if (mapInstanceRef.current) {
-                      mapInstanceRef.current.setView([38.9637, 35.2433], 6, { animate: true });
-                    }
+                  const selectedCountry = e.target.value;
+                  setCountryFilter(selectedCountry);
+                  const map = mapInstanceRef.current;
+                  const L = (window as any).L;
+                  if (!map || !L) return;
+
+                  if (!selectedCountry) {
+                    map.setView(mapHomeCenter, mapHomeZoom, { animate: true });
+                    return;
+                  }
+
+                  const countryPartners = partners.filter((p) => getPartnerCountry(p) === selectedCountry);
+                  if (countryPartners.length > 0) {
+                    const bounds = L.latLngBounds(countryPartners.map((p) => [p.latitude, p.longitude]));
+                    map.fitBounds(bounds, {
+                      padding: [52, 52],
+                      maxZoom: countryPartners.length === 1 ? 9 : 7,
+                    });
                   }
                 }}
                 className="w-full text-xs bg-white border border-brand-warm-sand/70 rounded-lg px-2.5 py-1.5 appearance-none focus:outline-none text-brand-deep-slate cursor-pointer"
               >
-                <option value="">{t('allCities')}</option>
-                {sortedCities.map(city => (
-                  <option key={city.id} value={city.id}>
-                    {language === 'tr' ? city.nameTr : city.nameEn}
+                <option value="">{language === 'tr' ? 'Tüm Ülkeler' : 'All Countries'}</option>
+                {availableCountries.map(country => (
+                  <option key={country} value={country}>
+                    {country}
                   </option>
                 ))}
               </select>
@@ -450,12 +464,13 @@ export default function MapContainer({
             </div>
 
             {/* Reset Button */}
-            {(selectedCategory !== 'all' || cityFilter !== '' || searchQuery !== '') && (
+            {(selectedCategory !== 'all' || countryFilter !== '' || searchQuery !== '') && (
               <button
                 onClick={() => {
                   onCategorySelect('all');
-                  setCityFilter('');
+                  setCountryFilter('');
                   setSearchQuery('');
+                  mapInstanceRef.current?.setView(mapHomeCenter, mapHomeZoom, { animate: true });
                 }}
                 className="px-2.5 bg-brand-warm-sand/45 hover:bg-brand-warm-sand/70 text-brand-deep-slate text-xs rounded-lg transition-colors cursor-pointer flex items-center gap-1 font-semibold"
               >
@@ -527,9 +542,9 @@ export default function MapContainer({
             <span>
               {language === 'tr' ? `${sortedSidePartners.length} sonuç gösteriliyor` : `Showing ${sortedSidePartners.length} results`}
             </span>
-            {cityFilter && (
+            {countryFilter && (
               <span className="font-semibold text-[#5A9D62]">
-                {translatePartner(sortedSidePartners[0]?.id || '', 'city', cityFilter)}
+                {countryFilter}
               </span>
             )}
           </div>
@@ -597,7 +612,7 @@ export default function MapContainer({
                         {translatePartner(p.id, 'name', p.name)}
                       </h4>
                       <p className="text-xs text-brand-deep-slate/60 mt-0.5 truncate font-sans">
-                        {translatePartner(p.id, 'city', p.city)}
+                        {formatPartnerLocation(p)}
                       </p>
                       
                       <p className="text-[10px] text-brand-deep-slate/50 mt-1 line-clamp-2">
@@ -698,7 +713,7 @@ export default function MapContainer({
                 <div className="flex items-center gap-1.5">
                   <MapPin className="w-4 h-4 text-brand-med-teal" />
                   <span className="text-xs font-semibold text-brand-deep-slate">
-                    {translatePartner(selectedPartner.id, 'city', selectedPartner.city)}
+                    {formatPartnerLocation(selectedPartner)}
                   </span>
                 </div>
                 <div className="flex items-center gap-1">

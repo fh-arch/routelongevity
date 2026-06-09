@@ -137,7 +137,14 @@ export default function ExploreView({
 
   const leadArticle = latestPosts[0];
 
-  // Live filter logic. Matches by name, city, specialty, description, categoryLabel (supporting dual languages!)
+  const getPartnerCountry = (partner: Partner) => partner.country || 'Türkiye';
+  const formatPartnerLocation = (partner: Partner) => {
+    const city = translatePartner(partner.id, 'city', partner.city);
+    const country = getPartnerCountry(partner);
+    return city && city !== country ? `${city}, ${country}` : country;
+  };
+
+  // Live filter logic. Matches by name, city, country, specialty, description, categoryLabel.
   const matchedPartners = PARTNERS_DATA.filter((p) => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return false;
@@ -146,6 +153,7 @@ export default function ExploreView({
     const nameTR = translatePartner(p.id, 'name', p.name).toLowerCase();
     const cityEN = p.city.toLowerCase();
     const cityTR = translatePartner(p.id, 'city', p.city).toLowerCase();
+    const country = getPartnerCountry(p).toLowerCase();
     const specialtyEN = p.specialty.toLowerCase();
     const specialtyTR = translatePartner(p.id, 'specialty', p.specialty).toLowerCase();
     const descEN = p.description.toLowerCase();
@@ -156,6 +164,7 @@ export default function ExploreView({
     return (
       nameEN.includes(q) || nameTR.includes(q) ||
       cityEN.includes(q) || cityTR.includes(q) ||
+      country.includes(q) ||
       specialtyEN.includes(q) || specialtyTR.includes(q) ||
       descEN.includes(q) || descTR.includes(q) ||
       catLabelEN.includes(q) || catLabelTR.includes(q)
@@ -649,7 +658,7 @@ export default function ExploreView({
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-103"
                     />
                     <div className="absolute top-3 left-3 bg-brand-deep-slate text-brand-soft-ivory text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider backdrop-blur-sm bg-opacity-90">
-                      {translatePartner(p.id, 'city', p.city)}
+                      {formatPartnerLocation(p)}
                     </div>
                     
                     {/* Favorite Toggle button */}
