@@ -141,7 +141,7 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
   };
 
   const statusPill = (status: unknown) => (
-    <span className="rounded-full bg-[#F1F7EA] px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#007c73]">
+    <span className="rounded-full bg-[#F1F7EA] px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#086058]">
       {typeof status === 'string' ? status : 'new'}
     </span>
   );
@@ -164,7 +164,7 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
     statuses: string[],
   ) => (
     <section className="rounded-2xl border border-brand-warm-sand/45 bg-white p-4 shadow-sm">
-      <div className="flex items-center justify-between border-b border-[#dcede9] pb-3">
+      <div className="flex items-center justify-between border-b border-[#d8ebe6] pb-3">
         <h3 className="text-sm font-black text-brand-deep-slate">{title}</h3>
         <span className="text-[10px] font-black text-brand-deep-slate/45">{items.length}</span>
       </div>
@@ -172,7 +172,7 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
         {items.length === 0 ? (
           <p className="text-xs text-brand-deep-slate/55">No records yet.</p>
         ) : items.map((item) => (
-          <article key={String(item.id)} className="rounded-2xl border border-[#dcede9] bg-[#f7fbf9] p-4">
+          <article key={String(item.id)} className="rounded-2xl border border-[#d8ebe6] bg-[#f6fbf9] p-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <div className="truncate text-sm font-black text-brand-deep-slate">{asText(item, primaryKey)}</div>
@@ -200,7 +200,7 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
   const inputClass = 'w-full rounded-xl border border-brand-warm-sand/70 bg-white px-3 py-2.5 text-sm text-brand-deep-slate outline-none focus:border-brand-med-teal';
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#f7fbf9] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
+    <div className="flex-1 overflow-y-auto bg-[#f6fbf9] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
       <section className="rounded-3xl bg-brand-deep-slate p-6 text-white shadow-sm">
         <span className="text-[10px] uppercase font-extrabold tracking-widest text-brand-med-teal bg-brand-med-teal/10 px-2.5 py-1 rounded">
           {language === 'tr' ? 'Yönetim' : 'Admin'}
@@ -247,7 +247,7 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
       )}
 
       {notice && (
-        <div className="rounded-2xl border border-[#8ed7c2]/35 bg-[#F1F7EA] p-4 text-sm font-bold text-[#007c73]">
+        <div className="rounded-2xl border border-[#79c9b8]/35 bg-[#F1F7EA] p-4 text-sm font-bold text-[#086058]">
           {notice}
         </div>
       )}
@@ -326,9 +326,9 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
 
           <section className="rounded-3xl border border-brand-warm-sand/45 bg-white p-5 shadow-sm">
             <h3 className="text-lg font-black text-brand-deep-slate">Latest pins</h3>
-            <div className="mt-4 overflow-hidden rounded-2xl border border-[#dcede9]">
+            <div className="mt-4 overflow-hidden rounded-2xl border border-[#d8ebe6]">
               {overview.content.listings.map((listing) => (
-                <div key={String(listing.id)} className="grid grid-cols-[minmax(0,1fr)_120px_90px] gap-3 border-b border-[#dcede9] p-3 text-xs last:border-0">
+                <div key={String(listing.id)} className="grid grid-cols-[minmax(0,1fr)_120px_90px] gap-3 border-b border-[#d8ebe6] p-3 text-xs last:border-0">
                   <div className="min-w-0">
                     <div className="truncate font-black text-brand-deep-slate">{asText(listing, 'name')}</div>
                     <div className="text-brand-deep-slate/50">{asText(listing, 'city')} • {asText(listing, 'category_id')}</div>
@@ -347,7 +347,7 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
           <h3 className="text-lg font-black text-brand-deep-slate">Users and travelers</h3>
           <div className="mt-4 space-y-3">
             {overview.content.users.map((user) => (
-              <article key={String(user.id)} className="flex flex-col gap-3 rounded-2xl border border-[#dcede9] bg-[#f7fbf9] p-4 md:flex-row md:items-center md:justify-between">
+              <article key={String(user.id)} className="flex flex-col gap-3 rounded-2xl border border-[#d8ebe6] bg-[#f6fbf9] p-4 md:flex-row md:items-center md:justify-between">
                 <div>
                   <div className="font-black text-brand-deep-slate">{asText(user, 'name')}</div>
                   <div className="text-xs text-brand-deep-slate/55">{asText(user, 'email')}</div>

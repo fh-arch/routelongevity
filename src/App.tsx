@@ -201,12 +201,12 @@ export default function App() {
       <header className="flex lg:hidden items-center justify-between gap-2 px-3 sm:px-5 py-3 sm:py-4 glass-surface-strong border-x-0 border-t-0 rounded-none shrink-0 z-40">
         <button
           onClick={() => setActiveTab('explore')}
-          className="h-11 w-[126px] sm:h-12 sm:w-[154px] shrink-0 cursor-pointer rounded-xl bg-white/45 px-2 py-1 sm:px-2.5 shadow-sm backdrop-blur-md"
+          className="h-12 w-[150px] sm:h-14 sm:w-[184px] shrink-0 cursor-pointer px-0 py-0 text-left"
         >
           <img
             src="/route-longevity-logo.png"
             alt={t('routeLongevity')}
-            className="h-full w-full object-contain scale-[1.08]"
+            className="h-full w-full object-contain object-left"
           />
         </button>
 
@@ -233,12 +233,12 @@ export default function App() {
       <header className="hidden lg:flex items-center justify-between gap-5 px-7 py-4 glass-surface-strong border-x-0 border-t-0 rounded-none shrink-0 z-40">
         <button
           onClick={() => setActiveTab('explore')}
-          className="h-14 w-[230px] min-w-[230px] rounded-2xl bg-white/45 px-3.5 py-1.5 text-left cursor-pointer shadow-sm shadow-brand-deep-slate/5 backdrop-blur-md"
+          className="h-16 w-[250px] min-w-[250px] px-0 py-0 text-left cursor-pointer"
         >
           <img
             src="/route-longevity-logo.png"
             alt={t('routeLongevity')}
-            className="h-full w-full object-contain scale-[1.08]"
+            className="h-full w-full object-contain object-left"
           />
         </button>
 
@@ -458,7 +458,7 @@ export default function App() {
       </main>
 
       {/* Mobile Sticky Bottom Navigation */}
-      <nav className="flex lg:hidden bg-white border-t border-[#dcede9]/45 py-2 px-1 items-center justify-around shrink-0 z-40 shadow-xl fixed bottom-0 left-0 right-0">
+      <nav className="flex lg:hidden bg-white border-t border-[#d8ebe6]/45 py-2 px-1 items-center justify-around shrink-0 z-40 shadow-xl fixed bottom-0 left-0 right-0">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;
@@ -467,13 +467,13 @@ export default function App() {
               key={item.id}
               onClick={() => setActiveTab(item.id)}
               className={`flex flex-col items-center justify-center py-1 px-3.5 rounded-xl transition-all relative cursor-pointer ${
-                isActive ? 'text-[#007c73]' : 'text-[#062c2b]/55'
+                isActive ? 'text-[#086058]' : 'text-[#042f2c]/55'
               }`}
             >
               <div className="relative">
                 <Icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5px]' : 'stroke-[1.5]'}`} />
                 {item.badge !== undefined && (
-                  <span className="absolute -top-1.5 -right-2.5 bg-[#0ea37f] text-white text-[8px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center border border-white">
+                  <span className="absolute -top-1.5 -right-2.5 bg-[#0e655c] text-white text-[8px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center border border-white">
                     {item.badge}
                   </span>
                 )}

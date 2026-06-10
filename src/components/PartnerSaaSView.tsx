@@ -158,7 +158,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
   };
 
   const statusPill = (status: unknown) => (
-    <span className="rounded-full bg-[#F1F7EA] px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#007c73]">
+    <span className="rounded-full bg-[#F1F7EA] px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[#086058]">
       {typeof status === 'string' ? status : 'new'}
     </span>
   );
@@ -172,7 +172,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
     allowedStatuses: string[],
   ) => (
     <section className="rounded-3xl border border-brand-warm-sand/45 bg-white p-5 shadow-sm">
-      <div className="flex items-center justify-between gap-3 border-b border-[#dcede9]/70 pb-3">
+      <div className="flex items-center justify-between gap-3 border-b border-[#d8ebe6]/70 pb-3">
         <h3 className="text-sm font-black text-brand-deep-slate">{title}</h3>
         <span className="text-[10px] font-black text-brand-deep-slate/45">{items.length} items</span>
       </div>
@@ -180,7 +180,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
         {items.length === 0 ? (
           <p className="text-xs text-brand-deep-slate/55">{language === 'tr' ? 'Henüz kayıt yok.' : 'No records yet.'}</p>
         ) : items.map((item) => (
-          <article key={String(item.id)} className="rounded-2xl border border-[#dcede9]/70 bg-[#f7fbf9] p-4">
+          <article key={String(item.id)} className="rounded-2xl border border-[#d8ebe6]/70 bg-[#f6fbf9] p-4">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">
                 <div className="font-black text-brand-deep-slate text-sm truncate">{getText(item, primaryKey)}</div>
@@ -207,7 +207,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
 
   if (authSession?.role === 'user') {
     return (
-      <div className="flex-1 overflow-y-auto bg-[#f7fbf9] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
+      <div className="flex-1 overflow-y-auto bg-[#f6fbf9] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
         <section className="rounded-3xl bg-brand-deep-slate p-6 text-white shadow-sm">
           <span className="text-[10px] uppercase font-extrabold tracking-widest text-brand-turquoise bg-brand-turquoise/10 px-2.5 py-1 rounded">
             {language === 'tr' ? 'Profil' : 'Profile'}
@@ -274,12 +274,12 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
   }
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#f7fbf9] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
+    <div className="flex-1 overflow-y-auto bg-[#f6fbf9] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8 animate-in fade-in duration-300">
       
       {/* Upper Mode Details */}
       <div className="flex flex-col sm:flex-row justify-between items-center bg-white p-4 rounded-2xl border border-brand-warm-sand/50 shadow-sm gap-4">
         <div className="flex items-center gap-2">
-          <Building className="w-5 h-5 text-[#062c2b]" />
+          <Building className="w-5 h-5 text-[#042f2c]" />
           <span className="font-bold text-xs text-brand-deep-slate uppercase tracking-wider">
             {language === 'tr' ? 'B2B Ortak Yönetim Portalı' : 'B2B Provider Management Portal'}
           </span>
@@ -348,7 +348,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                   placeholder={language === 'tr' ? 'Tesis veya marka adı' : 'Venue or brand name'}
                   value={listingForm.venueName}
                   onChange={(event) => setListingForm((prev) => ({ ...prev, venueName: event.target.value }))}
-                  className="w-full text-sm p-3 bg-[#f7fbf9] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
+                  className="w-full text-sm p-3 bg-[#f6fbf9] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
                 />
               )}
               <div className="relative">
@@ -358,7 +358,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                   placeholder={language === 'tr' ? 'E-posta adresi' : 'Email address'}
                   value={accessMode === 'listing' ? listingForm.email : undefined}
                   onChange={accessMode === 'listing' ? ((event) => setListingForm((prev) => ({ ...prev, email: event.target.value }))) : undefined}
-                  className="w-full text-sm pl-10 pr-3 py-3 bg-[#f7fbf9] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
+                  className="w-full text-sm pl-10 pr-3 py-3 bg-[#f6fbf9] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
                 />
               </div>
               {accessMode !== 'listing' ? (
@@ -367,14 +367,14 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                   <input
                     type="password"
                     placeholder={language === 'tr' ? 'Şifre' : 'Password'}
-                    className="w-full text-sm pl-10 pr-3 py-3 bg-[#f7fbf9] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
+                    className="w-full text-sm pl-10 pr-3 py-3 bg-[#f6fbf9] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
                   />
                 </div>
               ) : (
                 <select
                   value={listingForm.categoryId}
                   onChange={(event) => setListingForm((prev) => ({ ...prev, categoryId: event.target.value }))}
-                  className="w-full text-sm p-3 bg-[#f7fbf9] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
+                  className="w-full text-sm p-3 bg-[#f6fbf9] border border-brand-warm-sand/70 rounded-xl focus:outline-none focus:border-brand-med-teal"
                 >
                   <option value="">{language === 'tr' ? 'Kategori seçin' : 'Select category'}</option>
                   <option value="thermal-spa">{language === 'tr' ? 'Kaplıca ve spa' : 'Thermal & spa'}</option>
@@ -403,7 +403,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                 disabled={isListingSubmitting}
                 className={`w-full py-3 rounded-xl text-white font-extrabold text-sm transition-colors cursor-pointer ${
                   listingSubmitted && accessMode === 'listing'
-                    ? 'bg-[#8ed7c2]'
+                    ? 'bg-[#79c9b8]'
                     : 'bg-brand-deep-slate hover:bg-brand-med-teal'
                 }`}
               >
@@ -426,7 +426,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                 </button>
               )}
               {authSession && (
-                <div className="rounded-xl bg-[#8ed7c2]/10 border border-[#8ed7c2]/25 px-3 py-2 text-xs">
+                <div className="rounded-xl bg-[#79c9b8]/10 border border-[#79c9b8]/25 px-3 py-2 text-xs">
                   <span className="text-brand-deep-slate/55 font-semibold">
                     {language === 'tr' ? 'Aktif oturum:' : 'Signed in as:'}
                   </span>
@@ -472,7 +472,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                 const partner = PARTNERS_DATA.find(p => p.id === e.target.value);
                 if (partner) setTier(partner.licenseType);
               }}
-              className="w-full text-xs font-bold bg-[#f7fbf9] border border-brand-warm-sand rounded-xl px-3 py-2.5 text-brand-deep-slate focus:outline-none cursor-pointer"
+              className="w-full text-xs font-bold bg-[#f6fbf9] border border-brand-warm-sand rounded-xl px-3 py-2.5 text-brand-deep-slate focus:outline-none cursor-pointer"
             >
               {PARTNERS_DATA.map(p => (
                 <option key={p.id} value={p.id}>
@@ -513,7 +513,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
               </div>
 
               {/* Map Clicks */}
-              <div className="bg-white border border-[#dcede9]/50 p-5 rounded-2xl shadow-sm space-y-3">
+              <div className="bg-white border border-[#d8ebe6]/50 p-5 rounded-2xl shadow-sm space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-bold text-brand-deep-slate/50 uppercase">{t('clicksMetric')}</span>
                   <div className="p-2 bg-brand-copper/10 text-brand-copper rounded-lg">
@@ -534,10 +534,10 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
               </div>
 
               {/* Direct Leads Generated */}
-              <div className="bg-white border border-[#dcede9]/50 p-5 rounded-2xl shadow-sm space-y-3">
+              <div className="bg-white border border-[#d8ebe6]/50 p-5 rounded-2xl shadow-sm space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-xs font-bold text-brand-deep-slate/50 uppercase">{t('leadsMetric')}</span>
-                  <div className="p-2 bg-[#8ed7c2]/15 text-[#8ed7c2] rounded-lg">
+                  <div className="p-2 bg-[#79c9b8]/15 text-[#79c9b8] rounded-lg">
                     <PhoneCall className="w-4 h-4" />
                   </div>
                 </div>
@@ -557,7 +557,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
             </div>
 
             {/* Traffic Trends SVG Chart (fully responsive) */}
-            <div className="bg-white border border-[#dcede9]/45 p-6 rounded-3xl shadow-sm space-y-4">
+            <div className="bg-white border border-[#d8ebe6]/45 p-6 rounded-3xl shadow-sm space-y-4">
               <div className="flex justify-between items-center pb-2">
                 <div>
                   <h3 className="text-sm font-bold text-brand-deep-slate uppercase tracking-wider">
@@ -567,7 +567,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                     {language === 'tr' ? 'Son 6 aya ait harita üzeri toplam görüntülenme istatistiği' : 'Historical map display views across past 6 months'}
                   </p>
                 </div>
-                <span className="text-xs font-bold text-brand-deep-slate bg-[#f7fbf9] border border-brand-warm-sand px-3 py-1 rounded-lg flex items-center gap-1">
+                <span className="text-xs font-bold text-brand-deep-slate bg-[#f6fbf9] border border-brand-warm-sand px-3 py-1 rounded-lg flex items-center gap-1">
                   <TrendingUp className="w-3.5 h-3.5 text-brand-turquoise" />
                   <span>{language === 'tr' ? '6 Aylık Özet' : '6-Month Summary'}</span>
                 </span>
@@ -577,14 +577,14 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
               <div className="relative pt-4 pl-4 pr-4">
                 <svg className="w-full h-32 overflow-visible" viewBox="0 0 500 120" preserveAspectRatio="none">
                   {/* Grid Lines */}
-                  <line x1="0" y1="10" x2="500" y2="10" stroke="#f7fbf9" strokeWidth="1" />
-                  <line x1="0" y1="60" x2="500" y2="60" stroke="#f7fbf9" strokeWidth="1" />
-                  <line x1="0" y1="110" x2="500" y2="110" stroke="#f7fbf9" strokeWidth="1" />
+                  <line x1="0" y1="10" x2="500" y2="10" stroke="#f6fbf9" strokeWidth="1" />
+                  <line x1="0" y1="60" x2="500" y2="60" stroke="#f6fbf9" strokeWidth="1" />
+                  <line x1="0" y1="110" x2="500" y2="110" stroke="#f6fbf9" strokeWidth="1" />
 
                   <defs>
                     <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#2bc0a6" stopOpacity="0.25" />
-                      <stop offset="100%" stopColor="#2bc0a6" stopOpacity="0.01" />
+                      <stop offset="0%" stopColor="#0e7a70" stopOpacity="0.25" />
+                      <stop offset="100%" stopColor="#0e7a70" stopOpacity="0.01" />
                     </linearGradient>
                   </defs>
 
@@ -598,7 +598,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                   <path
                     d={generateChartPath(currentPartner.analytics.monthlyTrafficTrend)}
                     fill="none"
-                    stroke="#2bc0a6"
+                    stroke="#0e7a70"
                     strokeWidth="3.5"
                     strokeLinecap="round"
                   />
@@ -611,8 +611,8 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                     const y = 120 - ((val - min) / (max - min)) * (120 - 20) - 10;
                     return (
                       <g key={idx}>
-                        <circle cx={x} cy={y} r="5" fill="#062c2b" stroke="#f7fbf9" strokeWidth="1.5" />
-                        <text x={x} y={y - 10} textAnchor="middle" fontSize="9" fontWeight="bold" fill="#062c2b" fontFamily="monospace">
+                        <circle cx={x} cy={y} r="5" fill="#042f2c" stroke="#f6fbf9" strokeWidth="1.5" />
+                        <text x={x} y={y - 10} textAnchor="middle" fontSize="9" fontWeight="bold" fill="#042f2c" fontFamily="monospace">
                           {tier === 'Premium' ? Math.round(val * 1.5) : val}
                         </text>
                       </g>
@@ -621,7 +621,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                 </svg>
                 
                 {/* Chart X axis text */}
-                <div className="flex justify-between items-center text-[10px] text-brand-deep-slate/40 font-mono mt-3.5 pt-1 border-t border-[#f7fbf9]">
+                <div className="flex justify-between items-center text-[10px] text-brand-deep-slate/40 font-mono mt-3.5 pt-1 border-t border-[#f6fbf9]">
                   {trendMonths.map(month => (
                     <span key={month}>{month}</span>
                   ))}
@@ -653,7 +653,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
               )}
 
               <div className="space-y-4">
-                <div className="flex items-center gap-1.5 pb-2 border-b border-[#f7fbf9]">
+                <div className="flex items-center gap-1.5 pb-2 border-b border-[#f6fbf9]">
                   <Award className="w-5 h-5 text-brand-copper" />
                   <span className="text-xs font-extrabold text-brand-deep-slate uppercase tracking-wider">
                     {language === 'tr' ? 'Dinamik Lisans Portalı' : 'Dynamic License Portal'}
@@ -670,7 +670,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                           {language === 'tr' ? 'Aktif' : 'Active'}
                         </span>
                       </div>
-                      <p className="text-[10px] text-[#0ea37f]/80 mt-1.5 leading-relaxed font-serif">
+                      <p className="text-[10px] text-[#0e655c]/80 mt-1.5 leading-relaxed font-serif">
                         {language === 'tr' 
                           ? 'Markanız, harita üzerinde yayılan dalga animasyonlu özel pin yerleşimi ve aramalarda üstün öncelik ile öne çıkar.'
                           : 'Your business stands out globally with a custom glowing map pin, top search rating priority, and direct phone link.'}
@@ -719,7 +719,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                       className={`py-2 px-3 text-[11px] font-bold rounded-xl border transition-all cursor-pointer ${
                         tier === 'Standard'
                           ? 'bg-zinc-100 border-zinc-200 text-zinc-400'
-                          : 'bg-white border-brand-warm-sand hover:bg-[#f7fbf9] text-brand-deep-slate'
+                          : 'bg-white border-brand-warm-sand hover:bg-[#f6fbf9] text-brand-deep-slate'
                       }`}
                     >
                       {language === 'tr' ? 'Standart ($1.200)' : 'Standard ($1,200)'}

@@ -31,7 +31,7 @@ export default function BlogPage({ onOpenBlog, onOpenEvents }: BlogPageProps) {
   }, [language]);
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#f7fbf9] px-4 py-5 md:p-8 max-w-7xl mx-auto w-full space-y-8">
+    <div className="flex-1 overflow-y-auto bg-[#f6fbf9] px-4 py-5 md:p-8 max-w-7xl mx-auto w-full space-y-8">
       <section className="rounded-3xl bg-brand-deep-slate text-white p-6 md:p-8 shadow-sm">
         <div className="flex items-center gap-2 text-brand-med-teal">
           <BookOpen className="h-5 w-5" />
@@ -77,7 +77,7 @@ export default function BlogPage({ onOpenBlog, onOpenEvents }: BlogPageProps) {
               <div className="mt-6 whitespace-pre-line text-sm leading-8 text-brand-deep-slate/76">{selectedPost.content}</div>
               <div className="mt-6 flex flex-wrap gap-2">
                 {selectedPost.tags.map((tag) => (
-                  <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-[#F1F7EA] px-3 py-1 text-[11px] font-bold text-[#007c73]">
+                  <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-[#F1F7EA] px-3 py-1 text-[11px] font-bold text-[#086058]">
                     <Tag className="h-3 w-3" />
                     {tag}
                   </span>

@@ -511,7 +511,7 @@ export default function ExploreView({
       <div className="glass-surface-strong rounded-3xl p-5 md:p-6 space-y-3 relative overflow-hidden">
         
         <div className="relative">
-          <label htmlFor="explore-search" className="block text-xs font-bold text-[#062c2b] uppercase tracking-wider mb-2 font-sans select-none">
+          <label htmlFor="explore-search" className="block text-xs font-bold text-[#042f2c] uppercase tracking-wider mb-2 font-sans select-none">
             {t('exploreSearchLabel')}
           </label>
           <div className="relative">
@@ -679,7 +679,7 @@ export default function ExploreView({
                         <span className="text-[10px] uppercase font-bold text-brand-med-teal bg-brand-turquoise/12 px-2 py-0.5 rounded">
                           {translateCategory(p.category, p.categoryLabel)}
                         </span>
-                        <div className="flex items-center gap-1 bg-[#f7fbf9] px-2 py-0.5 rounded-lg border border-brand-warm-sand/30">
+                        <div className="flex items-center gap-1 bg-[#f6fbf9] px-2 py-0.5 rounded-lg border border-brand-warm-sand/30">
                           <Star className="w-3 h-3 text-brand-med-teal fill-brand-med-teal" />
                           <span className="text-xs font-bold text-brand-deep-slate">{p.rating}</span>
                         </div>
@@ -700,7 +700,7 @@ export default function ExploreView({
                         <span className="text-[10px] text-brand-deep-slate/40 uppercase block font-semibold">
                           {t('specialtyFocus')}
                         </span>
-                        <span className="text-xs font-bold text-[#062c2b] font-mono block truncate">
+                        <span className="text-xs font-bold text-[#042f2c] font-mono block truncate">
                           {translatePartner(p.id, 'specialty', p.specialty)}
                         </span>
                       </div>

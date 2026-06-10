@@ -28,15 +28,15 @@ export default function Sidebar({ activeTab, onTabChange, favoritesCount }: Side
             <div className="w-10 h-10 rounded-xl bg-brand-deep-slate flex items-center justify-center shadow-md shadow-brand-deep-slate/10 shrink-0">
               {/* Minimalist leaf pin SVG logo */}
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="#f7fbf9" />
-                <path d="M12 6.5C13 5.5 14.5 5 16 5.5" stroke="#2bc0a6" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2ZM12 11.5C10.62 11.5 9.5 10.38 9.5 9C9.5 7.62 10.62 6.5 12 6.5C13.38 6.5 14.5 7.62 14.5 9C14.5 10.38 13.38 11.5 12 11.5Z" fill="#f6fbf9" />
+                <path d="M12 6.5C13 5.5 14.5 5 16 5.5" stroke="#0e7a70" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
             </div>
             <div>
-              <span className="font-sans font-extrabold text-[#062c2b] tracking-tight text-lg block leading-tight">
+              <span className="font-sans font-extrabold text-[#042f2c] tracking-tight text-lg block leading-tight">
                 ROUTE
               </span>
-              <span className="font-sans font-medium text-[#8ed7c2] text-xs tracking-[0.2em] block uppercase -mt-0.5">
+              <span className="font-sans font-medium text-[#79c9b8] text-xs tracking-[0.2em] block uppercase -mt-0.5">
                 Longevity
               </span>
             </div>
@@ -84,7 +84,7 @@ export default function Sidebar({ activeTab, onTabChange, favoritesCount }: Side
       </nav>
 
       {/* B2B Promo Banner in Sidebar */}
-      <div className="p-4 mx-4 mb-4 rounded-xl bg-gradient-to-tr from-[#f7fbf9] to-white border border-brand-warm-sand/50 shadow-sm">
+      <div className="p-4 mx-4 mb-4 rounded-xl bg-gradient-to-tr from-[#f6fbf9] to-white border border-brand-warm-sand/50 shadow-sm">
         <div className="flex items-center gap-1.5 mb-1 bg-brand-turquoise/10 text-brand-med-teal w-fit px-1.5 py-0.5 rounded text-[9px] font-bold">
           <ShieldCheck className="w-3" />
           <span>{t('b2bPartner')}</span>

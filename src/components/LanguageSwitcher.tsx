@@ -33,7 +33,7 @@ export default function LanguageSwitcher() {
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-brand-warm-sand/55 hover:border-brand-deep-slate/30 text-xs font-bold text-brand-deep-slate bg-white shadow-sm hover:bg-brand-warm-sand/10 transition-all cursor-pointer"
         id="language-switcher-btn"
       >
-        <Globe className="w-3.5 h-3.5 text-[#007c73]" />
+        <Globe className="w-3.5 h-3.5 text-[#086058]" />
         <span className="font-sans font-extrabold tracking-wide text-brand-deep-slate select-none">
           {currentLanguage.code.toUpperCase()}
         </span>
@@ -49,7 +49,7 @@ export default function LanguageSwitcher() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-1.5 w-32 bg-white rounded-xl border border-[#dcede9]/60 shadow-xl p-1 font-sans text-xs flex flex-col gap-0.5 overflow-hidden"
+            className="absolute right-0 mt-1.5 w-32 bg-white rounded-xl border border-[#d8ebe6]/60 shadow-xl p-1 font-sans text-xs flex flex-col gap-0.5 overflow-hidden"
             id="language-switcher-dropdown"
           >
             {languages.map((lang) => {
@@ -63,8 +63,8 @@ export default function LanguageSwitcher() {
                   }}
                   className={`w-full text-left px-2.5 py-2 rounded-lg font-bold flex items-center justify-between cursor-pointer transition-all ${
                     isSelected
-                      ? 'bg-[#062c2b] text-[#f7fbf9]'
-                      : 'text-[#062c2b] hover:bg-[#dcede9]/20'
+                      ? 'bg-[#042f2c] text-[#f6fbf9]'
+                      : 'text-[#042f2c] hover:bg-[#d8ebe6]/20'
                   }`}
                 >
                   <div className="flex items-center gap-2">
@@ -72,7 +72,7 @@ export default function LanguageSwitcher() {
                     <span className="font-sans font-extrabold">{lang.label}</span>
                   </div>
                   {isSelected && (
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#2bc0a6]" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#0e7a70]" />
                   )}
                 </button>
               );
