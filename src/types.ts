@@ -52,3 +52,37 @@ export interface RouteJourney {
   imageUrl: string;
   tags: string[];
 }
+
+export interface RouteSuggestion {
+  listingId: string;
+  externalId: string | null;
+  name: string;
+  categoryId: string;
+  category?: string;
+  city: string | null;
+  country: string | null;
+  reason: string;
+  durationDays?: number | null;
+  priceRange?: string | null;
+  rating?: number | null;
+  outcomeScore?: number | null;
+}
+
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'agent';
+  type: 'text' | 'route_suggestion' | 'loading';
+  content: string;
+  suggestions?: RouteSuggestion[];
+  timestamp: string;
+}
+
+export interface HealthProfile {
+  goals: string[];
+  budgetRange: 'economy' | 'premium' | 'luxury';
+  travelDays: number;
+  preferredRegions: string[];
+  biomarkers?: Record<string, unknown>;
+  createdAt?: string;
+  updatedAt?: string;
+}

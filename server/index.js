@@ -21,6 +21,7 @@ import {
   verifyPassword,
 } from './auth.js';
 import { query } from './db.js';
+import agentRouter from './routes/agent.js';
 
 const app = express();
 const port = Number(process.env.PORT || 4000);
@@ -539,6 +540,8 @@ app.get('/api/profile', requireAuth, async (req, res, next) => {
     return next(error);
   }
 });
+
+app.use('/api/agent', agentRouter);
 
 app.get('/api/admin/overview', requireAuth, requireAdmin, async (req, res, next) => {
   try {

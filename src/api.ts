@@ -1,5 +1,5 @@
 import type { AuthRole, AuthSession } from './components/AuthModal';
-import type { RouteJourney } from './types';
+import type { ChatMessage, HealthProfile, RouteJourney, RouteSuggestion } from './types';
 import type { BlogPost, LongevityEvent } from './components/BlogEventsModal';
 
 const API_BASE = import.meta.env.VITE_API_BASE || '';
@@ -124,6 +124,19 @@ export interface AdminEventInput {
   sortOrder?: number;
 }
 
+export interface AgentChatInput {
+  message: string;
+  sessionId: string;
+  language?: 'en' | 'tr';
+}
+
+export interface AgentChatResponse {
+  reply: string;
+  suggestions: RouteSuggestion[];
+  sessionId: string;
+  message?: ChatMessage;
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
     ...options,
@@ -186,6 +199,38 @@ export async function signout() {
 
 export async function getProfile() {
   return request<UserProfileSummary>('/api/profile');
+}
+
+export async function getAgentProfile() {
+  return request<{ profile: HealthProfile | null }>('/api/agent/profile');
+}
+
+export async function saveAgentProfile(input: HealthProfile) {
+  return request<{ profile: HealthProfile }>('/api/agent/profile', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function sendAgentMessage(input: AgentChatInput) {
+  return request<AgentChatResponse>('/api/agent/chat', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function submitJourneyOutcome(input: {
+  listingId?: string;
+  listingExternalId?: string;
+  visitedAt: string;
+  selfReportedScore: number;
+  notes?: string;
+  biomarkerChange?: Record<string, unknown>;
+}) {
+  return request<{ outcome: unknown }>('/api/agent/outcomes', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
 }
 
 export async function getAdminOverview() {
