@@ -50,7 +50,6 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         }`}
       >
         <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-white/72 via-white/22 to-brand-turquoise/12 pointer-events-none" />
-        <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent" />
         
         {/* Route Longevity Brand */}
         <div 
@@ -82,14 +81,6 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
         >
           We’re building the first <span className="text-brand-med-teal">agentic AI for longevity</span>
         </h1>
-
-        {/* Dynamic Line Separator */}
-        <div 
-          className="relative h-[2px] bg-gradient-to-r from-transparent via-brand-olive-sage to-transparent my-4 transition-all duration-1000 delay-500 ease-out"
-          style={{ 
-            width: stage === 'enter' ? '0%' : '280px' 
-          }}
-        />
 
         <p 
           className={`relative text-brand-deep-slate/72 text-sm md:text-base max-w-xl leading-relaxed transition-all duration-1200 delay-700 transform ${

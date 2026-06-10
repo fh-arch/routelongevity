@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, Calendar, Mail, ArrowRight, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { BookOpen, Calendar, Mail, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { submitContactMessage } from '../api';
 
@@ -65,10 +65,6 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
             {t('footerDesc')}
           </p>
 
-          <div className="flex items-center gap-2 text-[10px] text-[#0e7a70] uppercase font-bold tracking-widest bg-white/5 py-1 px-2.5 rounded w-fit border border-white/10">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>{t('scienceDatabase')}</span>
-          </div>
         </div>
 
         {/* Middle Column: Resource Sections (Blog & Events Highlights) */}
