@@ -57,7 +57,7 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
         <div className="lg:col-span-5 space-y-4">
           <div className="h-20 w-[210px]">
             <img
-              src="/route-longevity-logo.png"
+              src="/route-longevity-logo-reverse.png"
               alt={t('routeLongevity')}
               className="h-full w-full object-contain object-left"
             />

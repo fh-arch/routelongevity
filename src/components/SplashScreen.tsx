@@ -56,7 +56,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
           <img
             src="/route-longevity-logo.png"
             alt="Route Longevity"
-            className="w-full h-auto object-contain brightness-0"
+            className="w-full h-auto object-contain"
           />
         </div>
 

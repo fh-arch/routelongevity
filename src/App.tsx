@@ -206,7 +206,7 @@ export default function App() {
           <img
             src="/route-longevity-logo.png"
             alt={t('routeLongevity')}
-            className="h-full w-full object-contain brightness-0 scale-[1.15]"
+            className="h-full w-full object-contain scale-[1.08]"
           />
         </button>
 
@@ -238,7 +238,7 @@ export default function App() {
           <img
             src="/route-longevity-logo.png"
             alt={t('routeLongevity')}
-            className="h-full w-full object-contain brightness-0 scale-[1.15]"
+            className="h-full w-full object-contain scale-[1.08]"
           />
         </button>
 
