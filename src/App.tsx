@@ -183,7 +183,7 @@ export default function App() {
   };
 
   const navItems = [
-    { id: 'explore' as ActiveTab, label: t('explore'), icon: Compass },
+    { id: 'explore' as ActiveTab, label: language === 'tr' ? 'Keşfet' : 'Discover', icon: Compass },
     { id: 'map' as ActiveTab, label: t('map'), icon: MapIcon },
     { id: 'experiences' as ActiveTab, label: t('experiences'), icon: Activity },
     { id: 'favorites' as ActiveTab, label: t('favorites'), icon: Heart, badge: (favorites.length + savedRouteIds.length) > 0 ? (favorites.length + savedRouteIds.length) : undefined },
@@ -221,12 +221,12 @@ export default function App() {
         {/* Quick Gazette Dialog Actions & Switcher */}
         <div className="flex items-center gap-1 sm:gap-1.5 min-w-0">
           <LanguageSwitcher />
-          <button 
+          <button
             onClick={openBlog}
             className="p-1.5 px-2 sm:px-3 rounded-xl text-[10px] font-bold text-white bg-brand-med-teal hover:bg-brand-deep-slate transition-all flex items-center gap-1 cursor-pointer"
           >
             <BookOpen className="w-3.5 h-3.5" />
-            <span>{t('blog')}</span>
+            <span>{language === 'tr' ? 'Journal' : 'Journal'}</span>
           </button>
           <button 
             onClick={openEvents}
@@ -258,7 +258,7 @@ export default function App() {
               <button
                 key={item.id}
                 onClick={() => setActiveTab(item.id)}
-                className={`relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              className={`relative flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   isActive
                     ? 'bg-brand-deep-slate text-white shadow-sm'
                     : 'text-brand-deep-slate/62 hover:text-brand-deep-slate hover:bg-white/60'
@@ -281,8 +281,8 @@ export default function App() {
             onClick={openBlog}
             className="px-3 py-2 rounded-xl text-xs font-bold text-brand-deep-slate hover:bg-white/50 transition-colors flex items-center gap-1.5 cursor-pointer"
           >
-            <BookOpen className="w-4 h-4 text-brand-med-teal" />
-            <span>{t('blog')}</span>
+            <BookOpen className="w-4 h-4 text-brand-copper" />
+            <span>{language === 'tr' ? 'Journal' : 'Journal'}</span>
           </button>
           <button
             onClick={openEvents}
@@ -308,10 +308,10 @@ export default function App() {
                 openAuth('partner', 'signin');
               }
             }}
-            className="px-3 py-2 rounded-xl text-xs font-bold bg-brand-turquoise/18 text-brand-med-teal hover:bg-brand-turquoise/30 transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="px-3 py-2 rounded-xl text-xs font-bold bg-brand-med-teal/12 text-brand-med-teal hover:bg-brand-med-teal/20 transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <ShieldCheck className="w-4 h-4" />
-            <span>{t('b2bPartner')}</span>
+            <span>{language === 'tr' ? 'Partnerler' : 'Partners'}</span>
           </button>
           {authSession && (
             <button

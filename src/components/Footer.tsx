@@ -9,7 +9,7 @@ interface FooterProps {
 }
 
 export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
@@ -45,8 +45,8 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
   };
 
   return (
-    <footer className="w-full bg-[#042f2c] text-[#f6fbf9] rounded-3xl mt-16 overflow-hidden border border-[#f6fbf9]/10 shadow-2xl relative z-10 animate-in fade-in duration-300">
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.06),transparent_42%,rgba(43,192,166,0.14))] pointer-events-none" />
+    <footer className="w-full bg-brand-deep-slate text-brand-soft-ivory rounded-[32px] mt-16 overflow-hidden border border-white/10 shadow-2xl relative z-10 animate-in fade-in duration-300">
+      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.06),transparent_42%,rgba(21,154,140,0.18))] pointer-events-none" />
 
       {/* Primary Grid */}
       <div className="p-8 md:p-12 grid grid-cols-1 lg:grid-cols-12 gap-10 relative z-10">
@@ -61,33 +61,37 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
             />
           </div>
           
-          <p className="text-xs md:text-sm text-[#f6fbf9]/75 leading-relaxed font-serif max-w-sm">
-            {t('footerDesc')}
+          <p className="text-xs md:text-sm text-brand-soft-ivory/75 leading-relaxed max-w-sm">
+            {language === 'tr'
+              ? 'Route Longevity, doğrulanmış klinikleri, inzivaları, termal deneyimleri ve sağlıklı yaşam destinasyonlarını kişiselleştirilmiş rotalar içinde görünür kılan global longevity platformudur.'
+              : 'Route Longevity is a global longevity route platform connecting verified clinics, retreats, thermal experiences and wellness destinations through personalized route intelligence.'}
           </p>
 
         </div>
 
         {/* Middle Column: Resource Sections (Blog & Events Highlights) */}
         <div className="lg:col-span-4 space-y-5">
-          <p className="text-[10px] tracking-widest font-mono text-[#f6fbf9]/40 uppercase">
-            {t('harnessingHeritage')}
+          <p className="text-[10px] tracking-widest font-mono text-brand-soft-ivory/40 uppercase">
+            {language === 'tr' ? 'Kaynaklar' : 'Resources'}
           </p>
 
           <div className="space-y-3">
             {/* Quick Blog Trigger */}
             <button
               onClick={onOpenBlog}
-              className="w-full text-left p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#0e655c]/55 hover:bg-white/[0.08] transition-all duration-300 flex items-start gap-3.5 group cursor-pointer"
+              className="w-full text-left p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-med-teal/55 hover:bg-white/[0.08] transition-all duration-300 flex items-start gap-3.5 group cursor-pointer"
             >
-              <div className="p-2 bg-[#0e655c]/15 rounded-lg text-[#0e655c]">
+              <div className="p-2 bg-brand-med-teal/15 rounded-lg text-brand-med-teal">
                 <BookOpen className="w-4 h-4" />
               </div>
               <div className="flex-1">
-                <h4 className="text-xs font-bold text-[#f6fbf9] group-hover:text-[#0e655c] transition-colors">
-                  {t('scientificGazette')}
+                <h4 className="text-xs font-bold text-brand-soft-ivory group-hover:text-brand-med-teal transition-colors">
+                  {language === 'tr' ? 'Longevity Journal' : 'Longevity Journal'}
                 </h4>
-                <p className="text-[10px] text-[#f6fbf9]/60 leading-normal mt-0.5">
-                  {t('scientificGazetteDesc')}
+                <p className="text-[10px] text-brand-soft-ivory/60 leading-normal mt-0.5">
+                  {language === 'tr'
+                    ? 'Kanıt odaklı rehberler, destinasyon notları ve rota fikirleri.'
+                    : 'Evidence-informed guides, destination notes and route ideas.'}
                 </p>
               </div>
             </button>
@@ -95,17 +99,19 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
             {/* Quick Events Trigger */}
             <button
               onClick={onOpenEvents}
-              className="w-full text-left p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-[#0e7a70]/55 hover:bg-white/[0.08] transition-all duration-300 flex items-start gap-3.5 group cursor-pointer"
+              className="w-full text-left p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-brand-med-teal/55 hover:bg-white/[0.08] transition-all duration-300 flex items-start gap-3.5 group cursor-pointer"
             >
-              <div className="p-2 bg-[#0e7a70]/15 rounded-lg text-[#0e7a70]">
+              <div className="p-2 bg-brand-med-teal/15 rounded-lg text-brand-med-teal">
                 <Calendar className="w-4 h-4" />
               </div>
               <div className="flex-1">
-                <h4 className="text-xs font-bold text-[#f6fbf9] group-hover:text-[#0e7a70] transition-colors">
-                  {t('workshopsEvents')}
+                <h4 className="text-xs font-bold text-brand-soft-ivory group-hover:text-brand-med-teal transition-colors">
+                  {language === 'tr' ? 'Deneyimler ve Etkinlikler' : 'Experiences & Events'}
                 </h4>
-                <p className="text-[10px] text-[#f6fbf9]/60 leading-normal mt-0.5">
-                  {t('workshopsEventsDesc')}
+                <p className="text-[10px] text-brand-soft-ivory/60 leading-normal mt-0.5">
+                  {language === 'tr'
+                    ? 'Workshoplar, inzivalar ve sezonluk wellness programları.'
+                    : 'Workshops, retreats and seasonal wellness programs.'}
                 </p>
               </div>
             </button>
@@ -114,11 +120,13 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
 
         {/* Right Column: Longevity Gazette Subscription */}
         <div className="lg:col-span-3 space-y-4">
-          <p className="text-[10px] tracking-widest font-mono text-[#f6fbf9]/40 uppercase">
-            {t('longevityGazette')}
+          <p className="text-[10px] tracking-widest font-mono text-brand-soft-ivory/40 uppercase">
+            {language === 'tr' ? 'Bağlantıda Kal' : 'Stay Connected'}
           </p>
-          <p className="text-xs text-[#f6fbf9]/75 font-serif leading-relaxed">
-            {t('gazetteDesc')}
+          <p className="text-xs text-brand-soft-ivory/75 leading-relaxed">
+            {language === 'tr'
+              ? 'Yeni rotalar, partner fırsatları ve bilimsel içerikler için bize ulaşın.'
+              : 'Get new route ideas, partner opportunities and evidence-informed updates.'}
           </p>
 
           {subscribed ? (
@@ -166,7 +174,7 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
                 disabled={isSubmitting}
                 className="w-full py-2.5 rounded-xl bg-[#0e655c] hover:bg-[#0e655c]/90 text-[#f6fbf9] font-semibold text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
               >
-                <span>{isSubmitting ? 'Sending...' : t('joinGazette')}</span>
+              <span>{isSubmitting ? (language === 'tr' ? 'Gönderiliyor...' : 'Sending...') : (language === 'tr' ? 'Mesaj Gönder' : 'Send Message')}</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             </form>
@@ -178,14 +186,14 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
       {/* Underbar Metadata */}
       <div className="px-8 py-5 border-t border-white/5 bg-black/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[10px] text-[#f6fbf9]/40 font-mono tracking-wider relative z-10 w-full">
         <div>
-          <span>© 2026 {t('routeLongevity')} • {t('royalties') || 'TRANSLATED MEDICINE'}</span>
+          <span>© 2026 Route Longevity • {language === 'tr' ? 'Kişiselleştirilmiş longevity rotaları' : 'Personalized longevity routes'}</span>
         </div>
         <div className="flex gap-4">
-          <button onClick={onOpenBlog} className="hover:text-[#0e655c] transition-colors cursor-pointer">{t('journalArticles')}</button>
+          <button onClick={onOpenBlog} className="hover:text-brand-med-teal transition-colors cursor-pointer">{language === 'tr' ? 'Makaleler' : 'Journal'}</button>
           <span>•</span>
-          <button onClick={onOpenEvents} className="hover:text-[#0e7a70] transition-colors cursor-pointer">{t('epigeneticEvents')}</button>
+          <button onClick={onOpenEvents} className="hover:text-brand-med-teal transition-colors cursor-pointer">{language === 'tr' ? 'Etkinlikler' : 'Events'}</button>
           <span>•</span>
-          <span>{t('ancientRoots')}</span>
+          <span>{language === 'tr' ? 'Partner Ağı' : 'Partner Network'}</span>
         </div>
       </div>
     </footer>

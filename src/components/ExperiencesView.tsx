@@ -125,7 +125,7 @@ export default function ExperiencesView({
                 {/* Listing of stops in route */}
                 <div className="space-y-2">
                   <h4 className="text-[10px] uppercase font-bold text-brand-deep-slate/40 tracking-wider">
-                    {language === 'tr' ? `Yol Durakları ve Sağlık Odakları (${participants.length})` : `Journey Stops & Healing Hubs (${participants.length})`}
+                    {language === 'tr' ? `Yol Durakları ve Sağlık Odakları (${participants.length})` : `Journey Stops & Healing Places (${participants.length})`}
                   </h4>
                   <div className="flex flex-wrap gap-3">
                     {participants.map((p: any) => (

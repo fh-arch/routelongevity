@@ -73,7 +73,7 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
         : 'Manage profile, visibility analytics, applications, and license details.'
       : language === 'tr'
         ? 'Favori rotalarınızı, kayıtlı merkezleri ve etkinlik rezervasyonlarınızı saklayın.'
-        : 'Save favorite routes, listed hubs, and event reservations.',
+        : 'Save favorite routes, verified places, and event reservations.',
   };
 
   const handleSubmit = async (event: React.FormEvent) => {

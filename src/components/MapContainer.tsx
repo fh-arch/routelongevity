@@ -414,7 +414,7 @@ export default function MapContainer({
             <Search className="w-4 h-4 text-brand-deep-slate/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder={t('searchPlaceholderMap') || "Search wellness hubs..."}
+              placeholder={t('searchPlaceholderMap') || "Search verified places..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2 bg-white text-sm rounded-xl border border-brand-warm-sand/70 focus:outline-none focus:border-[#086058]/50 transition-colors placeholder:text-brand-deep-slate/30"

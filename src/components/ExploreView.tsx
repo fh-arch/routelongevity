@@ -186,6 +186,37 @@ export default function ExploreView({
     { label: language === 'tr' ? 'Denge' : 'Balance', icon: Scale },
   ];
 
+  const categoryContent: Record<string, { en: { title: string; desc: string }; tr: { title: string; desc: string } }> = {
+    'thermal-spa': {
+      en: { title: 'Thermal & Mineral Waters', desc: 'Mineral bathing, hydrotherapy and recovery destinations.' },
+      tr: { title: 'Termal ve Mineral Sular', desc: 'Mineral banyo, hidroterapi ve toparlanma destinasyonları.' },
+    },
+    hammams: {
+      en: { title: 'Hammams & Ritual Bathing', desc: 'Heritage bathing rituals for circulation, stress and renewal.' },
+      tr: { title: 'Hamamlar ve Ritüel Banyo', desc: 'Dolaşım, stres ve yenilenme için miras ritüelleri.' },
+    },
+    'longevity-clinics': {
+      en: { title: 'Longevity Clinics', desc: 'Diagnostics, preventive programs and physician-led protocols.' },
+      tr: { title: 'Longevity Klinikleri', desc: 'Tanı, önleyici programlar ve hekim liderliğinde protokoller.' },
+    },
+    'retreat-nature': {
+      en: { title: 'Retreats & Nature Recovery', desc: 'Forest, mountain and coastal resets for nervous-system balance.' },
+      tr: { title: 'İnzivalar ve Doğada Toparlanma', desc: 'Sinir sistemi dengesi için orman, dağ ve kıyı kaçışları.' },
+    },
+    'mediterranean-diet': {
+      en: { title: 'Mediterranean Nutrition', desc: 'Olive oil, fermented foods and evidence-informed food routes.' },
+      tr: { title: 'Akdeniz Beslenmesi', desc: 'Zeytinyağı, fermente gıdalar ve bilimsel beslenme rotaları.' },
+    },
+    'traditional-med': {
+      en: { title: 'Traditional Healing', desc: 'Time-tested practices presented with modern safety context.' },
+      tr: { title: 'Geleneksel Şifa', desc: 'Modern güvenlik bağlamıyla sunulan kadim pratikler.' },
+    },
+    'local-producers': {
+      en: { title: 'Olive Routes & Local Producers', desc: 'Terroir, harvest quality and producer-led longevity experiences.' },
+      tr: { title: 'Zeytin Rotaları ve Üreticiler', desc: 'Terroir, hasat kalitesi ve üretici deneyimleri.' },
+    },
+  };
+
   const uiDirectionCards = [
     {
       tag: language === 'tr' ? 'Kıyı Ritüelleri' : 'Coastal Rituals',
@@ -226,29 +257,31 @@ export default function ExploreView({
   return (
     <div className="flex-1 overflow-y-auto px-4 py-5 md:p-8 max-w-7xl mx-auto w-full space-y-8 md:space-y-10">
       {/* Hero Welcome banner */}
-      <div className="relative rounded-[28px] overflow-hidden glass-dark text-brand-soft-ivory p-6 md:p-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-8 items-stretch">
-        <div className="space-y-5 max-w-2xl z-10 self-center">
-          <span className="text-xs font-semibold text-brand-highlight-lime bg-white/10 px-3 py-1.5 rounded-full uppercase tracking-wide border border-white/10">
-            {language === 'tr' ? 'Türkiye’nin Klasik Şifası' : "Türkiye's Ancient Wisdom"}
+      <div className="relative rounded-[32px] overflow-hidden glass-dark text-brand-soft-ivory p-6 md:p-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-8 items-stretch">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_12%,rgba(255,255,255,0.16),transparent_32%),radial-gradient(circle_at_82%_12%,rgba(217,110,95,0.22),transparent_24%)]" />
+        <div className="space-y-5 max-w-3xl z-10 self-center">
+          <span className="text-xs font-semibold text-white bg-white/10 px-3 py-1.5 rounded-full uppercase tracking-wide border border-white/10">
+            {language === 'tr' ? 'Global longevity rota zekası' : 'Global longevity route intelligence'}
           </span>
-          <h1 className="text-3xl md:text-5xl font-extrabold font-sans leading-[1.05] tracking-normal">
-            {language === 'tr' 
-              ? 'Türkiye’nin Kadim Sağlık ve Uzun Yaşam Mirasını Haritalayın' 
-              : "Map Türkiye's Ancient Wellness & Longevity Heritage"}
-          </h1>
-          <p className="text-sm md:text-base text-brand-soft-ivory/78 leading-7 max-w-xl">
+          <h1 className="text-3xl md:text-6xl font-extrabold font-display leading-[1.03] tracking-normal">
             {language === 'tr'
-              ? 'Tarihi Roma-Osmanlı hamamlarını, mineral bakımından zengin kaplıcaları, uzun yaşam kliniklerini, saf Ege zeytinyağı üreticilerini ve organik beslenme merkezlerini keşfedin. Hücresel yenilenme ve bağışıklık sağlığı için optimize edilmiş şifa rotalarını seçin.'
-              : 'Discover historic Roman-Ottoman hammams, mineral-rich hot springs, longevity clinics, pure Aegean olive producers, and organic dietary centers. Select routes optimized for cellular regeneration and immune health.'}
+              ? 'Sağlık hedefini anlat. AI longevity rotanı oluştursun.'
+              : 'Describe Your Health Goal. AI Builds Your Longevity Route.'}
+          </h1>
+          <p className="text-sm md:text-base text-brand-soft-ivory/82 leading-7 max-w-2xl">
+            {language === 'tr'
+              ? 'Uyku, stres, toparlanma, bağışıklık, metabolizma veya sağlıklı yaşlanma hedefini yaz. Route Longevity verified klinikler, inzivalar, termal kaynaklar, hamamlar, beslenme deneyimleri ve wellness destinasyonları arasında kişiselleştirilmiş bir rota oluşturur.'
+              : 'Tell us what you want to improve — sleep, stress, recovery, immunity, metabolism or healthy aging. Route Longevity creates a personalized route across verified clinics, retreats, thermal springs, hammams, nutrition experiences and wellness destinations.'}
           </p>
           <AgentSearchBar authSession={authSession} onOpenAuth={onOpenAuth} />
-          <div className="grid grid-cols-3 gap-3 max-w-lg">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl">
             {[
-              [PARTNERS_DATA.length, language === 'tr' ? 'doğrulanmış merkez' : 'verified hubs'],
-              [CATEGORIES.length, language === 'tr' ? 'miras kategorisi' : 'heritage categories'],
-              ['4.8', language === 'tr' ? 'ortalama puan' : 'avg rating']
+              [PARTNERS_DATA.length, language === 'tr' ? 'doğrulanmış yer' : 'verified places'],
+              [CATEGORIES.length + 1, language === 'tr' ? 'longevity kategorisi' : 'longevity categories'],
+              ['4.8', language === 'tr' ? 'misafir puanı' : 'guest rating'],
+              ['25+', language === 'tr' ? 'ülke planlandı' : 'countries planned']
             ].map(([value, label]) => (
-              <div key={`${value}-${label}`} className="border border-white/14 bg-white/10 rounded-xl p-3 backdrop-blur-md">
+              <div key={`${value}-${label}`} className="border border-white/14 bg-white/10 rounded-2xl p-3 backdrop-blur-md">
                 <div className="text-xl font-black text-white">{value}</div>
                 <div className="text-[10px] text-white/55 font-semibold leading-tight mt-1">{label}</div>
               </div>
@@ -257,16 +290,16 @@ export default function ExploreView({
           <div className="flex flex-wrap gap-3 pt-2">
             <button
               onClick={() => onTabChange('map')}
-              className="px-5 py-3 bg-brand-turquoise hover:bg-brand-highlight-lime text-brand-deep-slate font-bold text-sm rounded-xl transition-all shadow-md shadow-brand-turquoise/15 flex items-center gap-2 cursor-pointer"
+              className="px-5 py-3 bg-brand-med-teal hover:bg-white text-white hover:text-brand-deep-slate font-bold text-sm rounded-[16px] transition-all shadow-md shadow-brand-turquoise/15 flex items-center gap-2 cursor-pointer"
             >
-              <span>{language === 'tr' ? 'İnteraktif Haritayı Başlat' : 'Launch Interactive Map'}</span>
+              <span>{language === 'tr' ? 'Haritayı Keşfet' : 'Explore the Map'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
             <button
               onClick={() => onTabChange('experiences')}
-              className="px-5 py-3 bg-white/10 hover:bg-white/15 text-white font-semibold text-sm rounded-xl transition-all flex items-center gap-2 border border-white/20 cursor-pointer"
+              className="px-5 py-3 bg-white/10 hover:bg-white/15 text-white font-semibold text-sm rounded-[16px] transition-all flex items-center gap-2 border border-white/20 cursor-pointer"
             >
-              {language === 'tr' ? 'Özel Rotaları Keşfet' : 'Explore Curated Routes'}
+              {language === 'tr' ? 'Deneyim Rotaları' : 'Explore Experiences'}
             </button>
           </div>
         </div>
@@ -280,7 +313,7 @@ export default function ExploreView({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-brand-deep-slate/92 via-brand-deep-slate/20 to-transparent flex flex-col justify-end p-5">
             <p className="text-[10px] font-bold text-brand-highlight-lime uppercase tracking-wide">
-              {leadArticle ? (language === 'tr' ? 'Son bilimsel inceleme' : 'Latest article review') : (language === 'tr' ? 'Bursa termal odağı' : 'Bursa thermal highlight')}
+              {leadArticle ? (language === 'tr' ? 'Longevity Journal' : 'Longevity Journal') : (language === 'tr' ? 'Öne çıkan rota' : 'Featured route')}
             </p>
             <p className="text-xl font-black text-white leading-tight mt-1">
               {leadArticle?.title || (language === 'tr' ? '16. Yüzyıl Termal Kaynakları' : '16th Century Thermal Springs')}
@@ -301,6 +334,40 @@ export default function ExploreView({
       </div>
 
       <section className="glass-surface-strong rounded-[28px] overflow-hidden">
+        <div className="px-5 md:px-8 pt-6 pb-3">
+          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-widest text-brand-med-teal">
+                {language === 'tr' ? 'AI rota akışı' : 'AI route workflow'}
+              </p>
+              <h2 className="mt-1 text-2xl font-extrabold text-brand-deep-slate">
+                {language === 'tr' ? 'AI Longevity Rotanız Nasıl Oluşur?' : 'How Your AI Longevity Route Works'}
+              </h2>
+            </div>
+            <p className="max-w-md text-xs leading-5 text-brand-deep-slate/55">
+              {language === 'tr'
+                ? 'Route Longevity tıbbi tanı sunmaz. Belirttiğiniz hedeflere göre doğrulanmış wellness ve longevity deneyimlerini keşfetmenize yardımcı olur.'
+                : 'Route Longevity does not provide medical diagnosis. It helps users discover verified wellness and longevity experiences based on their stated goals.'}
+            </p>
+          </div>
+          <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-4">
+            {[
+              [language === 'tr' ? 'Hedefini yaz' : 'Describe your goal', language === 'tr' ? 'Uyku, stres, toparlanma veya metabolizma gibi ihtiyacını anlat.' : 'Tell us about sleep, stress, recovery, metabolism or another need.'],
+              [language === 'tr' ? 'AI eşleştirir' : 'AI matches needs', language === 'tr' ? 'Sistem gerçek yerleri kategori, konum ve sağlık odağıyla eşleştirir.' : 'The system matches real places by category, location and health focus.'],
+              [language === 'tr' ? 'Rotanı incele' : 'Review your route', language === 'tr' ? 'Önerilen klinik, termal, inziva ve deneyimleri karşılaştır.' : 'Compare recommended clinics, thermal places, retreats and experiences.'],
+              [language === 'tr' ? 'Kaydet ve geliştir' : 'Save and refine', language === 'tr' ? 'Favorilere ekle, haritada gör ve partnerlerden detay iste.' : 'Save favorites, view on map and request partner details.'],
+            ].map(([title, desc], index) => (
+              <div key={title} className="relative rounded-3xl border border-brand-warm-sand/55 bg-white/78 p-4 shadow-sm">
+                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-2xl bg-brand-olive-sage/70 text-sm font-black text-brand-deep-slate">
+                  {index + 1}
+                </div>
+                <h3 className="text-sm font-black text-brand-deep-slate">{title}</h3>
+                <p className="mt-2 text-xs leading-5 text-brand-deep-slate/58">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="px-5 md:px-8 pt-6">
           <div className="flex items-center gap-4">
             <div className="h-px flex-1 bg-brand-turquoise/35" />
@@ -437,10 +504,10 @@ export default function ExploreView({
             <div>
               <p className="text-[11px] font-bold uppercase tracking-wide text-brand-med-teal flex items-center gap-1.5">
                 <BookOpen className="w-3.5 h-3.5" />
-                {language === 'tr' ? 'Son makaleler' : 'Latest articles'}
+                {language === 'tr' ? 'Longevity Journal' : 'Longevity Journal'}
               </p>
               <h2 className="text-xl font-extrabold text-brand-deep-slate tracking-normal mt-1">
-                {language === 'tr' ? 'Bilimsel incelemeler ve rota notları' : 'Scientific reviews and route notes'}
+                {language === 'tr' ? 'Kanıt odaklı rehberler ve rota fikirleri' : 'Evidence-informed guides and route ideas'}
               </h2>
             </div>
             <button
@@ -471,6 +538,9 @@ export default function ExploreView({
                     <div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-brand-deep-slate/45">
                       <Clock className="w-3 h-3" />
                       {post.readTime}
+                      <span className="ml-1 rounded-full bg-brand-highlight-lime/18 px-2 py-0.5 text-brand-deep-slate/65">
+                        {language === 'tr' ? 'Editoryal' : 'Editorial'}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -485,12 +555,12 @@ export default function ExploreView({
               <Building2 className="w-5 h-5" />
             </div>
             <h2 className="text-xl font-extrabold tracking-normal">
-              {language === 'tr' ? 'Route Longevity’de listelenin' : 'Apply to be listed on Route Longevity'}
+              {language === 'tr' ? 'Kliniğinizi, inzivanızı veya longevity deneyiminizi listeleyin' : 'List Your Clinic, Retreat or Longevity Experience'}
             </h2>
             <p className="text-sm text-white/68 leading-6 mt-2">
               {language === 'tr'
-                ? 'Klinik, kaplıca, üretici veya inziva markanız için doğrulama başvurusu başlatın.'
-                : 'Start verification for your clinic, thermal spa, producer, or retreat brand.'}
+                ? 'Route Longevity’nin doğrulanmış partner ağına katılın ve kişiselleştirilmiş AI rotalarında keşfedilebilir olun.'
+                : 'Join Route Longevity’s verified partner network and become discoverable inside personalized AI-generated routes.'}
             </p>
           </div>
           <button
@@ -501,10 +571,10 @@ export default function ExploreView({
                 onOpenAuth('partner', 'signup');
               }
             }}
-            className="w-full py-3 rounded-xl bg-brand-turquoise text-brand-deep-slate text-sm font-black hover:bg-white transition-colors flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-3 rounded-xl bg-brand-copper text-white text-sm font-black hover:bg-white hover:text-brand-deep-slate transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
             <ClipboardCheck className="w-4 h-4" />
-            <span>{language === 'tr' ? 'Listeleme Başvurusu Yap' : 'Start Listing Application'}</span>
+            <span>{language === 'tr' ? 'Partner Başvurusu Yap' : 'Apply as Partner'}</span>
           </button>
         </section>
       </div>
@@ -553,37 +623,41 @@ export default function ExploreView({
         )}
       </div>
 
-      {/* Heritage Categories Grid */}
+      {/* Longevity Categories Grid */}
       <div className="space-y-4">
         <div className="flex justify-between items-end">
           <div>
             <h2 className="text-2xl font-extrabold text-brand-deep-slate tracking-tight">
-              {t('heritageCategories')}
+              {language === 'tr' ? 'Longevity Kategorileri' : 'Longevity Categories'}
             </h2>
-            <p className="text-xs text-brand-deep-slate/50 font-serif italic">
-              {language === 'tr' ? 'Türkiye’nin tarihi uzun yaşam merkezlerini keşfedin' : "Explore Türkiye's historic longevity clusters"}
+            <p className="text-sm text-brand-deep-slate/58 max-w-2xl mt-1">
+              {language === 'tr'
+                ? 'Kişiselleştirilmiş longevity rotalarının arkasındaki bilimi, ritüelleri ve destinasyonları keşfedin.'
+                : 'Explore the science, rituals and destinations behind personalized longevity routes.'}
             </p>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.key}
               onClick={() => handleCategoryClick(cat.key)}
-              className="glass-surface hover:border-brand-med-teal/45 hover:shadow-lg p-4 rounded-3xl flex flex-col items-center justify-between text-center min-h-[140px] transition-all cursor-pointer group"
+              className="glass-surface hover:border-brand-med-teal/45 hover:shadow-lg p-5 rounded-[24px] flex flex-col items-start text-left min-h-[180px] transition-all cursor-pointer group"
             >
               <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-105"
-                style={{ backgroundColor: `${cat.color}15`, color: cat.color }}
+                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105 bg-brand-olive-sage/70 text-brand-med-teal"
               >
                 <CategoryIcon categoryKey={cat.key} />
               </div>
-              <span className="font-sans font-bold text-xs text-brand-deep-slate flex-1 flex items-center justify-center">
-                {translateCategory(cat.key, cat.label)}
+              <span className="font-display font-extrabold text-base text-brand-deep-slate leading-tight">
+                {categoryContent[cat.key]?.[language].title || translateCategory(cat.key, cat.label)}
               </span>
-              <span className="text-[10px] text-brand-med-teal font-mono mt-2 uppercase font-bold tracking-widest">
-                {language === 'tr' ? 'Keşfet >' : 'Explore >'}
+              <span className="mt-2 text-xs leading-5 text-brand-deep-slate/58">
+                {categoryContent[cat.key]?.[language].desc || cat.label}
+              </span>
+              <span className="text-[11px] text-brand-med-teal mt-auto pt-4 font-black flex items-center gap-1.5">
+                {language === 'tr' ? 'Keşfet' : 'Explore'} <ArrowRight className="w-3.5 h-3.5" />
               </span>
             </button>
           ))}
@@ -596,15 +670,15 @@ export default function ExploreView({
           <div>
             <div className="flex items-center gap-1.5 bg-brand-turquoise/14 text-brand-med-teal px-2.5 py-1 rounded w-fit text-[10px] font-bold uppercase mb-1">
               <ShieldCheck className="w-3.5 h-3.5" />
-              <span>{searchQuery ? t('realtimeSearchActive') : t('premiumLicensesActive')}</span>
+              <span>{searchQuery ? (language === 'tr' ? 'Canlı keşif' : 'Live Discovery') : (language === 'tr' ? 'Doğrulanmış' : 'Verified Network')}</span>
             </div>
             <h2 className="text-2xl font-extrabold text-brand-deep-slate tracking-tight font-sans">
-              {searchQuery ? t('searchResults') : t('featuredLongevityHubs')}
+              {searchQuery ? t('searchResults') : (language === 'tr' ? 'Öne Çıkan Longevity Yerleri' : 'Featured Longevity Places')}
             </h2>
             <p className="text-xs text-brand-deep-slate/50 font-serif">
-              {searchQuery 
-                ? (language === 'tr' ? `"${searchQuery}" ifadesiyle eşleşen ${displayPartners.length} şifa merkezi listeleniyor.` : `Displaying ${displayPartners.length} hubs matching "${searchQuery}".`) 
-                : (language === 'tr' ? 'Doğrulanmış klinikler, kaplıcalar ve geleneksel uzun yaşam inzivaları.' : 'Validated medical clinics, mineral reserves, and traditional retreats.')}
+              {searchQuery
+                ? (language === 'tr' ? `"${searchQuery}" ile eşleşen ${displayPartners.length} yer listeleniyor.` : `Displaying ${displayPartners.length} places matching "${searchQuery}".`)
+                : (language === 'tr' ? 'Sağlık hedefleriyle eşleşen doğrulanmış klinikler, inzivalar, termal destinasyonlar ve şifa deneyimleri.' : 'Verified clinics, retreats, thermal destinations and healing experiences matched to health goals.')}
             </p>
           </div>
           {!searchQuery && (
@@ -615,7 +689,7 @@ export default function ExploreView({
               }}
               className="text-xs font-bold text-brand-med-teal hover:text-brand-deep-slate flex items-center gap-1 cursor-pointer self-start"
             >
-              <span>{t('allListingPartners')}</span>
+              <span>{language === 'tr' ? 'Tüm yerleri haritada gör' : 'View all places on map'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
@@ -681,8 +755,8 @@ export default function ExploreView({
                         <span className="text-[10px] uppercase font-bold text-brand-med-teal bg-brand-turquoise/12 px-2 py-0.5 rounded">
                           {translateCategory(p.category, p.categoryLabel)}
                         </span>
-                        <div className="flex items-center gap-1 bg-[#f6fbf9] px-2 py-0.5 rounded-lg border border-brand-warm-sand/30">
-                          <Star className="w-3 h-3 text-brand-med-teal fill-brand-med-teal" />
+                        <div className="flex items-center gap-1 bg-brand-warm-sand/25 px-2 py-0.5 rounded-lg border border-brand-warm-sand/40">
+                          <Star className="w-3 h-3 text-brand-highlight-lime fill-brand-highlight-lime" />
                           <span className="text-xs font-bold text-brand-deep-slate">{p.rating}</span>
                         </div>
                       </div>
@@ -694,13 +768,25 @@ export default function ExploreView({
                       <p className="text-xs text-brand-deep-slate/75 line-clamp-3 leading-relaxed font-serif">
                         {translatePartner(p.id, 'description', p.description)}
                       </p>
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {translatePartner(p.id, 'specialty', p.specialty)
+                          .split(/[,&]/)
+                          .slice(0, 3)
+                          .map((tag) => tag.trim())
+                          .filter(Boolean)
+                          .map((tag) => (
+                            <span key={`${p.id}-${tag}`} className="rounded-full bg-brand-olive-sage/55 px-2 py-1 text-[9px] font-bold text-brand-deep-slate/75">
+                              {tag}
+                            </span>
+                          ))}
+                      </div>
                     </div>
 
                     {/* Pricing action footer */}
                     <div className="border-t border-brand-warm-sand/20 mt-4 pt-4 flex items-center justify-between gap-2">
                       <div className="overflow-hidden">
                         <span className="text-[10px] text-brand-deep-slate/40 uppercase block font-semibold">
-                          {t('specialtyFocus')}
+                          {language === 'tr' ? 'Sağlık odağı' : 'Health focus'}
                         </span>
                         <span className="text-xs font-bold text-[#042f2c] font-mono block truncate">
                           {translatePartner(p.id, 'specialty', p.specialty)}
@@ -709,10 +795,10 @@ export default function ExploreView({
 
                       <button
                         onClick={() => handleViewOnMap(p.id)}
-                        className="px-4 py-2 font-semibold text-xs rounded-xl bg-brand-deep-slate text-brand-soft-ivory hover:bg-brand-med-teal transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+                        className="px-4 py-2 font-semibold text-xs rounded-xl bg-brand-copper text-white hover:bg-brand-med-teal transition-colors flex items-center gap-1 cursor-pointer shrink-0"
                       >
-                        <span>{t('showPin')}</span>
-                        <MapPin className="w-3.5 h-3.5 text-brand-turquoise" />
+                        <span>{language === 'tr' ? 'Rota Ekle' : 'Add to Route'}</span>
+                        <MapPin className="w-3.5 h-3.5 text-white" />
                       </button>
                     </div>
                   </div>

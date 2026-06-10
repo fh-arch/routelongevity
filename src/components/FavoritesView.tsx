@@ -84,7 +84,7 @@ export default function FavoritesView({
                 : 'text-brand-deep-slate/60 hover:text-brand-deep-slate hover:bg-brand-warm-sand/20'
             }`}
           >
-            {language === 'tr' ? `Şifa Merkezleri (${savedPartners.length})` : `Healing Hubs (${savedPartners.length})`}
+            {language === 'tr' ? `Şifa Yerleri (${savedPartners.length})` : `Healing Places (${savedPartners.length})`}
           </button>
           
           <button
@@ -101,7 +101,7 @@ export default function FavoritesView({
       </div>
 
       {activeSubTab === 'hubs' ? (
-        /* Saved Healing Hubs Grid Section */
+        /* Saved Healing Places Grid Section */
         savedPartners.length === 0 ? (
           <div className="bg-white border border-brand-warm-sand/40 rounded-3xl p-12 text-center max-w-2xl mx-auto space-y-5 shadow-sm">
             <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto shadow-sm">
@@ -280,7 +280,7 @@ export default function FavoritesView({
                     <div className="border-t border-brand-warm-sand/20 pt-4 flex flex-col sm:flex-row items-center sm:justify-between gap-4">
                       <div className="flex items-center gap-1.5">
                         <span className="text-[9px] font-mono text-brand-deep-slate/40 uppercase tracking-widest bg-zinc-50 border border-zinc-100 rounded-md px-2 py-0.5">
-                          {participants.length} {language === 'tr' ? 'Şifa Durağı' : 'Healing Hubs'}
+                          {participants.length} {language === 'tr' ? 'Şifa Durağı' : 'Healing Places'}
                         </span>
                       </div>
 

@@ -233,7 +233,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
           <>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
               {[
-                { label: language === 'tr' ? 'Favori merkezler' : 'Favorite hubs', value: profile.stats.favoriteListings, icon: Heart },
+                { label: language === 'tr' ? 'Favori yerler' : 'Favorite places', value: profile.stats.favoriteListings, icon: Heart },
                 { label: language === 'tr' ? 'Kayıtlı rotalar' : 'Saved journeys', value: profile.stats.favoriteJourneys, icon: Route },
                 { label: language === 'tr' ? 'Etkinlik kayıtları' : 'Event bookings', value: profile.stats.eventRegistrations, icon: CalendarCheck },
                 { label: language === 'tr' ? 'Başvurular' : 'Applications', value: profile.stats.listingApplications + profile.stats.partnerApplications + profile.stats.adApplications, icon: ClipboardCheck },
