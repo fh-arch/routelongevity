@@ -17,8 +17,8 @@ export interface Partner {
   licenseType: LicenseType;
   annualFee: number;
   specialty: string;
-  phone: string;
-  email: string;
+  phone: string | null;
+  email: string | null;
   address: string;
   website: string | null;
   featured: boolean;

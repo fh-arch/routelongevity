@@ -756,14 +756,18 @@ export default function MapContainer({
                     {translatePartner(selectedPartner.id, 'specialty', selectedPartner.specialty)}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-brand-deep-slate/40" />
-                  <span>{selectedPartner.phone}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Mail className="w-3.5 h-3.5 text-brand-deep-slate/40" />
-                  <span>{selectedPartner.email}</span>
-                </div>
+                {selectedPartner.phone && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="w-3.5 h-3.5 text-brand-deep-slate/40" />
+                    <span>{selectedPartner.phone}</span>
+                  </div>
+                )}
+                {selectedPartner.email && (
+                  <div className="flex items-center gap-2">
+                    <Mail className="w-3.5 h-3.5 text-brand-deep-slate/40" />
+                    <span>{selectedPartner.email}</span>
+                  </div>
+                )}
                 {selectedPartner.website && (
                   <div className="flex items-center gap-2">
                     <Globe className="w-3.5 h-3.5 text-brand-deep-slate/40" />
