@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -69,7 +69,6 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             stage === 'enter' ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'
           }`}
         >
-          <Sparkles className="h-3.5 w-3.5" />
           Agentic longevity intelligence
         </div>
 

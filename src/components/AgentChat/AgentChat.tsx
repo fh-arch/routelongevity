@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight, Bot, Loader2, RotateCcw, Sparkles, X } from 'lucide-react';
+import { ArrowRight, Compass, Loader2, RotateCcw, Route, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useAgent } from '../../context/AgentContext';
 import { useLanguage } from '../../context/LanguageContext';
@@ -68,14 +68,14 @@ export default function AgentChat({ favorites, toggleFavorite, onViewSuggestion 
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-deep-slate text-brand-turquoise">
-                    <Bot className="h-5 w-5" />
+                    <Compass className="h-5 w-5" strokeWidth={1.8} />
                   </div>
                   <div>
                     <p className="text-[10px] font-black uppercase tracking-widest text-brand-med-teal">
-                      {language === 'tr' ? 'Agentic AI rota planlayıcı' : 'Agentic AI route planner'}
+                      {language === 'tr' ? 'Kişisel rota planlayıcı' : 'Personal route planner'}
                     </p>
                     <h2 className="text-lg font-black text-brand-deep-slate">
-                      Route Longevity Agent
+                      Route Longevity Planner
                     </h2>
                   </div>
                 </div>
@@ -103,7 +103,9 @@ export default function AgentChat({ favorites, toggleFavorite, onViewSuggestion 
             <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-5">
               {messages.length === 0 && (
                 <div className="rounded-3xl border border-white/70 bg-white/60 p-5 text-center shadow-sm">
-                  <Sparkles className="mx-auto h-8 w-8 text-brand-med-teal" />
+                  <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-turquoise/14 text-brand-med-teal">
+                    <Route className="h-5 w-5" strokeWidth={1.8} />
+                  </div>
                   <h3 className="mt-3 text-xl font-black text-brand-deep-slate">
                     {language === 'tr' ? 'Rotanı birlikte oluşturalım' : 'Let’s build your route'}
                   </h3>

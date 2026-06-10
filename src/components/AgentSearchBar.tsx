@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Route } from 'lucide-react';
 import { useAgent } from '../context/AgentContext';
 import { useLanguage } from '../context/LanguageContext';
 import { AuthMode, AuthRole, AuthSession } from './AuthModal';
@@ -54,7 +54,7 @@ export default function AgentSearchBar({ authSession, onOpenAuth }: AgentSearchB
           {language === 'tr' ? 'Longevity rotası oluştur' : 'Create a longevity route'}
         </label>
         <div className="flex min-w-0 flex-1 items-center gap-2 rounded-xl bg-white/92 px-3 py-2 text-brand-deep-slate shadow-inner">
-          <Sparkles className="h-4 w-4 shrink-0 text-brand-med-teal" />
+          <Route className="h-4 w-4 shrink-0 text-brand-med-teal" strokeWidth={1.8} />
           <input
             id="agent-route-query"
             value={query}
@@ -75,8 +75,8 @@ export default function AgentSearchBar({ authSession, onOpenAuth }: AgentSearchB
       {!authSession && (
         <p className="px-2 pt-2 text-[11px] font-semibold text-white/62">
           {language === 'tr'
-            ? 'Gerçek AI rota planlaması için giriş yapmanız gerekir.'
-            : 'Sign in to use real AI route planning.'}
+            ? 'Kişiselleştirilmiş rota planlaması için giriş yapmanız gerekir.'
+            : 'Sign in for personalized route planning.'}
         </p>
       )}
     </form>
