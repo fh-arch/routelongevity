@@ -42,8 +42,8 @@ export default function MapContainer({
   const [showMobileList, setShowMobileList] = useState(false);
   const [showDensityLayer, setShowDensityLayer] = useState(false);
 
-  const mapHomeCenter: [number, number] = [38, 24];
-  const mapHomeZoom = 4;
+  const mapHomeCenter: [number, number] = [32, 15];
+  const mapHomeZoom = 3;
   const getPartnerCountry = (partner: Partner) => partner.country || 'Türkiye';
   const formatPartnerLocation = (partner: Partner) => {
     const city = translatePartner(partner.id, 'city', partner.city);
@@ -102,13 +102,19 @@ export default function MapContainer({
       return;
     }
 
+    const partnerCoordinates = partners.map((partner) => [partner.latitude, partner.longitude] as [number, number]);
+    const partnerBounds = partnerCoordinates.length
+      ? L.latLngBounds(partnerCoordinates).pad(0.22)
+      : L.latLngBounds(L.latLng(-35, -95), L.latLng(66, 75));
+
     const map = L.map(mapRef.current, {
       center: mapHomeCenter,
       zoom: mapHomeZoom,
       zoomControl: false,
       scrollWheelZoom: true,
-      maxBounds: L.latLngBounds(L.latLng(10, -25), L.latLng(66, 75)),
-      minZoom: 3,
+      maxBounds: partnerBounds,
+      maxBoundsViscosity: 0.5,
+      minZoom: 2,
     });
 
     // Elegant Light Canvas Layer: Voyager Map style
