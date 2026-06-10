@@ -143,7 +143,9 @@ function locationSearchTerms(profile, message) {
     'turkiye', 'türkiye', 'turkey', 'istanbul', 'bursa', 'izmir', 'bodrum',
     'antalya', 'mugla', 'muğla', 'cappadocia', 'kapadokya', 'greece',
     'italy', 'spain', 'france', 'portugal', 'uae', 'dubai', 'qatar',
-    'morocco', 'egypt', 'mena', 'europe',
+    'morocco', 'egypt', 'mena', 'europe', 'americas', 'america',
+    'usa', 'united states', 'canada', 'mexico', 'brazil', 'argentina',
+    'chile', 'peru', 'costa rica', 'panama', 'colombia',
   ];
 
   for (const location of knownLocations) {

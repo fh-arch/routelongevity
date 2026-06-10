@@ -1,6 +1,7 @@
 import { Partner, Category, RouteJourney } from './types';
 import routeLongevityPinsJson from './data/route-longevity-pins.json';
 import europeMenaPinsJson from './data/route-longevity-europe-mena.json';
+import americasPinsJson from './data/route-longevity-americas.json';
 
 export const CATEGORIES: Category[] = [
   {
@@ -411,6 +412,8 @@ interface ImportedRoutePin {
     | 'thermal_spa'
     | 'wellness_retreat'
     | 'medical_wellness'
+    | 'biohacking'
+    | 'blue_zone'
     | 'hammam_heritage'
     | 'longevity_food';
   year_built?: number;
@@ -429,6 +432,7 @@ interface ImportedPinsFile {
 
 const importedPinsFile = routeLongevityPinsJson as ImportedPinsFile;
 const europeMenaPinsFile = europeMenaPinsJson as ImportedPinsFile;
+const americasPinsFile = americasPinsJson as ImportedPinsFile;
 
 const importedCategoryMap: Record<ImportedRoutePin['category'], Pick<Category, 'key' | 'label'>> = {
   hammam: { key: 'hammams', label: 'HAMMAMS' },
@@ -441,6 +445,8 @@ const importedCategoryMap: Record<ImportedRoutePin['category'], Pick<Category, '
   thermal_spa: { key: 'thermal-spa', label: 'THERMAL & SPA' },
   wellness_retreat: { key: 'retreat-nature', label: 'RETREAT & NATURE' },
   medical_wellness: { key: 'longevity-clinics', label: 'MEDICAL WELLNESS' },
+  biohacking: { key: 'longevity-clinics', label: 'BIOHACKING CENTER' },
+  blue_zone: { key: 'traditional-med', label: 'BLUE ZONE HERITAGE' },
   hammam_heritage: { key: 'hammams', label: 'HAMMAM HERITAGE' },
   longevity_food: { key: 'mediterranean-diet', label: 'LONGEVITY FOOD' },
 };
@@ -456,6 +462,8 @@ const importedCategoryImages: Record<ImportedRoutePin['category'], string> = {
   thermal_spa: 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?auto=format&fit=crop&w=800&q=85',
   wellness_retreat: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=85',
   medical_wellness: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?auto=format&fit=crop&w=800&q=85',
+  biohacking: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?auto=format&fit=crop&w=800&q=85',
+  blue_zone: 'https://images.unsplash.com/photo-1471193945509-9ad0617afabf?auto=format&fit=crop&w=800&q=85',
   hammam_heritage: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=800&q=80',
   longevity_food: 'https://images.unsplash.com/photo-1471193945509-9ad0617afabf?auto=format&fit=crop&w=800&q=80',
 };
@@ -471,6 +479,8 @@ const importedCategorySpecialties: Record<ImportedRoutePin['category'], string> 
   thermal_spa: 'Thermal Spa & Mineral Recovery',
   wellness_retreat: 'Wellness Retreat & Recovery',
   medical_wellness: 'Medical Wellness & Preventive Health',
+  biohacking: 'Biohacking Diagnostics & Performance Optimization',
+  blue_zone: 'Blue Zone Heritage & Lifestyle Medicine',
   hammam_heritage: 'Hammam Heritage & Steam Ritual',
   longevity_food: 'Longevity Food & Bioactive Nutrition',
 };
@@ -485,7 +495,7 @@ const normalizePartnerName = (name: string) =>
 
 const currentPartnerNames = new Set(FEATURED_PARTNERS_DATA.map((partner) => normalizePartnerName(partner.name)));
 
-const buildImportedPinPartners = (pins: ImportedRoutePin[], source: 'tr' | 'global'): Partner[] => pins
+const buildImportedPinPartners = (pins: ImportedRoutePin[], source: 'tr' | 'global' | 'americas'): Partner[] => pins
   .filter((pin) => !currentPartnerNames.has(normalizePartnerName(pin.name)))
   .map((pin) => {
     const category = importedCategoryMap[pin.category];
@@ -494,7 +504,7 @@ const buildImportedPinPartners = (pins: ImportedRoutePin[], source: 'tr' | 'glob
     const baseline = 360 + pin.id * 18;
     const country = pin.country || 'Türkiye';
     const region = pin.region || pin.region_tag || country;
-    const sourcePrefix = source === 'tr' ? 'pin' : 'global-pin';
+    const sourcePrefix = source === 'tr' ? 'pin' : source === 'americas' ? 'americas-pin' : 'global-pin';
     const foundedYear = pin.year_built || pin.year_founded;
 
     return {
@@ -540,6 +550,7 @@ const buildImportedPinPartners = (pins: ImportedRoutePin[], source: 'tr' | 'glob
 const importedPinPartners: Partner[] = [
   ...buildImportedPinPartners(importedPinsFile.pins, 'tr'),
   ...buildImportedPinPartners(europeMenaPinsFile.pins, 'global'),
+  ...buildImportedPinPartners(americasPinsFile.pins, 'americas'),
 ];
 
 export const PARTNERS_DATA: Partner[] = [
