@@ -5,21 +5,26 @@
   --font-display: "Plus Jakarta Sans", "Manrope", system-ui, sans-serif;
   --font-serif: "Lora", Georgia, serif;
 
-  --color-brand-deep-slate: #122328;
-  --color-brand-med-teal: #5A9D62;
-  --color-brand-turquoise: #64D2A2;
-  --color-brand-olive-sage: #A6D26A;
-  --color-brand-warm-sand: #E5EDE1;
-  --color-brand-soft-ivory: #FAFAF8;
-  --color-brand-copper: #FF6B4A;
-  --color-brand-highlight-lime: #D3F874;
-  --color-brand-support-purple: #8041F5;
+  --color-brand-deep-slate: #062c2b;
+  --color-brand-med-teal: #007c73;
+  --color-brand-turquoise: #2bc0a6;
+  --color-brand-olive-sage: #8ed7c2;
+  --color-brand-warm-sand: #dcede9;
+  --color-brand-soft-ivory: #f7fbf9;
+  --color-brand-copper: #0ea37f;
+  --color-brand-highlight-lime: #b8ead8;
+  --color-brand-support-purple: #0a6a64;
 }
 
 /* Custom scrollbar and minor cleanups for Leaflet */
 body {
   font-family: var(--font-sans);
   background-color: var(--color-brand-soft-ivory);
+  background-image:
+    linear-gradient(135deg, rgba(43, 192, 166, 0.14), transparent 34%),
+    linear-gradient(315deg, rgba(142, 215, 194, 0.18), transparent 32%),
+    linear-gradient(180deg, #f7fbf9 0%, #edf6f2 100%);
+  background-attachment: fixed;
   color: var(--color-brand-deep-slate);
   line-height: 1.5;
 }
@@ -44,9 +49,53 @@ h3,
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #E5EDE1;
+  background: #dcede9;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #A6D26A;
+  background: #8ed7c2;
+}
+
+@layer components {
+  .app-glass-shell {
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(247, 251, 249, 0.48)),
+      linear-gradient(180deg, rgba(43, 192, 166, 0.08), rgba(6, 44, 43, 0.03));
+  }
+
+  .glass-surface {
+    background: rgba(255, 255, 255, 0.64);
+    border: 1px solid rgba(220, 237, 233, 0.72);
+    box-shadow: 0 20px 60px rgba(6, 44, 43, 0.08);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+  }
+
+  .glass-surface-strong {
+    background: rgba(255, 255, 255, 0.78);
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    box-shadow: 0 24px 70px rgba(6, 44, 43, 0.11);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+  }
+
+  .glass-dark {
+    background: linear-gradient(135deg, rgba(6, 44, 43, 0.94), rgba(0, 124, 115, 0.72));
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 28px 80px rgba(6, 44, 43, 0.18);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+  }
+}
+
+.bg-white {
+  background-color: rgba(255, 255, 255, 0.68) !important;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.bg-\[\#f7fbf9\] {
+  background-color: rgba(247, 251, 249, 0.58) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }

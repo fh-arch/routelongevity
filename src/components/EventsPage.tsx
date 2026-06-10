@@ -42,7 +42,7 @@ export default function EventsPage({ onOpenBlog, onOpenEvents }: EventsPageProps
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#FAFAF8] px-4 py-5 md:p-8 max-w-7xl mx-auto w-full space-y-8">
+    <div className="flex-1 overflow-y-auto bg-[#f7fbf9] px-4 py-5 md:p-8 max-w-7xl mx-auto w-full space-y-8">
       <section className="rounded-3xl bg-brand-deep-slate text-white p-6 md:p-8 shadow-sm">
         <div className="flex items-center gap-2 text-brand-turquoise">
           <Calendar className="h-5 w-5" />
@@ -80,7 +80,7 @@ export default function EventsPage({ onOpenBlog, onOpenEvents }: EventsPageProps
             <div className="p-5">
               <div className="flex flex-wrap gap-2">
                 {event.tags.map((tag) => (
-                  <span key={tag} className="rounded-full bg-[#F1F7EA] px-2.5 py-1 text-[10px] font-black text-[#5A9D62]">
+                  <span key={tag} className="rounded-full bg-[#F1F7EA] px-2.5 py-1 text-[10px] font-black text-[#007c73]">
                     {tag}
                   </span>
                 ))}
@@ -88,23 +88,23 @@ export default function EventsPage({ onOpenBlog, onOpenEvents }: EventsPageProps
               <h2 className="mt-4 text-xl font-black leading-tight text-brand-deep-slate">{event.title}</h2>
               <p className="mt-3 text-sm leading-6 text-brand-deep-slate/62">{event.description}</p>
               <div className="mt-4 space-y-2 text-xs font-bold text-brand-deep-slate/58">
-                <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-brand-coral" /> {event.date}</div>
+                <div className="flex items-center gap-2"><Calendar className="h-4 w-4 text-brand-med-teal" /> {event.date}</div>
                 <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-brand-med-teal" /> {event.time}</div>
                 <div className="flex items-center gap-2"><MapPin className="h-4 w-4 text-brand-med-teal" /> {event.location}, {event.city}</div>
-                <div className="flex items-center gap-2"><Users className="h-4 w-4 text-brand-coral" /> {event.spotsLeft} spots left</div>
+                <div className="flex items-center gap-2"><Users className="h-4 w-4 text-brand-med-teal" /> {event.spotsLeft} spots left</div>
               </div>
               <div className="mt-5 grid grid-cols-1 gap-2">
                 <input
                   value={registration.name}
                   onChange={(e) => setRegistration((prev) => ({ ...prev, name: e.target.value }))}
                   placeholder={language === 'tr' ? 'Adınız' : 'Your name'}
-                  className="rounded-xl border border-brand-warm-sand/70 bg-[#FAFAF8] px-3 py-2.5 text-sm outline-none focus:border-brand-med-teal"
+                  className="rounded-xl border border-brand-warm-sand/70 bg-[#f7fbf9] px-3 py-2.5 text-sm outline-none focus:border-brand-med-teal"
                 />
                 <input
                   value={registration.email}
                   onChange={(e) => setRegistration((prev) => ({ ...prev, email: e.target.value }))}
                   placeholder={language === 'tr' ? 'E-posta' : 'Email'}
-                  className="rounded-xl border border-brand-warm-sand/70 bg-[#FAFAF8] px-3 py-2.5 text-sm outline-none focus:border-brand-med-teal"
+                  className="rounded-xl border border-brand-warm-sand/70 bg-[#f7fbf9] px-3 py-2.5 text-sm outline-none focus:border-brand-med-teal"
                 />
                 <button
                   onClick={() => submitRegistration(event.id)}

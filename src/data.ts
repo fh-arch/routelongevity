@@ -7,49 +7,49 @@ export const CATEGORIES: Category[] = [
     key: 'hammams',
     label: 'Hammams',
     iconName: 'Droplets',
-    color: '#122328', // Deep Longevity Navy
+    color: '#062c2b', // Deep logo teal
     borderColor: 'border-brand-deep-slate',
   },
   {
     key: 'thermal-spa',
     label: 'Thermal & Spa',
     iconName: 'Waves',
-    color: '#64D2A2', // Vital Mint
+    color: '#2bc0a6', // Logo mint
     borderColor: 'border-brand-turquoise',
   },
   {
     key: 'mediterranean-diet',
     label: 'Mediterranean Diet',
     iconName: 'Utensils',
-    color: '#5A9D62', // Herbal Green
+    color: '#007c73', // Logo teal
     borderColor: 'border-brand-med-teal',
   },
   {
     key: 'longevity-clinics',
     label: 'Longevity Clinics',
     iconName: 'HeartPulse',
-    color: '#FF6B4A', // Warm Coral Accent
+    color: '#0ea37f', // Clean clinical green
     borderColor: 'border-brand-copper',
   },
   {
     key: 'retreat-nature',
     label: 'Retreat & Nature',
     iconName: 'Trees',
-    color: '#5A9D62', // Herbal Green
+    color: '#8ed7c2', // Soft wellness sage
     borderColor: 'border-brand-olive-sage',
   },
   {
     key: 'traditional-med',
     label: 'Traditional Medicine',
     iconName: 'Leaf',
-    color: '#8041F5', // Support Purple
+    color: '#0a6a64', // Deep support teal
     borderColor: 'border-brand-support-purple',
   },
   {
     key: 'local-producers',
     label: 'Local Producers',
     iconName: 'Store',
-    color: '#D3F874', // Bright Highlight Lime
+    color: '#b8ead8', // Light logo highlight
     borderColor: 'border-brand-highlight-lime',
   }
 ];

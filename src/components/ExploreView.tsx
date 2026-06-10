@@ -223,11 +223,11 @@ export default function ExploreView({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#FAFAF8] px-4 py-5 md:p-8 max-w-7xl mx-auto w-full space-y-8 md:space-y-10">
+    <div className="flex-1 overflow-y-auto px-4 py-5 md:p-8 max-w-7xl mx-auto w-full space-y-8 md:space-y-10">
       {/* Hero Welcome banner */}
-      <div className="relative rounded-2xl overflow-hidden bg-brand-deep-slate text-brand-soft-ivory p-6 md:p-10 shadow-xl shadow-brand-deep-slate/10 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-8 items-stretch">
+      <div className="relative rounded-[28px] overflow-hidden glass-dark text-brand-soft-ivory p-6 md:p-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-8 items-stretch">
         <div className="space-y-5 max-w-2xl z-10 self-center">
-          <span className="text-xs font-semibold text-[#64D2A2] bg-[#64D2A2]/10 px-3 py-1.5 rounded-full uppercase tracking-wide">
+          <span className="text-xs font-semibold text-brand-highlight-lime bg-white/10 px-3 py-1.5 rounded-full uppercase tracking-wide border border-white/10">
             {language === 'tr' ? 'Türkiye’nin Klasik Şifası' : "Türkiye's Ancient Wisdom"}
           </span>
           <h1 className="text-3xl md:text-5xl font-extrabold font-sans leading-[1.05] tracking-normal">
@@ -246,7 +246,7 @@ export default function ExploreView({
               [CATEGORIES.length, language === 'tr' ? 'miras kategorisi' : 'heritage categories'],
               ['4.8', language === 'tr' ? 'ortalama puan' : 'avg rating']
             ].map(([value, label]) => (
-              <div key={`${value}-${label}`} className="border border-white/10 bg-white/5 rounded-xl p-3">
+              <div key={`${value}-${label}`} className="border border-white/14 bg-white/10 rounded-xl p-3 backdrop-blur-md">
                 <div className="text-xl font-black text-white">{value}</div>
                 <div className="text-[10px] text-white/55 font-semibold leading-tight mt-1">{label}</div>
               </div>
@@ -255,7 +255,7 @@ export default function ExploreView({
           <div className="flex flex-wrap gap-3 pt-2">
             <button
               onClick={() => onTabChange('map')}
-              className="px-5 py-3 bg-brand-turquoise hover:bg-brand-turquoise/90 text-brand-deep-slate font-bold text-sm rounded-xl transition-all shadow-md shadow-brand-turquoise/15 flex items-center gap-2 cursor-pointer"
+              className="px-5 py-3 bg-brand-turquoise hover:bg-brand-highlight-lime text-brand-deep-slate font-bold text-sm rounded-xl transition-all shadow-md shadow-brand-turquoise/15 flex items-center gap-2 cursor-pointer"
             >
               <span>{language === 'tr' ? 'İnteraktif Haritayı Başlat' : 'Launch Interactive Map'}</span>
               <ArrowRight className="w-4 h-4" />
@@ -269,15 +269,15 @@ export default function ExploreView({
           </div>
         </div>
 
-        <div className="w-full min-h-[260px] rounded-2xl overflow-hidden relative border border-white/10 shadow-lg">
+        <div className="w-full min-h-[260px] rounded-3xl overflow-hidden relative border border-white/16 shadow-lg bg-white/10 backdrop-blur-md">
           <img
             src={leadArticle?.imageUrl || 'https://images.unsplash.com/photo-1602002418082-a4443e081dd1?auto=format&fit=crop&w=1000&q=85'}
             alt={leadArticle?.title || (language === 'tr' ? 'Bursa termal spa havuzu' : 'Bursa thermal spa pool')}
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#122328]/92 via-[#122328]/20 to-transparent flex flex-col justify-end p-5">
-            <p className="text-[10px] font-bold text-[#64D2A2] uppercase tracking-wide">
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-deep-slate/92 via-brand-deep-slate/20 to-transparent flex flex-col justify-end p-5">
+            <p className="text-[10px] font-bold text-brand-highlight-lime uppercase tracking-wide">
               {leadArticle ? (language === 'tr' ? 'Son bilimsel inceleme' : 'Latest article review') : (language === 'tr' ? 'Bursa termal odağı' : 'Bursa thermal highlight')}
             </p>
             <p className="text-xl font-black text-white leading-tight mt-1">
@@ -289,7 +289,7 @@ export default function ExploreView({
             {leadArticle && (
               <button
                 onClick={() => onTabChange('blog')}
-                className="mt-4 w-fit rounded-xl bg-brand-coral px-4 py-2 text-xs font-black text-white hover:bg-brand-coral/90 transition-colors"
+                className="mt-4 w-fit rounded-xl bg-brand-turquoise px-4 py-2 text-xs font-black text-brand-deep-slate hover:bg-brand-highlight-lime transition-colors"
               >
                 {language === 'tr' ? 'Makaleyi oku' : 'Read review'}
               </button>
@@ -298,21 +298,21 @@ export default function ExploreView({
         </div>
       </div>
 
-      <section className="bg-white rounded-3xl border border-brand-warm-sand/55 shadow-sm overflow-hidden">
+      <section className="glass-surface-strong rounded-[28px] overflow-hidden">
         <div className="px-5 md:px-8 pt-6">
           <div className="flex items-center gap-4">
-            <div className="h-px flex-1 bg-brand-olive-sage/45" />
+            <div className="h-px flex-1 bg-brand-turquoise/35" />
             <h2 className="text-lg md:text-xl font-extrabold text-brand-deep-slate tracking-normal">
               {language === 'tr' ? 'Uzun Yaşam İşaretleri' : 'Longevity Signals'}
             </h2>
-            <div className="h-px flex-1 bg-brand-olive-sage/45" />
+            <div className="h-px flex-1 bg-brand-turquoise/35" />
           </div>
-          <div className="grid grid-cols-5 md:grid-cols-10 gap-y-5 mt-5 pb-6 border-b border-brand-olive-sage/35">
+          <div className="grid grid-cols-5 md:grid-cols-10 gap-y-5 mt-5 pb-6 border-b border-brand-turquoise/22">
             {brandKeywords.map((keyword) => {
               const Icon = keyword.icon;
               return (
                 <div key={keyword.label} className="flex flex-col items-center gap-2 px-2 md:border-r md:last:border-r-0 border-brand-warm-sand/70">
-                  <div className="w-10 h-10 rounded-full bg-brand-olive-sage/14 text-brand-deep-slate flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-brand-turquoise/12 text-brand-med-teal flex items-center justify-center border border-white/65 shadow-sm">
                     <Icon className="w-5 h-5" />
                   </div>
                   <span className="text-[10px] md:text-xs font-bold text-brand-deep-slate text-center leading-tight">
@@ -326,18 +326,16 @@ export default function ExploreView({
 
         <div className="px-5 md:px-8 py-6">
           <div className="flex items-center gap-4 mb-5">
-            <div className="h-px flex-1 bg-brand-olive-sage/45" />
+            <div className="h-px flex-1 bg-brand-turquoise/35" />
             <h2 className="text-lg md:text-xl font-extrabold text-brand-deep-slate tracking-normal">
               {language === 'tr' ? 'Öne Çıkan Rota Hikayeleri' : 'Curated Route Stories'}
             </h2>
-            <div className="h-px flex-1 bg-brand-olive-sage/45" />
+            <div className="h-px flex-1 bg-brand-turquoise/35" />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.62fr_1.45fr] gap-5 items-stretch">
-            <article className="relative min-h-[190px] rounded-2xl bg-brand-deep-slate text-white overflow-hidden p-6 flex flex-col justify-between shadow-lg shadow-brand-deep-slate/10">
-              <div className="absolute -right-10 -bottom-10 w-48 h-48 rounded-full bg-brand-olive-sage/15" />
-              <div className="absolute right-5 bottom-1 w-32 h-36 rounded-full bg-gradient-to-br from-brand-turquoise via-brand-med-teal to-brand-olive-sage rotate-35 opacity-90" />
-              <div className="absolute right-12 bottom-2 w-28 h-36 rounded-full border border-brand-turquoise/25 rotate-12" />
+            <article className="relative min-h-[190px] rounded-3xl glass-dark text-white overflow-hidden p-6 flex flex-col justify-between">
+              <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent,rgba(255,255,255,0.08)_55%,rgba(43,192,166,0.18))]" />
               <div className="relative z-10">
                 <h3 className="text-2xl md:text-3xl font-extrabold leading-tight tracking-normal max-w-xs">
                   {language === 'tr' ? 'Longevity bir yolculuktur. Miras yolun kendisidir.' : 'Longevity is a journey. Heritage is the path.'}
@@ -350,7 +348,7 @@ export default function ExploreView({
               </div>
               <button
                 onClick={() => onTabChange('map')}
-                className="relative z-10 w-fit px-5 py-3 rounded-xl bg-brand-copper text-white text-xs font-black hover:bg-brand-copper/90 transition-colors flex items-center gap-3 cursor-pointer"
+                className="relative z-10 w-fit px-5 py-3 rounded-xl bg-brand-turquoise text-brand-deep-slate text-xs font-black hover:bg-brand-highlight-lime transition-colors flex items-center gap-3 cursor-pointer"
               >
                 <span>{language === 'tr' ? 'Rotayı Keşfet' : 'Explore Route'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -360,7 +358,7 @@ export default function ExploreView({
             <div className="flex flex-col justify-center gap-4">
               <button
                 onClick={() => onTabChange('experiences')}
-                className="w-full px-5 py-3.5 rounded-xl bg-brand-copper text-white text-xs font-black shadow-sm hover:bg-brand-copper/90 transition-colors flex items-center justify-between cursor-pointer"
+                className="w-full px-5 py-3.5 rounded-xl bg-brand-med-teal text-white text-xs font-black shadow-sm hover:bg-brand-deep-slate transition-colors flex items-center justify-between cursor-pointer"
               >
                 <span>{language === 'tr' ? 'Deneyimleri Gör' : 'View Experiences'}</span>
                 <ArrowRight className="w-4 h-4" />
@@ -378,7 +376,7 @@ export default function ExploreView({
                 <span>{language === 'tr' ? 'Partner Ol' : 'Become a Partner'}</span>
                 <UsersRound className="w-4 h-4" />
               </button>
-              <div className="grid grid-cols-3 gap-2 rounded-xl border border-brand-warm-sand/75 bg-white px-3 py-3">
+              <div className="grid grid-cols-3 gap-2 rounded-xl glass-surface px-3 py-3">
                 {[
                   [language === 'tr' ? 'Doğal' : 'Natural', Leaf],
                   [language === 'tr' ? 'Holistik' : 'Holistic', Flower2],
@@ -397,7 +395,7 @@ export default function ExploreView({
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {uiDirectionCards.map((card) => (
-                <article key={card.title} className="rounded-2xl bg-white border border-brand-warm-sand/65 overflow-hidden shadow-md shadow-brand-deep-slate/5">
+                <article key={card.title} className="rounded-3xl glass-surface overflow-hidden transition-transform duration-300 hover:-translate-y-1">
                   <div className="h-28 overflow-hidden">
                     <img
                       src={card.image}
@@ -432,10 +430,10 @@ export default function ExploreView({
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-5">
-        <section className="bg-white border border-brand-warm-sand/45 rounded-2xl p-5 shadow-sm">
+        <section className="glass-surface-strong rounded-3xl p-5">
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
-              <p className="text-[11px] font-bold uppercase tracking-wide text-brand-coral flex items-center gap-1.5">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-brand-med-teal flex items-center gap-1.5">
                 <BookOpen className="w-3.5 h-3.5" />
                 {language === 'tr' ? 'Son makaleler' : 'Latest articles'}
               </p>
@@ -456,7 +454,7 @@ export default function ExploreView({
               <button
                 key={post.id}
                 onClick={() => onTabChange('blog')}
-                className="rounded-2xl border border-brand-warm-sand/55 bg-[#FAFAF8] p-3 text-left hover:border-brand-med-teal transition-colors"
+                className="rounded-2xl glass-surface p-3 text-left hover:border-brand-med-teal transition-colors"
               >
                 <div className="flex gap-3">
                   <img
@@ -466,7 +464,7 @@ export default function ExploreView({
                     className="h-20 w-24 rounded-xl object-cover"
                   />
                   <div className="min-w-0">
-                    <div className="text-[10px] font-black uppercase tracking-wider text-brand-coral truncate">{post.category}</div>
+                    <div className="text-[10px] font-black uppercase tracking-wider text-brand-med-teal truncate">{post.category}</div>
                     <h3 className="mt-1 text-sm font-black leading-snug text-brand-deep-slate line-clamp-2">{post.title}</h3>
                     <div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-brand-deep-slate/45">
                       <Clock className="w-3 h-3" />
@@ -479,7 +477,7 @@ export default function ExploreView({
           </div>
         </section>
 
-        <section className="bg-brand-deep-slate text-white rounded-2xl p-5 shadow-sm flex flex-col justify-between gap-5">
+        <section className="glass-dark text-white rounded-3xl p-5 flex flex-col justify-between gap-5">
           <div>
             <div className="w-10 h-10 rounded-xl bg-brand-turquoise/15 text-brand-turquoise flex items-center justify-center mb-3">
               <Building2 className="w-5 h-5" />
@@ -510,11 +508,10 @@ export default function ExploreView({
       </div>
 
       {/* Real-time Search Box */}
-      <div className="bg-white rounded-3xl border border-brand-warm-sand/40 p-5 md:p-6 shadow-sm space-y-3 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 rounded-full bg-[#5A9D62]/5 blur-3xl pointer-events-none" />
+      <div className="glass-surface-strong rounded-3xl p-5 md:p-6 space-y-3 relative overflow-hidden">
         
         <div className="relative">
-          <label htmlFor="explore-search" className="block text-xs font-bold text-[#122328] uppercase tracking-wider mb-2 font-sans select-none">
+          <label htmlFor="explore-search" className="block text-xs font-bold text-[#062c2b] uppercase tracking-wider mb-2 font-sans select-none">
             {t('exploreSearchLabel')}
           </label>
           <div className="relative">
@@ -525,7 +522,7 @@ export default function ExploreView({
               placeholder={t('exploreSearchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-12 py-3 bg-[#FAFAF8] text-sm text-brand-deep-slate rounded-2xl border border-brand-warm-sand/65 focus:outline-none focus:border-[#5A9D62]/70 focus:ring-1 focus:ring-[#5A9D62]/50 transition-all placeholder:text-brand-deep-slate/30"
+              className="w-full pl-11 pr-12 py-3 bg-white/58 text-sm text-brand-deep-slate rounded-2xl border border-white/80 focus:outline-none focus:border-brand-med-teal/70 focus:ring-1 focus:ring-brand-med-teal/50 transition-all placeholder:text-brand-deep-slate/30 backdrop-blur-md"
             />
             {searchQuery && (
               <button
@@ -546,7 +543,7 @@ export default function ExploreView({
             </span>
             <button
               onClick={() => setSearchQuery('')}
-              className="text-[#5A9D62] font-bold hover:underline cursor-pointer"
+              className="text-brand-med-teal font-bold hover:underline cursor-pointer"
             >
               {t('clearSearch')}
             </button>
@@ -558,7 +555,7 @@ export default function ExploreView({
       <div className="space-y-4">
         <div className="flex justify-between items-end">
           <div>
-            <h2 className="text-2xl font-extrabold text-[#122328] tracking-tight">
+            <h2 className="text-2xl font-extrabold text-brand-deep-slate tracking-tight">
               {t('heritageCategories')}
             </h2>
             <p className="text-xs text-brand-deep-slate/50 font-serif italic">
@@ -572,7 +569,7 @@ export default function ExploreView({
             <button
               key={cat.key}
               onClick={() => handleCategoryClick(cat.key)}
-              className="bg-white border border-brand-warm-sand/45 hover:border-brand-warm-sand/90 hover:shadow-md p-4 rounded-2xl flex flex-col items-center justify-between text-center min-h-[140px] transition-all cursor-pointer group"
+              className="glass-surface hover:border-brand-med-teal/45 hover:shadow-lg p-4 rounded-3xl flex flex-col items-center justify-between text-center min-h-[140px] transition-all cursor-pointer group"
             >
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-105"
@@ -583,7 +580,7 @@ export default function ExploreView({
               <span className="font-sans font-bold text-xs text-brand-deep-slate flex-1 flex items-center justify-center">
                 {translateCategory(cat.key, cat.label)}
               </span>
-              <span className="text-[10px] text-[#5A9D62] font-mono mt-2 uppercase font-bold tracking-widest">
+              <span className="text-[10px] text-brand-med-teal font-mono mt-2 uppercase font-bold tracking-widest">
                 {language === 'tr' ? 'Keşfet >' : 'Explore >'}
               </span>
             </button>
@@ -595,11 +592,11 @@ export default function ExploreView({
       <div className="space-y-4">
         <div className="flex flex-col md:flex-row justify-between md:items-end gap-2">
           <div>
-            <div className="flex items-center gap-1.5 bg-brand-copper/10 text-brand-copper px-2.5 py-1 rounded w-fit text-[10px] font-bold uppercase mb-1">
+            <div className="flex items-center gap-1.5 bg-brand-turquoise/14 text-brand-med-teal px-2.5 py-1 rounded w-fit text-[10px] font-bold uppercase mb-1">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>{searchQuery ? t('realtimeSearchActive') : t('premiumLicensesActive')}</span>
             </div>
-            <h2 className="text-2xl font-extrabold text-[#122328] tracking-tight font-sans">
+            <h2 className="text-2xl font-extrabold text-brand-deep-slate tracking-tight font-sans">
               {searchQuery ? t('searchResults') : t('featuredLongevityHubs')}
             </h2>
             <p className="text-xs text-brand-deep-slate/50 font-serif">
@@ -623,9 +620,9 @@ export default function ExploreView({
         </div>
 
         {displayPartners.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-brand-warm-sand/40 p-12 text-center max-w-lg mx-auto space-y-4 animate-in fade-in duration-300">
-            <div className="w-14 h-14 bg-brand-warm-sand/30 rounded-full flex items-center justify-center mx-auto text-[#122328] bg-[#122328]/5">
-              <Search className="w-6 h-6 text-[#5A9D62]" />
+          <div className="glass-surface-strong rounded-3xl p-12 text-center max-w-lg mx-auto space-y-4 animate-in fade-in duration-300">
+            <div className="w-14 h-14 bg-brand-turquoise/12 rounded-full flex items-center justify-center mx-auto text-brand-deep-slate">
+              <Search className="w-6 h-6 text-brand-med-teal" />
             </div>
             <div className="space-y-1">
               <h3 className="font-sans font-bold text-brand-deep-slate text-base">{t('noHubsFound')}</h3>
@@ -635,7 +632,7 @@ export default function ExploreView({
             </div>
             <button
               onClick={() => setSearchQuery('')}
-              className="px-4.5 py-2.5 bg-[#122328] hover:bg-[#5A9D62] text-brand-soft-ivory font-semibold text-xs rounded-xl transition-colors cursor-pointer"
+              className="px-4.5 py-2.5 bg-brand-deep-slate hover:bg-brand-med-teal text-brand-soft-ivory font-semibold text-xs rounded-xl transition-colors cursor-pointer"
             >
               {t('resetSearch')}
             </button>
@@ -647,7 +644,7 @@ export default function ExploreView({
               return (
                 <div
                   key={p.id}
-                  className="bg-white rounded-2xl border border-brand-warm-sand/40 hover:border-brand-warm-sand/80 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden group"
+                  className="glass-surface rounded-3xl hover:border-brand-med-teal/45 hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden group"
                 >
                   {/* Photo Header */}
                   <div className="relative h-48 bg-brand-warm-sand overflow-hidden">
@@ -679,16 +676,16 @@ export default function ExploreView({
                   <div className="p-5 flex-1 flex flex-col justify-between">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] uppercase font-bold text-brand-copper bg-brand-copper/5 px-2 py-0.5 rounded">
+                        <span className="text-[10px] uppercase font-bold text-brand-med-teal bg-brand-turquoise/12 px-2 py-0.5 rounded">
                           {translateCategory(p.category, p.categoryLabel)}
                         </span>
-                        <div className="flex items-center gap-1 bg-[#FAFAF8] px-2 py-0.5 rounded-lg border border-brand-warm-sand/30">
-                          <Star className="w-3 h-3 text-brand-copper fill-brand-copper" />
+                        <div className="flex items-center gap-1 bg-[#f7fbf9] px-2 py-0.5 rounded-lg border border-brand-warm-sand/30">
+                          <Star className="w-3 h-3 text-brand-med-teal fill-brand-med-teal" />
                           <span className="text-xs font-bold text-brand-deep-slate">{p.rating}</span>
                         </div>
                       </div>
 
-                      <h3 className="text-base font-bold text-brand-deep-slate tracking-tight leading-normal font-sans group-hover:text-[#5A9D62] transition-colors">
+                      <h3 className="text-base font-bold text-brand-deep-slate tracking-tight leading-normal font-sans group-hover:text-brand-med-teal transition-colors">
                         {translatePartner(p.id, 'name', p.name)}
                       </h3>
 
@@ -703,14 +700,14 @@ export default function ExploreView({
                         <span className="text-[10px] text-brand-deep-slate/40 uppercase block font-semibold">
                           {t('specialtyFocus')}
                         </span>
-                        <span className="text-xs font-bold text-[#122328] font-mono block truncate">
+                        <span className="text-xs font-bold text-[#062c2b] font-mono block truncate">
                           {translatePartner(p.id, 'specialty', p.specialty)}
                         </span>
                       </div>
 
                       <button
                         onClick={() => handleViewOnMap(p.id)}
-                        className="px-4 py-2 font-semibold text-xs rounded-xl bg-brand-deep-slate text-brand-soft-ivory hover:bg-[#5A9D62] transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+                        className="px-4 py-2 font-semibold text-xs rounded-xl bg-brand-deep-slate text-brand-soft-ivory hover:bg-brand-med-teal transition-colors flex items-center gap-1 cursor-pointer shrink-0"
                       >
                         <span>{t('showPin')}</span>
                         <MapPin className="w-3.5 h-3.5 text-brand-turquoise" />

@@ -59,12 +59,12 @@ export default function FavoritesView({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#FAFAF8] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6 animate-in fade-in duration-300">
+    <div className="flex-1 overflow-y-auto bg-[#f7fbf9] p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6 animate-in fade-in duration-300">
       
       {/* Title */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-brand-warm-sand/20 pb-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-[#122328] tracking-tight font-sans">
+          <h1 className="text-3xl font-extrabold text-[#062c2b] tracking-tight font-sans">
             {t('favoritesTitle')}
           </h1>
           <p className="text-sm text-brand-deep-slate/60 font-serif mt-1">
@@ -117,7 +117,7 @@ export default function FavoritesView({
             </div>
             <button
               onClick={() => onTabChange('map')}
-              className="px-6 py-2.5 bg-brand-deep-slate text-brand-soft-ivory hover:bg-[#5A9D62] font-bold text-xs rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5 shadow-sm shadow-brand-deep-slate/10 select-none"
+              className="px-6 py-2.5 bg-brand-deep-slate text-brand-soft-ivory hover:bg-[#007c73] font-bold text-xs rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5 shadow-sm shadow-brand-deep-slate/10 select-none"
             >
               <span>{language === 'tr' ? 'Keşif Haritasını Başlat' : 'Launch Discovery Map'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -202,7 +202,7 @@ export default function FavoritesView({
             </div>
             <button
               onClick={() => onTabChange('experiences')}
-              className="px-6 py-2.5 bg-brand-deep-slate text-brand-soft-ivory hover:bg-[#5A9D62] font-bold text-xs rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5 shadow-sm shadow-brand-deep-slate/10 select-none animate-bounce"
+              className="px-6 py-2.5 bg-brand-deep-slate text-brand-soft-ivory hover:bg-[#007c73] font-bold text-xs rounded-xl transition-colors cursor-pointer inline-flex items-center gap-1.5 shadow-sm shadow-brand-deep-slate/10 select-none animate-bounce"
             >
               <span>{language === 'tr' ? 'Şifa Rotalarını Keşfet' : 'Browse Wellness Routes'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -255,7 +255,7 @@ export default function FavoritesView({
                     <div className="space-y-2">
                       <div className="flex flex-wrap gap-1">
                         {journey.tags.map((tag) => (
-                          <span key={tag} className="text-[9px] uppercase font-bold text-brand-copper bg-[#FAFAF8] border border-brand-warm-sand/30 px-2 py-0.5 rounded-full">
+                          <span key={tag} className="text-[9px] uppercase font-bold text-brand-copper bg-[#f7fbf9] border border-brand-warm-sand/30 px-2 py-0.5 rounded-full">
                             {language === 'tr' 
                               ? (tag === 'Medical Cellular' ? 'Tıbbi Hücresel' : tag === 'Circadian Reset' ? 'Sirkadiyen Ayar' : tag === 'Epigenetic Diet' ? 'Epigenetik Beslenme' : tag === 'Hydrotherapy' ? 'Hidroterapi' : tag === 'Thermal Detox' ? 'Termal Toksin Arınma' : tag)
                               : tag}

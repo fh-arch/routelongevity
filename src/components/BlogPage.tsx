@@ -31,9 +31,9 @@ export default function BlogPage({ onOpenBlog, onOpenEvents }: BlogPageProps) {
   }, [language]);
 
   return (
-    <div className="flex-1 overflow-y-auto bg-[#FAFAF8] px-4 py-5 md:p-8 max-w-7xl mx-auto w-full space-y-8">
+    <div className="flex-1 overflow-y-auto bg-[#f7fbf9] px-4 py-5 md:p-8 max-w-7xl mx-auto w-full space-y-8">
       <section className="rounded-3xl bg-brand-deep-slate text-white p-6 md:p-8 shadow-sm">
-        <div className="flex items-center gap-2 text-brand-coral">
+        <div className="flex items-center gap-2 text-brand-med-teal">
           <BookOpen className="h-5 w-5" />
           <span className="text-[10px] font-black uppercase tracking-widest">
             {language === 'tr' ? 'Longevity Gazetesi' : 'Longevity Gazette'}
@@ -68,7 +68,7 @@ export default function BlogPage({ onOpenBlog, onOpenEvents }: BlogPageProps) {
             <img src={selectedPost.imageUrl} alt={selectedPost.title} className="h-64 w-full object-cover" referrerPolicy="no-referrer" />
             <div className="p-6 md:p-8">
               <div className="flex flex-wrap items-center gap-3 text-xs font-bold text-brand-deep-slate/55">
-                <span className="rounded-full bg-brand-coral/10 px-3 py-1 text-brand-coral">{selectedPost.category}</span>
+                <span className="rounded-full bg-brand-med-teal/10 px-3 py-1 text-brand-med-teal">{selectedPost.category}</span>
                 <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {selectedPost.readTime}</span>
                 <span>{selectedPost.date}</span>
               </div>
@@ -77,7 +77,7 @@ export default function BlogPage({ onOpenBlog, onOpenEvents }: BlogPageProps) {
               <div className="mt-6 whitespace-pre-line text-sm leading-8 text-brand-deep-slate/76">{selectedPost.content}</div>
               <div className="mt-6 flex flex-wrap gap-2">
                 {selectedPost.tags.map((tag) => (
-                  <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-[#F1F7EA] px-3 py-1 text-[11px] font-bold text-[#5A9D62]">
+                  <span key={tag} className="inline-flex items-center gap-1 rounded-full bg-[#F1F7EA] px-3 py-1 text-[11px] font-bold text-[#007c73]">
                     <Tag className="h-3 w-3" />
                     {tag}
                   </span>
@@ -97,7 +97,7 @@ export default function BlogPage({ onOpenBlog, onOpenEvents }: BlogPageProps) {
                     : 'border-brand-warm-sand/45 bg-white hover:border-brand-med-teal'
                 }`}
               >
-                <div className="text-[10px] font-black uppercase tracking-wider text-brand-coral">{post.category}</div>
+                <div className="text-[10px] font-black uppercase tracking-wider text-brand-med-teal">{post.category}</div>
                 <div className="mt-2 text-sm font-black leading-snug text-brand-deep-slate">{post.title}</div>
                 <div className="mt-2 flex items-center gap-2 text-[11px] font-bold text-brand-deep-slate/45">
                   <span>{post.readTime}</span>

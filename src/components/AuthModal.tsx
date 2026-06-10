@@ -153,13 +153,13 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[70] bg-[#122328]/75 backdrop-blur-sm flex items-center justify-center p-4">
+      <div className="fixed inset-0 z-[70] bg-[#062c2b]/75 backdrop-blur-sm flex items-center justify-center p-4">
         <motion.div
           initial={{ opacity: 0, y: 18, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 18, scale: 0.98 }}
           transition={{ duration: 0.18 }}
-          className="w-full max-w-4xl max-h-[92vh] bg-[#FAFAF8] border border-brand-warm-sand/60 rounded-2xl shadow-2xl overflow-y-auto grid grid-cols-1 md:grid-cols-[0.9fr_1.1fr]"
+          className="w-full max-w-4xl max-h-[92vh] bg-[#f7fbf9] border border-brand-warm-sand/60 rounded-2xl shadow-2xl overflow-y-auto grid grid-cols-1 md:grid-cols-[0.9fr_1.1fr]"
         >
           <aside className="bg-brand-deep-slate text-white p-6 md:p-8 flex flex-col justify-between gap-8">
             <div>
@@ -218,7 +218,7 @@ export default function AuthModal({ isOpen, initialRole, initialMode, onClose, o
 
             {success ? (
               <div className="min-h-[320px] flex flex-col items-center justify-center text-center">
-                <div className="w-16 h-16 rounded-full bg-[#A6D26A]/12 text-[#A6D26A] flex items-center justify-center mb-4">
+                <div className="w-16 h-16 rounded-full bg-[#8ed7c2]/12 text-[#8ed7c2] flex items-center justify-center mb-4">
                   <CheckCircle2 className="w-9 h-9" />
                 </div>
                 <h3 className="text-xl font-black text-brand-deep-slate">

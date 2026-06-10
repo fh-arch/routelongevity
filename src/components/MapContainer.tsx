@@ -154,18 +154,18 @@ export default function MapContainer({
 
     // Custom marker helper
     const createMarkerIcon = (categoryColor: string, isPremium: boolean) => {
-      const ringColor = isPremium ? '#FF6B4A' : '#FFFFFF';
+      const ringColor = isPremium ? '#0ea37f' : '#FFFFFF';
       return L.divIcon({
         html: `
           <div class="relative flex items-center justify-center transform hover:scale-115 transition-transform duration-200">
             ${isPremium ? `
-              <span class="absolute inline-flex h-9 w-9 rounded-full bg-[#FF6B4A] opacity-25 animate-pulse"></span>
+              <span class="absolute inline-flex h-9 w-9 rounded-full bg-[#0ea37f] opacity-25 animate-pulse"></span>
             ` : ''}
             <!-- Inner Pin -->
-            <div class="w-7 h-7 rounded-full border-2 shadow-md flex items-center justify-center relative z-10" style="border-color: ${ringColor}; background-color: #FAFAF8;">
+            <div class="w-7 h-7 rounded-full border-2 shadow-md flex items-center justify-center relative z-10" style="border-color: ${ringColor}; background-color: #f7fbf9;">
               <div class="w-4.5 h-4.5 rounded-full flex items-center justify-center" style="background-color: ${categoryColor}">
                 ${isPremium ? `
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="#FAFAF8" stroke="#FAFAF8" stroke-width="1">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="#f7fbf9" stroke="#f7fbf9" stroke-width="1">
                     <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9"/>
                   </svg>
                 ` : `
@@ -187,7 +187,7 @@ export default function MapContainer({
     // Add markers
     filteredPartners.forEach(partner => {
       const cat = CATEGORIES.find(c => c.key === partner.category);
-      const color = cat?.color || '#122328';
+      const color = cat?.color || '#062c2b';
       const isPremium = partner.licenseType === 'Premium';
 
       const marker = L.marker([partner.latitude, partner.longitude], {
@@ -253,7 +253,7 @@ export default function MapContainer({
 
         // Initialize the Polyline starting with just the first coordinate element
         polylineRef.current = L.polyline([coordinates[0]], {
-          color: '#FF6B4A', // Copper Accent
+          color: '#0ea37f', // Copper Accent
           weight: 4.5,
           opacity: 0.9,
           dashArray: '8, 8', // elegant dotted line
@@ -334,9 +334,9 @@ export default function MapContainer({
           blur: 25,
           maxZoom: 9,
           gradient: {
-            0.1: '#5A9D62', // soft teal
-            0.4: '#64D2A2', // turquoise
-            0.7: '#FF6B4A', // warm copper
+            0.1: '#007c73', // soft teal
+            0.4: '#2bc0a6', // turquoise
+            0.7: '#0ea37f', // warm copper
             1.0: '#A72B2B'  // dense volcanic red
           }
         }).addTo(map);
@@ -383,7 +383,7 @@ export default function MapContainer({
   return (
     <div className="flex flex-col md:flex-row h-full min-h-0 w-full relative">
       {/* Search and Listing Left Panel */}
-      <div className={`absolute md:relative inset-y-0 left-0 w-80 sm:w-96 bg-white border-r border-[#E5EDE1]/40 flex flex-col z-30 md:z-10 shrink-0 shadow-lg transition-transform duration-300 ${showMobileList ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+      <div className={`absolute md:relative inset-y-0 left-0 w-80 sm:w-96 bg-white border-r border-[#dcede9]/40 flex flex-col z-30 md:z-10 shrink-0 shadow-lg transition-transform duration-300 ${showMobileList ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         
         {/* Journey Active Banner */}
         {activeRoutePartnerIds && (
@@ -409,7 +409,7 @@ export default function MapContainer({
         )}
 
         {/* Filter & Search Header */}
-        <div className="p-4 border-b border-brand-warm-sand/30 bg-[#FAFAF8]/40 space-y-3">
+        <div className="p-4 border-b border-brand-warm-sand/30 bg-[#f7fbf9]/40 space-y-3">
           <div className="relative">
             <Search className="w-4 h-4 text-brand-deep-slate/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
@@ -417,7 +417,7 @@ export default function MapContainer({
               placeholder={t('searchPlaceholderMap') || "Search wellness hubs..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-white text-sm rounded-xl border border-brand-warm-sand/70 focus:outline-none focus:border-[#5A9D62]/50 transition-colors placeholder:text-brand-deep-slate/30"
+              className="w-full pl-9 pr-4 py-2 bg-white text-sm rounded-xl border border-brand-warm-sand/70 focus:outline-none focus:border-[#007c73]/50 transition-colors placeholder:text-brand-deep-slate/30"
             />
             {searchQuery && (
               <button 
@@ -486,11 +486,11 @@ export default function MapContainer({
           </div>
 
           {/* Density Heatmap Toggle Switch */}
-          <div className="pt-2 px-1 flex items-center justify-between border-t border-[#E5EDE1]/30">
+          <div className="pt-2 px-1 flex items-center justify-between border-t border-[#dcede9]/30">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2 w-2">
-                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${showDensityLayer ? 'bg-[#A72B2B]' : 'bg-[#5A9D62]/40'}`}></span>
-                <span className={`relative inline-flex rounded-full h-2 w-2 ${showDensityLayer ? 'bg-[#A72B2B]' : 'bg-[#5A9D62]/50'}`}></span>
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${showDensityLayer ? 'bg-[#A72B2B]' : 'bg-[#007c73]/40'}`}></span>
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${showDensityLayer ? 'bg-[#A72B2B]' : 'bg-[#007c73]/50'}`}></span>
               </span>
               <div>
                 <p className="text-xs font-bold text-brand-deep-slate leading-none">{t('densityHeatmapLayer')}</p>
@@ -502,7 +502,7 @@ export default function MapContainer({
               onClick={() => setShowDensityLayer(!showDensityLayer)}
               aria-label="Toggle Density Heatmap Layer"
               className={`scale-90 relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                showDensityLayer ? 'bg-[#5A9D62]' : 'bg-[#E5EDE1]/50'
+                showDensityLayer ? 'bg-[#007c73]' : 'bg-[#dcede9]/50'
               }`}
             >
               <span
@@ -521,7 +521,7 @@ export default function MapContainer({
             className={`px-3 py-1 text-[11px] font-semibold rounded-full transition-all shrink-0 cursor-pointer ${
               selectedCategory === 'all'
                 ? 'bg-brand-deep-slate text-white'
-                : 'bg-[#FAFAF8] text-brand-deep-slate/70 hover:bg-brand-warm-sand/30'
+                : 'bg-[#f7fbf9] text-brand-deep-slate/70 hover:bg-brand-warm-sand/30'
             }`}
           >
             {language === 'tr' ? `Tüm Kategoriler (${partners.length})` : `All Categories (${partners.length})`}
@@ -533,7 +533,7 @@ export default function MapContainer({
               className={`px-2.5 py-1 text-[11px] font-semibold rounded-full border transition-all shrink-0 cursor-pointer flex items-center gap-1 ${
                 selectedCategory === cat.key
                   ? 'bg-brand-deep-slate text-white border-brand-deep-slate'
-                  : 'bg-white text-brand-deep-slate/70 border-brand-warm-sand/60 hover:bg-[#FAFAF8]'
+                  : 'bg-white text-brand-deep-slate/70 border-brand-warm-sand/60 hover:bg-[#f7fbf9]'
               }`}
             >
               <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: cat.color }}></span>
@@ -543,13 +543,13 @@ export default function MapContainer({
         </div>
 
         {/* Side listings results */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#FAFAF8]/20">
+        <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#f7fbf9]/20">
           <div className="flex justify-between items-center text-xs text-brand-deep-slate/55 px-1">
             <span>
               {language === 'tr' ? `${sortedSidePartners.length} sonuç gösteriliyor` : `Showing ${sortedSidePartners.length} results`}
             </span>
             {countryFilter && (
-              <span className="font-semibold text-[#5A9D62]">
+              <span className="font-semibold text-[#007c73]">
                 {countryFilter}
               </span>
             )}
@@ -600,7 +600,7 @@ export default function MapContainer({
                         <span className={`text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full ${
                           p.category === 'thermal-spa' ? 'bg-brand-turquoise/15 text-brand-med-teal' :
                           p.category === 'hammams' ? 'bg-brand-deep-slate/5 text-brand-deep-slate' :
-                          p.category === 'mediterranean-diet' ? 'bg-[#A6D26A]/15 text-[#A6D26A]' :
+                          p.category === 'mediterranean-diet' ? 'bg-[#8ed7c2]/15 text-[#8ed7c2]' :
                           p.category === 'longevity-clinics' ? 'bg-brand-copper/15 text-brand-copper' :
                           p.category === 'retreat-nature' ? 'bg-brand-olive-sage/10 text-brand-olive-sage' :
                           'bg-zinc-100 text-zinc-900'
@@ -634,12 +634,12 @@ export default function MapContainer({
       </div>
 
       {/* Main Interactive Map Canvas */}
-      <div className="flex-1 h-full bg-[#FAFAF8] relative">
+      <div className="flex-1 h-full bg-[#f7fbf9] relative">
         <div ref={mapRef} className="w-full h-full z-0" />
 
         {/* Heatmap Legend */}
         {showDensityLayer && (
-          <div className="absolute top-4 right-4 z-10 bg-white/95 backdrop-blur-sm rounded-2xl border border-[#E5EDE1]/60 p-4 shadow-xl max-w-[260px] sm:max-w-xs animate-in fade-in slide-in-from-top-2 duration-300 pointer-events-auto">
+          <div className="absolute top-4 right-4 z-10 bg-white/95 backdrop-blur-sm rounded-2xl border border-[#dcede9]/60 p-4 shadow-xl max-w-[260px] sm:max-w-xs animate-in fade-in slide-in-from-top-2 duration-300 pointer-events-auto">
             <div className="flex items-center gap-1.5 mb-2">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#A72B2B] opacity-75"></span>
@@ -650,8 +650,8 @@ export default function MapContainer({
               </p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[9px] font-mono text-[#122328]/40">{t('low')}</span>
-              <div className="h-2 flex-1 rounded-full bg-gradient-to-r from-[#5A9D62] via-[#64D2A2] via-[#FF6B4A] to-[#A72B2B] shadow-inner" />
+              <span className="text-[9px] font-mono text-[#062c2b]/40">{t('low')}</span>
+              <div className="h-2 flex-1 rounded-full bg-gradient-to-r from-[#007c73] via-[#2bc0a6] via-[#0ea37f] to-[#A72B2B] shadow-inner" />
               <span className="text-[9px] font-mono text-[#A72B2B] font-bold">{t('dense')}</span>
             </div>
             <p className="text-[9px] text-brand-deep-slate/60 mt-2 leading-relaxed font-serif select-none">
@@ -665,9 +665,9 @@ export default function MapContainer({
           onClick={() => setShowMobileList(!showMobileList)}
           aria-label={showMobileList ? (language === 'tr' ? 'Listeyi kapat' : 'Close list') : (language === 'tr' ? 'Listeyi aç' : 'Open list')}
           className="md:hidden absolute bottom-24 right-4 z-20 bg-brand-deep-slate text-brand-soft-ivory p-3.5 rounded-full shadow-2xl border border-white/10 flex items-center justify-center cursor-pointer transition-transform hover:scale-105 active:scale-95"
-          style={{ backgroundColor: '#122328' }}
+          style={{ backgroundColor: '#062c2b' }}
         >
-          {showMobileList ? <X className="w-5 h-5 text-[#64D2A2]" /> : <Filter className="w-5 h-5 text-[#64D2A2]" />}
+          {showMobileList ? <X className="w-5 h-5 text-[#2bc0a6]" /> : <Filter className="w-5 h-5 text-[#2bc0a6]" />}
         </button>
 
         {/* Detail Float Card - Renders over map (soft depth shadows) */}
@@ -683,7 +683,7 @@ export default function MapContainer({
               <button
                 onClick={() => setSelectedPartner(null)}
                 aria-label={language === 'tr' ? 'Detay kartını kapat' : 'Close detail card'}
-                className="absolute top-3 right-3 bg-[#FAFAF8] hover:bg-white text-brand-deep-slate p-1.5 rounded-full shadow-lg border border-brand-warm-sand/30 transition-all cursor-pointer z-20"
+                className="absolute top-3 right-3 bg-[#f7fbf9] hover:bg-white text-brand-deep-slate p-1.5 rounded-full shadow-lg border border-brand-warm-sand/30 transition-all cursor-pointer z-20"
               >
                 <X className="w-4.5 h-4.5" />
               </button>
@@ -695,7 +695,7 @@ export default function MapContainer({
                     ? language === 'tr' ? 'Favorilerden çıkar' : 'Remove from favorites'
                     : language === 'tr' ? 'Favorilere ekle' : 'Add to favorites'
                 }
-                className="absolute top-3 left-3 bg-[#FAFAF8] hover:bg-white text-brand-deep-slate p-2 rounded-full shadow-lg border border-brand-warm-sand/30 transition-all cursor-pointer z-20"
+                className="absolute top-3 left-3 bg-[#f7fbf9] hover:bg-white text-brand-deep-slate p-2 rounded-full shadow-lg border border-brand-warm-sand/30 transition-all cursor-pointer z-20"
               >
                 <Heart className={`w-4.5 h-4.5 transition-colors ${
                   favorites.includes(selectedPartner.id) ? 'text-red-500 fill-red-500' : 'text-brand-deep-slate/65'
@@ -715,7 +715,7 @@ export default function MapContainer({
             </div>
 
             <div className="p-4 space-y-3.5">
-              <div className="flex justify-between items-center bg-[#FAFAF8] p-2.5 rounded-xl border border-brand-warm-sand/40">
+              <div className="flex justify-between items-center bg-[#f7fbf9] p-2.5 rounded-xl border border-brand-warm-sand/40">
                 <div className="flex items-center gap-1.5">
                   <MapPin className="w-4 h-4 text-brand-med-teal" />
                   <span className="text-xs font-semibold text-brand-deep-slate">
