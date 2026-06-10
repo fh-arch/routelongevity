@@ -665,7 +665,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                   {tier === 'Premium' ? (
                     <div className="p-3 bg-brand-copper/10 text-brand-copper border border-brand-copper/30 rounded-xl">
                       <div className="flex justify-between items-center">
-                        <span className="font-bold text-xs uppercase">{language === 'tr' ? 'PREMIUM LİSANS' : 'PREMIUM FEATURED PLACEMENT'}</span>
+                        <span className="font-bold text-xs uppercase">{language === 'tr' ? 'PREMIUM ÖNE ÇIKAN' : 'PREMIUM FEATURED'}</span>
                         <span className="text-[9px] font-mono bg-white text-brand-copper px-1.5 py-0.5 rounded font-black uppercase tracking-wider">
                           {language === 'tr' ? 'Aktif' : 'Active'}
                         </span>
@@ -709,7 +709,7 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
                 {/* Toggle controls to choose billing tier */}
                 <div className="space-y-2 border-t border-brand-warm-sand/30 pt-4">
                   <span className="text-[10px] text-brand-deep-slate/40 font-bold uppercase block">
-                    {language === 'tr' ? 'Konumlandırma seviyesini değiştir' : 'Change placement license tier'}
+                    {language === 'tr' ? 'Öne çıkan lisans seviyesini değiştir' : 'Change featured license tier'}
                   </span>
                   
                   <div className="grid grid-cols-2 gap-2">

@@ -543,7 +543,7 @@ export default function MapContainer({
         </div>
 
         {/* Side listings results */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[#f6fbf9]/20">
+        <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-[#f6fbf9]/20">
           <div className="flex justify-between items-center text-xs text-brand-deep-slate/55 px-1">
             <span>
               {language === 'tr' ? `${sortedSidePartners.length} sonuç gösteriliyor` : `Showing ${sortedSidePartners.length} results`}
@@ -573,30 +573,23 @@ export default function MapContainer({
                 <div
                   key={p.id}
                   onClick={() => handlePartnerSelect(p)}
-                  className={`p-3 rounded-xl border transition-all duration-300 cursor-pointer text-left relative ${
+                  className={`p-4 sm:p-5 rounded-2xl border transition-all duration-300 cursor-pointer text-left relative ${
                     isSelected
                       ? 'bg-white border-brand-med-teal ring-2 ring-brand-med-teal/10 shadow-md'
                       : isPremium 
-                        ? 'bg-white border-brand-copper/30 hover:border-brand-copper shadow-[0_2px_8px_rgba(192,130,64,0.06)]' 
+                        ? 'bg-white border-brand-copper/35 hover:border-brand-copper shadow-[0_8px_24px_rgba(14,101,92,0.08)]' 
                         : 'bg-white border-brand-warm-sand/40 hover:border-brand-warm-sand/85 shadow-sm'
                   }`}
                 >
-                  {/* Premium Badge Layer */}
-                  {isPremium && (
-                    <div className="absolute top-0.5 right-[4px] bg-brand-copper text-brand-soft-ivory text-[7px] font-extrabold px-1.5 py-0.5 rounded shadow-sm tracking-wider uppercase">
-                      {language === 'tr' ? 'VERİ ANALİTİĞİ LİSANS' : 'FEATURED PLACEMENT'}
-                    </div>
-                  )}
-
-                  <div className="flex gap-3">
+                  <div className="flex gap-4">
                     <img
                       src={p.imageUrl}
                       alt={translatePartner(p.id, 'name', p.name)}
                       referrerPolicy="no-referrer"
-                      className="w-20 h-20 rounded-lg object-cover bg-brand-warm-sand shrink-0 border border-brand-warm-sand/20"
+                      className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl object-cover bg-brand-warm-sand shrink-0 border border-brand-warm-sand/30"
                     />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-1.5">
+                    <div className="flex-1 min-w-0 py-0.5">
+                      <div className="flex flex-wrap items-start justify-between gap-2.5">
                         <span className={`text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-full ${
                           p.category === 'thermal-spa' ? 'bg-brand-turquoise/15 text-brand-med-teal' :
                           p.category === 'hammams' ? 'bg-brand-deep-slate/5 text-brand-deep-slate' :
@@ -608,20 +601,27 @@ export default function MapContainer({
                           {translateCategory(p.category, p.categoryLabel)}
                         </span>
                         
-                        <div className="flex items-center gap-1 shrink-0">
-                          <Star className="w-3 h-3 text-brand-copper fill-brand-copper" />
-                          <span className="text-xs font-semibold text-brand-deep-slate">{p.rating}</span>
+                        <div className="flex items-center gap-2 shrink-0">
+                          {isPremium && (
+                            <span className="rounded-full bg-brand-copper px-2.5 py-1 text-[8px] font-black uppercase tracking-wider text-brand-soft-ivory shadow-sm">
+                              {language === 'tr' ? 'Öne Çıkan' : 'Featured'}
+                            </span>
+                          )}
+                          <span className="inline-flex items-center gap-1 rounded-full bg-brand-soft-ivory px-2 py-1 text-xs font-bold text-brand-deep-slate">
+                            <Star className="w-3 h-3 text-brand-copper fill-brand-copper" />
+                            {p.rating}
+                          </span>
                         </div>
                       </div>
 
-                      <h4 className="text-sm font-bold text-brand-deep-slate mt-1.5 leading-tight truncate">
+                      <h4 className="text-base sm:text-lg font-bold text-brand-deep-slate mt-3 leading-tight line-clamp-2">
                         {translatePartner(p.id, 'name', p.name)}
                       </h4>
-                      <p className="text-xs text-brand-deep-slate/60 mt-0.5 truncate font-sans">
+                      <p className="text-sm text-brand-deep-slate/60 mt-1 truncate font-sans">
                         {formatPartnerLocation(p)}
                       </p>
                       
-                      <p className="text-[10px] text-brand-deep-slate/50 mt-1 line-clamp-2">
+                      <p className="text-xs text-brand-deep-slate/50 mt-2 line-clamp-2">
                         {translatePartner(p.id, 'specialty', p.specialty)}
                       </p>
                     </div>
