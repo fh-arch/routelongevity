@@ -146,6 +146,10 @@ function locationSearchTerms(profile, message) {
     'morocco', 'egypt', 'mena', 'europe', 'americas', 'america',
     'usa', 'united states', 'canada', 'mexico', 'brazil', 'argentina',
     'chile', 'peru', 'costa rica', 'panama', 'colombia',
+    'asia', 'oceania', 'thailand', 'japan', 'india', 'singapore',
+    'indonesia', 'malaysia', 'maldives', 'sri lanka', 'vietnam',
+    'china', 'hong kong', 'taiwan', 'south korea', 'philippines',
+    'bhutan', 'nepal', 'cambodia', 'oman',
   ];
 
   for (const location of knownLocations) {
