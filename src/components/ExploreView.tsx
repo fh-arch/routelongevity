@@ -7,6 +7,7 @@ import Footer from './Footer';
 import { AuthMode, AuthRole, AuthSession } from './AuthModal';
 import { getBlogPosts } from '../api';
 import type { BlogPost } from './BlogEventsModal';
+import AgentSearchBar from './AgentSearchBar';
 
 interface ExploreViewProps {
   onTabChange: (tab: any) => void;
@@ -240,6 +241,7 @@ export default function ExploreView({
               ? 'Tarihi Roma-Osmanlı hamamlarını, mineral bakımından zengin kaplıcaları, uzun yaşam kliniklerini, saf Ege zeytinyağı üreticilerini ve organik beslenme merkezlerini keşfedin. Hücresel yenilenme ve bağışıklık sağlığı için optimize edilmiş şifa rotalarını seçin.'
               : 'Discover historic Roman-Ottoman hammams, mineral-rich hot springs, longevity clinics, pure Aegean olive producers, and organic dietary centers. Select routes optimized for cellular regeneration and immune health.'}
           </p>
+          <AgentSearchBar authSession={authSession} onOpenAuth={onOpenAuth} />
           <div className="grid grid-cols-3 gap-3 max-w-lg">
             {[
               [PARTNERS_DATA.length, language === 'tr' ? 'doğrulanmış merkez' : 'verified hubs'],
