@@ -33,11 +33,12 @@ Owner: Backend
 
 Decide production AI provider and model.
 
-Recommended for now:
+Use the provider already present in this project:
 
 ```text
-AI_PROVIDER=openai
-AI_MODEL=gpt-4.1-mini or gpt-4o-mini equivalent
+AI_PROVIDER=gemini
+GEMINI_API_KEY=...
+AI_MODEL=gemini-2.5-flash
 AGENT_MAX_TOKENS=800
 ```
 
@@ -45,7 +46,8 @@ Acceptance:
 
 - `.env.example` includes AI provider variables.
 - Server fails gracefully when AI key is missing.
-- Local dev can run with a mock agent mode.
+- Local dev calls the real Gemini API when `GEMINI_API_KEY` is present.
+- No mock agent response path is shipped.
 
 ### Task 0.2 - Define Agent Data Contract
 
@@ -829,12 +831,12 @@ pm2 logs routelongevity-api --lines 100
 curl https://routelongevity.com/api/health
 ```
 
-New environment variables:
+New/confirmed environment variables:
 
 ```text
-AI_PROVIDER=
-AI_API_KEY=
-AI_MODEL=
+AI_PROVIDER=gemini
+GEMINI_API_KEY=
+AI_MODEL=gemini-2.5-flash
 AGENT_MAX_TOKENS=800
 AGENT_REQUEST_TIMEOUT_MS=30000
 ```
@@ -857,11 +859,11 @@ The UI and API both need stable contracts before chat work grows.
 1. Task 1 - AgentSearchBar.
 2. Task 2 - AgentChat shell.
 3. Task 3 - RouteCard.
-4. Mock `/api/agent/chat` response for UI testing.
+4. Connect `/api/agent/chat` to the real Gemini API for UI testing.
 
 Why:
 
-This creates the user-facing AI experience before connecting a real model.
+This creates the user-facing AI experience against the same real agent path we will ship.
 
 ### Sprint 3 - Backend MVP
 
@@ -916,4 +918,3 @@ Outcome forms and analytics can follow immediately after MVP.
 - Medical claims must be careful: position the AI as a route guide, not a doctor.
 - Resend sender/domain setup should be finalized before production email features.
 - Bundle is already large; AgentChat should be code-split if possible.
-
