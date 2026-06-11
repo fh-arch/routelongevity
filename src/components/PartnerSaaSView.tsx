@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { PARTNERS_DATA } from '../data';
 import { ActiveTab, LicenseType } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { 
-  Building, ShieldCheck, DollarSign, TrendingUp, Eye, 
+import {
+  Building, ShieldCheck, DollarSign, TrendingUp, Eye,
   MousePointerClick, PhoneCall, CheckCircle2, Award, LogIn, UserPlus, ClipboardCheck, Mail, Lock, BriefcaseBusiness,
-  Heart, Route, CalendarCheck, Inbox, Users, ListChecks, Megaphone, Loader2, AlertCircle
+  Heart, Route, CalendarCheck, Inbox, Users, ListChecks, Megaphone, Loader2, AlertCircle, Star, BarChart2
 } from 'lucide-react';
 import Footer from './Footer';
 import { AuthMode, AuthRole, AuthSession } from './AuthModal';
-import { AdminOverview, getAdminOverview, getProfile, submitListingApplication, updateAdminApplicationStatus, UserProfileSummary } from '../api';
+import { AdminOverview, getAdminOverview, getPartnerListingOutcomes, getProfile, PartnerOutcomeData, submitListingApplication, updateAdminApplicationStatus, UserProfileSummary } from '../api';
 import AdminDashboard from './AdminDashboard';
 
 interface PartnerSaaSViewProps {
@@ -52,11 +52,14 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
   const [adminOverview, setAdminOverview] = useState<AdminOverview | null>(null);
   const [panelError, setPanelError] = useState('');
   const [isPanelLoading, setIsPanelLoading] = useState(Boolean(authSession));
+  const [outcomeData, setOutcomeData] = useState<PartnerOutcomeData | null>(null);
+  const [outcomeLoading, setOutcomeLoading] = useState(false);
 
   const loadAccountData = async () => {
     if (!authSession) {
       setProfile(null);
       setAdminOverview(null);
+      setOutcomeData(null);
       setIsPanelLoading(false);
       return;
     }
@@ -74,6 +77,18 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
       setPanelError(error instanceof Error ? error.message : 'Account data could not be loaded.');
     } finally {
       setIsPanelLoading(false);
+    }
+
+    if (authSession.role === 'partner') {
+      try {
+        setOutcomeLoading(true);
+        const data = await getPartnerListingOutcomes();
+        setOutcomeData(data);
+      } catch {
+        // non-fatal: outcome data unavailable
+      } finally {
+        setOutcomeLoading(false);
+      }
     }
   };
 
@@ -764,6 +779,226 @@ export default function PartnerSaaSView({ onOpenBlog, onOpenEvents, onOpenAuth, 
 
         </div>
       </div>
+
+      {/* Partner Outcome Scores — only visible for signed-in partners */}
+      {authSession?.role === 'partner' && (
+        <section className="space-y-5">
+          <div className="flex items-center gap-2 px-1">
+            <Star className="h-5 w-5 text-brand-copper" />
+            <h2 className="text-base font-black text-brand-deep-slate uppercase tracking-wider">
+              {language === 'tr' ? 'Ziyaretçi Sonuç Skorları' : 'Visitor Outcome Scores'}
+            </h2>
+            <span className="ml-auto text-[10px] font-bold uppercase tracking-widest text-brand-deep-slate/40 bg-[#f6fbf9] border border-brand-warm-sand/50 px-2 py-0.5 rounded">
+              {language === 'tr' ? 'Yalnızca Toplu Veri' : 'Aggregate Only'}
+            </span>
+          </div>
+
+          {outcomeLoading && (
+            <div className="flex items-center gap-2 rounded-2xl border border-brand-warm-sand/50 bg-white p-4 text-sm font-bold text-brand-deep-slate">
+              <Loader2 className="h-4 w-4 animate-spin text-brand-med-teal" />
+              {language === 'tr' ? 'Sonuç verileri yükleniyor...' : 'Loading outcome data...'}
+            </div>
+          )}
+
+          {!outcomeLoading && outcomeData && (
+            <>
+              {/* Summary stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  {
+                    label: language === 'tr' ? 'Toplam Değerlendirme' : 'Total Outcomes',
+                    value: outcomeData.stats.totalOutcomes,
+                    icon: CheckCircle2,
+                    color: 'text-brand-med-teal',
+                    bg: 'bg-brand-med-teal/10',
+                  },
+                  {
+                    label: language === 'tr' ? 'Ortalama Skor' : 'Avg Score',
+                    value: outcomeData.stats.avgScore !== null ? `${outcomeData.stats.avgScore} / 10` : '—',
+                    icon: Star,
+                    color: 'text-brand-copper',
+                    bg: 'bg-brand-copper/10',
+                  },
+                  {
+                    label: language === 'tr' ? 'Listelenen Tesis' : 'Listed Venues',
+                    value: outcomeData.listings.length,
+                    icon: Building,
+                    color: 'text-brand-turquoise',
+                    bg: 'bg-brand-turquoise/10',
+                  },
+                  {
+                    label: language === 'tr' ? 'Son 30 Günde' : 'Last 30 Days',
+                    value: outcomeData.trend.reduce((sum, d) => sum + d.count, 0),
+                    icon: TrendingUp,
+                    color: 'text-emerald-600',
+                    bg: 'bg-emerald-50',
+                  },
+                ].map((stat) => {
+                  const Icon = stat.icon;
+                  return (
+                    <div key={stat.label} className="rounded-2xl border border-brand-warm-sand/45 bg-white p-5 shadow-sm">
+                      <div className={`inline-flex p-2 rounded-lg mb-3 ${stat.bg}`}>
+                        <Icon className={`h-4 w-4 ${stat.color}`} />
+                      </div>
+                      <div className="text-2xl font-black text-brand-deep-slate">{stat.value}</div>
+                      <div className="text-xs font-bold text-brand-deep-slate/50 mt-0.5">{stat.label}</div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                {/* Score distribution */}
+                <div className="rounded-3xl border border-brand-warm-sand/45 bg-white p-6 shadow-sm">
+                  <div className="flex items-center gap-2 mb-5">
+                    <BarChart2 className="h-4 w-4 text-brand-med-teal" />
+                    <h3 className="text-sm font-black text-brand-deep-slate uppercase tracking-wider">
+                      {language === 'tr' ? 'Skor Dağılımı' : 'Score Distribution'}
+                    </h3>
+                  </div>
+                  {outcomeData.distribution.length === 0 ? (
+                    <p className="text-xs text-brand-deep-slate/45">
+                      {language === 'tr' ? 'Henüz değerlendirme yok.' : 'No outcomes yet.'}
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => {
+                        const bucket = outcomeData.distribution.find((d) => Number(d.score) === score);
+                        const count = bucket?.count ?? 0;
+                        const maxCount = Math.max(...outcomeData.distribution.map((d) => d.count), 1);
+                        const pct = Math.round((count / maxCount) * 100);
+                        return (
+                          <div key={score} className="flex items-center gap-3">
+                            <span className="w-4 text-[11px] font-black text-brand-deep-slate/60 text-right">{score}</span>
+                            <div className="flex-1 h-4 rounded-full bg-[#f6fbf9] overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-gradient-to-r from-brand-med-teal to-brand-turquoise transition-all duration-500"
+                                style={{ width: `${pct}%` }}
+                              />
+                            </div>
+                            <span className="w-6 text-[11px] font-bold text-brand-deep-slate/50">{count}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                {/* 30-day trend sparkline */}
+                <div className="rounded-3xl border border-brand-warm-sand/45 bg-white p-6 shadow-sm">
+                  <div className="flex items-center gap-2 mb-5">
+                    <TrendingUp className="h-4 w-4 text-brand-med-teal" />
+                    <h3 className="text-sm font-black text-brand-deep-slate uppercase tracking-wider">
+                      {language === 'tr' ? '30 Günlük Skor Trendi' : '30-Day Score Trend'}
+                    </h3>
+                  </div>
+                  {outcomeData.trend.length === 0 ? (
+                    <p className="text-xs text-brand-deep-slate/45">
+                      {language === 'tr' ? 'Son 30 günde veri yok.' : 'No data in the last 30 days.'}
+                    </p>
+                  ) : (
+                    <svg className="w-full h-28 overflow-visible" viewBox="0 0 400 100" preserveAspectRatio="none">
+                      <defs>
+                        <linearGradient id="trendGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#0e7a70" stopOpacity="0.2" />
+                          <stop offset="100%" stopColor="#0e7a70" stopOpacity="0.01" />
+                        </linearGradient>
+                      </defs>
+                      {(() => {
+                        const scores = outcomeData.trend.map((d) => Number(d.avg_score));
+                        const minS = Math.max(0, Math.min(...scores) - 1);
+                        const maxS = Math.min(10, Math.max(...scores) + 1);
+                        const pts = scores.map((s, i) => {
+                          const x = scores.length === 1 ? 200 : (i / (scores.length - 1)) * 400;
+                          const y = 90 - ((s - minS) / (maxS - minS)) * 80;
+                          return `${x},${y}`;
+                        });
+                        const d = `M ${pts.join(' L ')}`;
+                        return (
+                          <>
+                            <path d={`${d} L 400,100 L 0,100 Z`} fill="url(#trendGrad)" />
+                            <path d={d} fill="none" stroke="#0e7a70" strokeWidth="2.5" strokeLinecap="round" />
+                            {scores.map((s, i) => {
+                              const x = scores.length === 1 ? 200 : (i / (scores.length - 1)) * 400;
+                              const y = 90 - ((s - minS) / (maxS - minS)) * 80;
+                              return <circle key={i} cx={x} cy={y} r="3.5" fill="#042f2c" stroke="#fff" strokeWidth="1.5" />;
+                            })}
+                          </>
+                        );
+                      })()}
+                    </svg>
+                  )}
+                </div>
+              </div>
+
+              {/* Per-listing table */}
+              {outcomeData.listings.length > 0 && (
+                <div className="rounded-3xl border border-brand-warm-sand/45 bg-white p-6 shadow-sm">
+                  <h3 className="text-sm font-black text-brand-deep-slate uppercase tracking-wider mb-4">
+                    {language === 'tr' ? 'Tesis Bazlı Sonuçlar' : 'Per-Venue Outcomes'}
+                  </h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-brand-warm-sand/40">
+                          <th className="text-left py-2 pr-4 font-bold text-brand-deep-slate/50 uppercase tracking-wider">
+                            {language === 'tr' ? 'Tesis' : 'Venue'}
+                          </th>
+                          <th className="text-right py-2 pr-4 font-bold text-brand-deep-slate/50 uppercase tracking-wider">
+                            {language === 'tr' ? 'Değerlendirme' : 'Outcomes'}
+                          </th>
+                          <th className="text-right py-2 pr-4 font-bold text-brand-deep-slate/50 uppercase tracking-wider">
+                            {language === 'tr' ? 'Ort. Skor' : 'Avg Score'}
+                          </th>
+                          <th className="text-right py-2 font-bold text-brand-deep-slate/50 uppercase tracking-wider">
+                            {language === 'tr' ? 'Son Ziyaret' : 'Last Visit'}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {outcomeData.listings.map((listing) => (
+                          <tr key={listing.externalId} className="border-b border-[#f6fbf9] hover:bg-[#f6fbf9]">
+                            <td className="py-2.5 pr-4 font-bold text-brand-deep-slate">
+                              {listing.name}
+                              {listing.city && (
+                                <span className="ml-1.5 font-normal text-brand-deep-slate/45">{listing.city}</span>
+                              )}
+                            </td>
+                            <td className="text-right py-2.5 pr-4 font-black text-brand-deep-slate">{listing.outcomeCount}</td>
+                            <td className="text-right py-2.5 pr-4">
+                              {listing.avgScore !== null ? (
+                                <span className="inline-flex items-center gap-1 font-black text-brand-copper">
+                                  <Star className="h-3 w-3" />{listing.avgScore}
+                                </span>
+                              ) : (
+                                <span className="text-brand-deep-slate/35">—</span>
+                              )}
+                            </td>
+                            <td className="text-right py-2.5 text-brand-deep-slate/55">
+                              {listing.lastVisited ? new Date(listing.lastVisited).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="mt-3 text-[10px] text-brand-deep-slate/40 italic">
+                    {language === 'tr'
+                      ? 'Gizlilik koruması: Bu veriler yalnızca toplu istatistikleri içerir. Kullanıcı adları, e-postalar, notlar veya biyomarker değişkenleri gösterilmez.'
+                      : 'Privacy protected: This data contains aggregate statistics only. No user names, emails, notes, or biomarker changes are shown.'}
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+
+          {!outcomeLoading && !outcomeData && (
+            <div className="rounded-2xl border border-brand-warm-sand/45 bg-white p-5 text-sm text-brand-deep-slate/55">
+              {language === 'tr' ? 'Sonuç verisi yüklenemedi.' : 'Outcome data could not be loaded.'}
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Responsive Brand Footer with Blog and Events */}
       <Footer onOpenBlog={onOpenBlog} onOpenEvents={onOpenEvents} />

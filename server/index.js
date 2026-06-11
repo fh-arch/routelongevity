@@ -973,6 +973,99 @@ app.get('/api/admin/agent-analytics', requireAuth, requireAdmin, async (req, res
   }
 });
 
+app.get('/api/partner/listing-outcomes', requireAuth, requirePartner, async (req, res, next) => {
+  try {
+    const partnerId = req.user.id;
+
+    const listingsResult = await query(
+      `SELECT id, external_id, name, city
+       FROM listings
+       WHERE partner_user_id = $1 AND status = 'approved'
+       ORDER BY name`,
+      [partnerId],
+    );
+
+    const listings = listingsResult.rows;
+
+    if (listings.length === 0) {
+      return res.json({
+        listings: [],
+        stats: { totalOutcomes: 0, avgScore: null },
+        trend: [],
+        distribution: [],
+      });
+    }
+
+    const listingIds = listings.map((l) => l.id);
+
+    const [statsResult, trendResult, distributionResult] = await Promise.all([
+      query(
+        `SELECT
+           COUNT(*)::int AS total_outcomes,
+           ROUND(AVG(self_reported_score)::numeric, 2) AS avg_score
+         FROM user_journey_outcomes
+         WHERE listing_id = ANY($1)`,
+        [listingIds],
+      ),
+      query(
+        `SELECT
+           DATE(visited_at) AS day,
+           ROUND(AVG(self_reported_score)::numeric, 2) AS avg_score,
+           COUNT(*)::int AS count
+         FROM user_journey_outcomes
+         WHERE listing_id = ANY($1)
+           AND visited_at >= CURRENT_DATE - INTERVAL '30 days'
+         GROUP BY DATE(visited_at)
+         ORDER BY day`,
+        [listingIds],
+      ),
+      query(
+        `SELECT
+           self_reported_score AS score,
+           COUNT(*)::int AS count
+         FROM user_journey_outcomes
+         WHERE listing_id = ANY($1)
+         GROUP BY self_reported_score
+         ORDER BY self_reported_score`,
+        [listingIds],
+      ),
+    ]);
+
+    const listingAggs = await query(
+      `SELECT
+         l.id, l.external_id, l.name, l.city,
+         COUNT(o.id)::int AS outcome_count,
+         ROUND(AVG(o.self_reported_score)::numeric, 2) AS avg_score,
+         MAX(o.visited_at) AS last_visited
+       FROM listings l
+       LEFT JOIN user_journey_outcomes o ON o.listing_id = l.id
+       WHERE l.partner_user_id = $1 AND l.status = 'approved'
+       GROUP BY l.id, l.external_id, l.name, l.city
+       ORDER BY outcome_count DESC, l.name`,
+      [partnerId],
+    );
+
+    return res.json({
+      listings: listingAggs.rows.map((r) => ({
+        externalId: r.external_id,
+        name: r.name,
+        city: r.city,
+        outcomeCount: r.outcome_count,
+        avgScore: r.avg_score,
+        lastVisited: r.last_visited,
+      })),
+      stats: {
+        totalOutcomes: statsResult.rows[0]?.total_outcomes ?? 0,
+        avgScore: statsResult.rows[0]?.avg_score ?? null,
+      },
+      trend: trendResult.rows,
+      distribution: distributionResult.rows,
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 app.post('/api/auth/forgot-password', authLimiter, async (req, res, next) => {
   try {
     const body = validate(forgotPasswordSchema, req, res);

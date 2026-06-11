@@ -67,6 +67,23 @@ export interface AgentAnalytics {
   goalDistribution: Array<{ goal: string; count: number }>;
 }
 
+export interface PartnerOutcomeData {
+  listings: Array<{
+    externalId: string;
+    name: string;
+    city: string | null;
+    outcomeCount: number;
+    avgScore: number | null;
+    lastVisited: string | null;
+  }>;
+  stats: {
+    totalOutcomes: number;
+    avgScore: number | null;
+  };
+  trend: Array<{ day: string; avg_score: number; count: number }>;
+  distribution: Array<{ score: number; count: number }>;
+}
+
 export interface AdminListingInput {
   externalId?: string;
   categoryId: string;
@@ -243,6 +260,10 @@ export async function submitJourneyOutcome(input: {
     method: 'POST',
     body: JSON.stringify(input),
   });
+}
+
+export async function getPartnerListingOutcomes() {
+  return request<PartnerOutcomeData>('/api/partner/listing-outcomes');
 }
 
 export async function getAdminOverview() {
