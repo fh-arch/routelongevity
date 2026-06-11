@@ -3,6 +3,7 @@ import { ArrowRight, Compass, Loader2, RotateCcw, Route, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react';
 import { useAgent } from '../../context/AgentContext';
 import { useLanguage } from '../../context/LanguageContext';
+import HealthWizard from './HealthWizard';
 import RouteCard from './RouteCard';
 
 interface AgentChatProps {
@@ -17,9 +18,12 @@ export default function AgentChat({ favorites, toggleFavorite, onViewSuggestion 
     messages,
     isOpen,
     isLoading,
+    showWizard,
     closeAgent,
     sendMessage,
     clearSession,
+    saveProfile,
+    dismissWizard,
   } = useAgent();
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -101,13 +105,15 @@ export default function AgentChat({ favorites, toggleFavorite, onViewSuggestion 
             </header>
 
             <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-5">
-              {messages.length === 0 && (
+              {showWizard && messages.length === 0 ? (
+                <HealthWizard onSave={saveProfile} onSkip={dismissWizard} />
+              ) : messages.length === 0 ? (
                 <div className="rounded-3xl border border-white/70 bg-white/60 p-5 text-center shadow-sm">
                   <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-turquoise/14 text-brand-med-teal">
                     <Route className="h-5 w-5" strokeWidth={1.8} />
                   </div>
                   <h3 className="mt-3 text-xl font-black text-brand-deep-slate">
-                    {language === 'tr' ? 'Rotanı birlikte oluşturalım' : 'Let’s build your route'}
+                    {language === 'tr' ? 'Rotanı birlikte oluşturalım' : "Let's build your route"}
                   </h3>
                   <p className="mt-2 text-sm leading-6 text-brand-deep-slate/62">
                     {language === 'tr'
@@ -115,7 +121,7 @@ export default function AgentChat({ favorites, toggleFavorite, onViewSuggestion 
                       : 'Tell me your health goal, budget, or preferred region. The agent recommends only real Route Longevity listings.'}
                   </p>
                 </div>
-              )}
+              ) : null}
 
               {messages.map((message) => {
                 const isUser = message.role === 'user';

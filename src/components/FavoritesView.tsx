@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { AnimatePresence } from 'motion/react';
 import { Partner, RouteJourney } from '../types';
 import { PARTNERS_DATA, WELLNESS_JOURNEYS } from '../data';
 import { useLanguage } from '../context/LanguageContext';
-import { Heart, Star, MapPin, Search, ArrowRight, Map, Clock, Activity } from 'lucide-react';
+import { Heart, Star, MapPin, MessageSquarePlus, ArrowRight, Map, Clock } from 'lucide-react';
 import Footer from './Footer';
 import { getExperiences } from '../api';
+import OutcomeForm from './AgentChat/OutcomeForm';
 
 interface FavoritesViewProps {
   favorites: string[];
@@ -32,6 +34,7 @@ export default function FavoritesView({
   const { language, t, translateCategory, translatePartner, translateJourney } = useLanguage();
   const [activeSubTab, setActiveSubTab] = useState<'hubs' | 'routes'>('hubs');
   const [databaseJourneys, setDatabaseJourneys] = useState<RouteJourney[] | null>(null);
+  const [outcomeTarget, setOutcomeTarget] = useState<{ id?: string; externalId?: string; name: string } | null>(null);
   const journeys = databaseJourneys?.length ? databaseJourneys : WELLNESS_JOURNEYS;
 
   React.useEffect(() => {
@@ -170,13 +173,20 @@ export default function FavoritesView({
                   </div>
                 </div>
 
-                <div className="p-5 pt-0">
+                <div className="p-5 pt-0 flex flex-col gap-2">
                   <button
                     onClick={() => handleShowOnMap(p.id)}
                     className="w-full py-2 bg-brand-deep-slate hover:bg-brand-turquoise hover:text-brand-deep-slate font-bold text-xs rounded-xl text-white transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-sm select-none"
                   >
                     <span>{t('viewOnMap')}</span>
                     <MapPin className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => setOutcomeTarget({ id: p.id, name: translatePartner(p.id, 'name', p.name) })}
+                    className="w-full py-2 border border-brand-warm-sand/60 bg-white/70 hover:bg-brand-turquoise/10 hover:border-brand-med-teal/40 font-bold text-xs rounded-xl text-brand-deep-slate/70 hover:text-brand-deep-slate transition-colors flex items-center justify-center gap-1.5 cursor-pointer select-none"
+                  >
+                    <MessageSquarePlus className="w-3.5 h-3.5" />
+                    <span>{language === 'tr' ? 'Nasıldı?' : 'How was it?'}</span>
                   </button>
                 </div>
               </div>
@@ -311,6 +321,14 @@ export default function FavoritesView({
 
       <Footer onOpenBlog={onOpenBlog} onOpenEvents={onOpenEvents} />
 
+      <AnimatePresence>
+        {outcomeTarget && (
+          <OutcomeForm
+            listing={outcomeTarget}
+            onClose={() => setOutcomeTarget(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }

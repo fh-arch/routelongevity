@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
-import { sendAgentMessage } from '../api';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { getAgentProfile, saveAgentProfile, sendAgentMessage } from '../api';
 import { ChatMessage, HealthProfile, RouteSuggestion } from '../types';
 import { useLanguage } from './LanguageContext';
 
@@ -10,12 +10,16 @@ interface AgentContextValue {
   isLoading: boolean;
   error: string;
   userProfile: HealthProfile | null;
+  profileLoaded: boolean;
+  showWizard: boolean;
   suggestions: RouteSuggestion[];
   openAgent: () => void;
   closeAgent: () => void;
   sendMessage: (text: string) => Promise<void>;
   startWithQuery: (text: string) => Promise<void>;
   clearSession: () => void;
+  saveProfile: (profile: HealthProfile) => Promise<void>;
+  dismissWizard: () => void;
 }
 
 const AgentContext = createContext<AgentContextValue | null>(null);
@@ -55,12 +59,35 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const [userProfile] = useState<HealthProfile | null>(null);
+  const [userProfile, setUserProfile] = useState<HealthProfile | null>(null);
+  const [profileLoaded, setProfileLoaded] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
 
   const persistMessages = (nextMessages: ChatMessage[]) => {
     setMessages(nextMessages);
     sessionStorage.setItem(messagesKey, JSON.stringify(nextMessages));
   };
+
+  useEffect(() => {
+    if (!isOpen || profileLoaded) return;
+    getAgentProfile()
+      .then(({ profile }) => {
+        setUserProfile(profile);
+        setProfileLoaded(true);
+        if (!profile) setShowWizard(true);
+      })
+      .catch(() => {
+        setProfileLoaded(true);
+      });
+  }, [isOpen, profileLoaded]);
+
+  const saveProfile = async (profile: HealthProfile) => {
+    const { profile: saved } = await saveAgentProfile(profile);
+    setUserProfile(saved);
+    setShowWizard(false);
+  };
+
+  const dismissWizard = () => setShowWizard(false);
 
   const clearSession = () => {
     const nextSessionId = createSessionId();
@@ -149,13 +176,17 @@ export function AgentProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     error,
     userProfile,
+    profileLoaded,
+    showWizard,
     suggestions,
     openAgent: () => setIsOpen(true),
     closeAgent: () => setIsOpen(false),
     sendMessage,
     startWithQuery,
     clearSession,
-  }), [messages, sessionId, isOpen, isLoading, error, userProfile, suggestions]);
+    saveProfile,
+    dismissWizard,
+  }), [messages, sessionId, isOpen, isLoading, error, userProfile, profileLoaded, showWizard, suggestions]);
 
   return (
     <AgentContext.Provider value={value}>
