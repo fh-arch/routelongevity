@@ -920,6 +920,59 @@ app.patch('/api/admin/users/:id/role', requireAuth, requireAdmin, async (req, re
   }
 });
 
+app.get('/api/admin/agent-analytics', requireAuth, requireAdmin, async (req, res, next) => {
+  try {
+    const [
+      sessionsResult,
+      suggestionsResult,
+      outcomesResult,
+      topSuggestedResult,
+      topOutcomeResult,
+      goalDistResult,
+    ] = await Promise.all([
+      query('SELECT COUNT(*)::int AS total FROM agent_sessions'),
+      query('SELECT COUNT(*)::int AS total FROM ai_route_suggestions'),
+      query(`SELECT
+               COUNT(*)::int AS total,
+               ROUND(AVG(self_reported_score)::numeric, 2) AS avg_score
+             FROM user_journey_outcomes`),
+      query(`SELECT l.name, l.external_id, l.city, COUNT(*)::int AS suggestion_count
+             FROM ai_route_suggestions ars
+             CROSS JOIN UNNEST(ars.suggested_listing_ids) AS lid
+             JOIN listings l ON l.id = lid
+             GROUP BY l.id, l.name, l.external_id, l.city
+             ORDER BY suggestion_count DESC
+             LIMIT 8`),
+      query(`SELECT l.name, l.external_id, l.city,
+                    ROUND(AVG(o.self_reported_score)::numeric, 2) AS avg_score,
+                    COUNT(*)::int AS visit_count
+             FROM user_journey_outcomes o
+             JOIN listings l ON l.id = o.listing_id
+             GROUP BY l.id, l.name, l.external_id, l.city
+             ORDER BY avg_score DESC, visit_count DESC
+             LIMIT 8`),
+      query(`SELECT UNNEST(goals) AS goal, COUNT(*)::int AS count
+             FROM user_health_profiles
+             GROUP BY goal
+             ORDER BY count DESC`),
+    ]);
+
+    return res.json({
+      stats: {
+        totalSessions: sessionsResult.rows[0]?.total ?? 0,
+        totalSuggestions: suggestionsResult.rows[0]?.total ?? 0,
+        totalOutcomes: outcomesResult.rows[0]?.total ?? 0,
+        avgOutcomeScore: outcomesResult.rows[0]?.avg_score ?? null,
+      },
+      topSuggestedListings: topSuggestedResult.rows,
+      topOutcomeListings: topOutcomeResult.rows,
+      goalDistribution: goalDistResult.rows,
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
+
 app.post('/api/auth/forgot-password', authLimiter, async (req, res, next) => {
   try {
     const body = validate(forgotPasswordSchema, req, res);

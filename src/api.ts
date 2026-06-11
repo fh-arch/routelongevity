@@ -55,6 +55,18 @@ export interface AdminOverview {
   };
 }
 
+export interface AgentAnalytics {
+  stats: {
+    totalSessions: number;
+    totalSuggestions: number;
+    totalOutcomes: number;
+    avgOutcomeScore: number | null;
+  };
+  topSuggestedListings: Array<{ name: string; external_id: string; city: string | null; suggestion_count: number }>;
+  topOutcomeListings: Array<{ name: string; external_id: string; city: string | null; avg_score: number; visit_count: number }>;
+  goalDistribution: Array<{ goal: string; count: number }>;
+}
+
 export interface AdminListingInput {
   externalId?: string;
   categoryId: string;
@@ -235,6 +247,10 @@ export async function submitJourneyOutcome(input: {
 
 export async function getAdminOverview() {
   return request<AdminOverview>('/api/admin/overview');
+}
+
+export async function getAgentAnalytics() {
+  return request<AgentAnalytics>('/api/admin/agent-analytics');
 }
 
 export async function updateAdminApplicationStatus(type: 'contact' | 'listing' | 'partner' | 'ad' | 'event', id: string, status: string) {

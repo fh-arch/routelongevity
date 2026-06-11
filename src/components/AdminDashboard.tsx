@@ -12,6 +12,7 @@ import {
   Megaphone,
   Newspaper,
   Save,
+  Sparkles,
   Users,
 } from 'lucide-react';
 import {
@@ -19,8 +20,10 @@ import {
   AdminEventInput,
   AdminListingInput,
   AdminOverview,
+  AgentAnalytics,
   createAdminListing,
   getAdminOverview,
+  getAgentAnalytics,
   saveAdminBlogPost,
   saveAdminEvent,
   updateAdminApplicationStatus,
@@ -30,7 +33,7 @@ import { AuthSession } from './AuthModal';
 import Footer from './Footer';
 import { useLanguage } from '../context/LanguageContext';
 
-type AdminTab = 'overview' | 'approvals' | 'listings' | 'travelers' | 'blogs' | 'events';
+type AdminTab = 'overview' | 'approvals' | 'listings' | 'travelers' | 'blogs' | 'events' | 'ai-analytics';
 
 interface AdminDashboardProps {
   authSession: AuthSession;
@@ -108,6 +111,8 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
   const [listingForm, setListingForm] = useState<AdminListingInput>(emptyListing);
   const [blogForm, setBlogForm] = useState<AdminBlogInput>(emptyBlog);
   const [eventForm, setEventForm] = useState<AdminEventInput>(emptyEvent);
+  const [analytics, setAnalytics] = useState<AgentAnalytics | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
 
   const loadOverview = async () => {
     try {
@@ -124,6 +129,15 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
   useEffect(() => {
     loadOverview();
   }, [authSession.id]);
+
+  useEffect(() => {
+    if (activeTab !== 'ai-analytics' || analytics) return;
+    setAnalyticsLoading(true);
+    getAgentAnalytics()
+      .then(setAnalytics)
+      .catch(() => setError('Could not load AI analytics.'))
+      .finally(() => setAnalyticsLoading(false));
+  }, [activeTab]);
 
   const runSave = async (action: () => Promise<unknown>, message: string) => {
     try {
@@ -153,6 +167,7 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
     { id: 'travelers', label: 'Travelers', icon: Users },
     { id: 'blogs', label: 'Blogs', icon: Newspaper },
     { id: 'events', label: 'Events', icon: CalendarCheck },
+    { id: 'ai-analytics', label: 'AI Analytics', icon: Sparkles },
   ];
 
   const renderQueue = (
@@ -403,6 +418,113 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
             </button>
           </div>
         </section>
+      )}
+
+      {activeTab === 'ai-analytics' && (
+        <div className="space-y-6">
+          {analyticsLoading && (
+            <div className="flex items-center gap-2 rounded-2xl border border-brand-warm-sand/50 bg-white p-4 text-sm font-bold text-brand-deep-slate">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Loading AI analytics...
+            </div>
+          )}
+
+          {analytics && (
+            <>
+              {/* Stat cards */}
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                {[
+                  { label: 'Agent Sessions', value: analytics.stats.totalSessions },
+                  { label: 'Route Suggestions', value: analytics.stats.totalSuggestions },
+                  { label: 'Outcome Reports', value: analytics.stats.totalOutcomes },
+                  { label: 'Avg Outcome Score', value: analytics.stats.avgOutcomeScore !== null ? `${analytics.stats.avgOutcomeScore} / 10` : '—' },
+                ].map((s) => (
+                  <div key={s.label} className="rounded-2xl border border-brand-warm-sand/45 bg-white p-4 shadow-sm">
+                    <Sparkles className="h-4 w-4 text-brand-copper" />
+                    <div className="mt-3 text-2xl font-black text-brand-deep-slate">{s.value}</div>
+                    <div className="text-[10px] font-black uppercase tracking-wider text-brand-deep-slate/45">{s.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+                {/* Goal distribution */}
+                <section className="rounded-2xl border border-brand-warm-sand/45 bg-white p-5 shadow-sm">
+                  <h3 className="mb-4 text-sm font-black text-brand-deep-slate">Goal Distribution</h3>
+                  {analytics.goalDistribution.length === 0 ? (
+                    <p className="text-xs text-brand-deep-slate/50">No health profiles yet.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {(() => {
+                        const max = Math.max(...analytics.goalDistribution.map((g) => g.count), 1);
+                        return analytics.goalDistribution.map((g) => (
+                          <div key={g.goal}>
+                            <div className="mb-1 flex justify-between text-xs font-bold text-brand-deep-slate">
+                              <span className="capitalize">{g.goal}</span>
+                              <span className="text-brand-deep-slate/50">{g.count}</span>
+                            </div>
+                            <div className="h-2 w-full overflow-hidden rounded-full bg-brand-warm-sand/40">
+                              <div
+                                className="h-full rounded-full bg-brand-med-teal transition-all duration-500"
+                                style={{ width: `${Math.round((g.count / max) * 100)}%` }}
+                              />
+                            </div>
+                          </div>
+                        ));
+                      })()}
+                    </div>
+                  )}
+                </section>
+
+                {/* Top outcome listings */}
+                <section className="rounded-2xl border border-brand-warm-sand/45 bg-white p-5 shadow-sm">
+                  <h3 className="mb-4 text-sm font-black text-brand-deep-slate">Highest Outcome Scores</h3>
+                  {analytics.topOutcomeListings.length === 0 ? (
+                    <p className="text-xs text-brand-deep-slate/50">No outcome reports yet.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {analytics.topOutcomeListings.map((l, i) => (
+                        <div key={l.external_id} className="flex items-center justify-between gap-3 rounded-xl border border-[#d8ebe6] bg-[#f6fbf9] px-3 py-2.5">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <span className="text-[10px] font-black text-brand-deep-slate/35 w-4">#{i + 1}</span>
+                            <div className="min-w-0">
+                              <p className="truncate text-xs font-black text-brand-deep-slate">{l.name}</p>
+                              <p className="text-[10px] text-brand-deep-slate/50">{l.city} · {l.visit_count} visit{l.visit_count !== 1 ? 's' : ''}</p>
+                            </div>
+                          </div>
+                          <span className="shrink-0 rounded-full bg-brand-turquoise/15 px-2.5 py-1 text-xs font-black text-brand-med-teal">
+                            {l.avg_score}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+
+                {/* Top suggested listings */}
+                <section className="rounded-2xl border border-brand-warm-sand/45 bg-white p-5 shadow-sm lg:col-span-2">
+                  <h3 className="mb-4 text-sm font-black text-brand-deep-slate">Most Suggested Listings</h3>
+                  {analytics.topSuggestedListings.length === 0 ? (
+                    <p className="text-xs text-brand-deep-slate/50">No suggestions recorded yet.</p>
+                  ) : (
+                    <div className="overflow-hidden rounded-2xl border border-[#d8ebe6]">
+                      {analytics.topSuggestedListings.map((l, i) => (
+                        <div key={l.external_id} className="grid grid-cols-[28px_minmax(0,1fr)_80px] gap-3 border-b border-[#d8ebe6] p-3 text-xs last:border-0">
+                          <span className="font-black text-brand-deep-slate/35">#{i + 1}</span>
+                          <div>
+                            <p className="font-black text-brand-deep-slate">{l.name}</p>
+                            <p className="text-brand-deep-slate/50">{l.city ?? '—'} · {l.external_id}</p>
+                          </div>
+                          <span className="text-right font-black text-brand-copper">{l.suggestion_count}×</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </section>
+              </div>
+            </>
+          )}
+        </div>
       )}
 
       <Footer onOpenBlog={onOpenBlog} onOpenEvents={onOpenEvents} />
