@@ -152,6 +152,7 @@ export default function App() {
 
   // State to handle direct focus-out and auto-centering on map pins
   const [focusedPartnerId, setFocusedPartnerId] = useState<string | null>(null);
+  const [agentHighlightedExternalIds, setAgentHighlightedExternalIds] = useState<string[]>([]);
 
   // States to handle active route polylines
   const [activeRoutePartnerIds, setActiveRoutePartnerIds] = useState<string[] | null>(null);
@@ -164,10 +165,13 @@ export default function App() {
     setActiveRouteTitle(null);
   };
 
-  const handleViewAgentSuggestion = (partnerId: string) => {
+  const handleViewAgentSuggestion = (partnerId: string, allIds: string[] = []) => {
+    setAgentHighlightedExternalIds(allIds.length ? allIds : [partnerId]);
     handleFocusPartner(partnerId);
     setActiveTab('map');
   };
+
+  const clearAgentHighlights = () => setAgentHighlightedExternalIds([]);
 
   const handleSelectRoute = (partnerIds: string[], title: string) => {
     setActiveRoutePartnerIds(partnerIds);
@@ -361,7 +365,7 @@ export default function App() {
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               className="flex-1 flex flex-col overflow-hidden w-full h-full"
             >
-              <MapContainer 
+              <MapContainer
                 partners={PARTNERS_DATA}
                 selectedCategory={selectedCategory}
                 onCategorySelect={handleCategorySelect}
@@ -371,6 +375,8 @@ export default function App() {
                 setFocusedPartnerId={setFocusedPartnerId}
                 activeRoutePartnerIds={activeRoutePartnerIds}
                 activeRouteTitle={activeRouteTitle}
+                agentHighlightedExternalIds={agentHighlightedExternalIds}
+                onClearAgentHighlights={clearAgentHighlights}
               />
             </motion.div>
           )}

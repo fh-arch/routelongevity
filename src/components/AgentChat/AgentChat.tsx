@@ -9,7 +9,7 @@ import RouteCard from './RouteCard';
 interface AgentChatProps {
   favorites: string[];
   toggleFavorite: (id: string) => void;
-  onViewSuggestion: (externalId: string) => void;
+  onViewSuggestion: (externalId: string, allIds: string[]) => void;
 }
 
 export default function AgentChat({ favorites, toggleFavorite, onViewSuggestion }: AgentChatProps) {
@@ -19,6 +19,7 @@ export default function AgentChat({ favorites, toggleFavorite, onViewSuggestion 
     isOpen,
     isLoading,
     showWizard,
+    suggestions,
     closeAgent,
     sendMessage,
     clearSession,
@@ -144,13 +145,14 @@ export default function AgentChat({ favorites, toggleFavorite, onViewSuggestion 
                             <div className="mt-4 flex gap-3 overflow-x-auto pb-2">
                               {message.suggestions.map((suggestion) => {
                                 const externalId = suggestion.externalId || suggestion.listingId;
+                                const allIds = suggestions.map((s) => s.externalId || s.listingId).filter(Boolean);
                                 return (
                                   <div key={`${message.id}-${externalId}`}>
                                     <RouteCard
                                       suggestion={suggestion}
                                       isFavorite={favorites.includes(externalId)}
                                       onFavorite={toggleFavorite}
-                                      onViewMap={onViewSuggestion}
+                                      onViewMap={(id) => onViewSuggestion(id, allIds)}
                                     />
                                   </div>
                                 );

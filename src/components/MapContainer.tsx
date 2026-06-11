@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Partner, Category } from '../types';
 import { PARTNERS_DATA, CATEGORIES } from '../data';
 import { useLanguage } from '../context/LanguageContext';
-import { MapPin, Star, Phone, Mail, Globe, Search, Filter, X, Heart, ShieldCheck, Compass } from 'lucide-react';
+import { MapPin, Star, Phone, Mail, Globe, Search, Filter, X, Heart, ShieldCheck, Compass, Sparkles } from 'lucide-react';
 
 interface MapContainerProps {
   partners: Partner[];
@@ -14,6 +14,8 @@ interface MapContainerProps {
   setFocusedPartnerId: (id: string | null) => void;
   activeRoutePartnerIds: string[] | null;
   activeRouteTitle: string | null;
+  agentHighlightedExternalIds?: string[];
+  onClearAgentHighlights?: () => void;
 }
 
 export default function MapContainer({
@@ -25,7 +27,9 @@ export default function MapContainer({
   focusedPartnerId,
   setFocusedPartnerId,
   activeRoutePartnerIds,
-  activeRouteTitle
+  activeRouteTitle,
+  agentHighlightedExternalIds = [],
+  onClearAgentHighlights,
 }: MapContainerProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<any>(null);
@@ -153,7 +157,30 @@ export default function MapContainer({
     markersRef.current = {};
 
     // Custom marker helper
-    const createMarkerIcon = (categoryColor: string, isPremium: boolean) => {
+    const createMarkerIcon = (categoryColor: string, isPremium: boolean, isAiHighlight: boolean = false) => {
+      if (isAiHighlight) {
+        return L.divIcon({
+          html: `
+            <div class="relative flex items-center justify-center">
+              <span class="absolute inline-flex h-12 w-12 rounded-full opacity-30 animate-ping" style="background-color:#d96e5f;"></span>
+              <span class="absolute inline-flex h-10 w-10 rounded-full opacity-20" style="background-color:#d96e5f;"></span>
+              <div class="w-9 h-9 rounded-full border-[3px] shadow-lg flex items-center justify-center relative z-10" style="border-color:#d96e5f; background-color:#fff8f6;">
+                <div class="w-5 h-5 rounded-full flex items-center justify-center" style="background-color:${categoryColor}">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2l1.5 4.5H18l-3.75 2.72 1.43 4.4L12 11.2l-3.68 2.42 1.43-4.4L6 6.5h4.5z"/>
+                  </svg>
+                </div>
+              </div>
+              <div class="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[8px] -mt-[1px] absolute -bottom-[6px] z-0" style="border-top-color:#d96e5f;"></div>
+            </div>
+          `,
+          className: 'custom-leaflet-marker',
+          iconSize: [36, 48],
+          iconAnchor: [18, 48],
+          popupAnchor: [0, -42],
+        });
+      }
+
       const ringColor = isPremium ? '#0e655c' : '#FFFFFF';
       return L.divIcon({
         html: `
@@ -189,9 +216,11 @@ export default function MapContainer({
       const cat = CATEGORIES.find(c => c.key === partner.category);
       const color = cat?.color || '#042f2c';
       const isPremium = partner.licenseType === 'Premium';
+      const isAiHighlight = agentHighlightedExternalIds.includes(partner.id);
 
       const marker = L.marker([partner.latitude, partner.longitude], {
-        icon: createMarkerIcon(color, isPremium)
+        icon: createMarkerIcon(color, isPremium, isAiHighlight),
+        zIndexOffset: isAiHighlight ? 1000 : 0,
       }).addTo(map);
 
       // Setup click handler
@@ -204,7 +233,7 @@ export default function MapContainer({
       markersRef.current[partner.id] = marker;
     });
 
-  }, [filteredPartners]);
+  }, [filteredPartners, agentHighlightedExternalIds]);
 
   // Handle drawing Journey Route Polyline if list is provided with animation
   useEffect(() => {
@@ -372,6 +401,20 @@ export default function MapContainer({
     }
   }, [focusedPartnerId]);
 
+  // Fit map to show all AI-highlighted pins
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    if (!map || agentHighlightedExternalIds.length === 0) return;
+    const L = (window as any).L;
+    if (!L) return;
+
+    const highlighted = partners.filter((p) => agentHighlightedExternalIds.includes(p.id));
+    if (highlighted.length < 2) return;
+
+    const bounds = L.latLngBounds(highlighted.map((p) => [p.latitude, p.longitude]));
+    map.fitBounds(bounds, { padding: [80, 80], maxZoom: 8, animate: true });
+  }, [agentHighlightedExternalIds]);
+
   const handlePartnerSelect = (partner: Partner) => {
     setSelectedPartner(partner);
     setFocusedPartnerId(partner.id);
@@ -385,6 +428,29 @@ export default function MapContainer({
       {/* Search and Listing Left Panel */}
       <div className={`absolute md:relative inset-y-0 left-0 w-80 sm:w-96 bg-white border-r border-[#d8ebe6]/40 flex flex-col z-30 md:z-10 shrink-0 shadow-lg transition-transform duration-300 ${showMobileList ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
         
+        {/* AI Suggestions Banner */}
+        {agentHighlightedExternalIds.length > 0 && (
+          <div className="bg-brand-copper/10 border-b border-brand-copper/30 px-4 py-2.5 flex items-center justify-between animate-in slide-in-from-top-1">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-brand-copper" />
+              <div>
+                <p className="text-[10px] uppercase tracking-wider font-extrabold text-brand-copper leading-none">
+                  {language === 'tr' ? 'AI Önerileri' : 'AI Suggestions'}
+                </p>
+                <p className="text-xs font-semibold text-brand-deep-slate mt-0.5">
+                  {agentHighlightedExternalIds.length} {language === 'tr' ? 'yer vurgulandı' : 'places highlighted'}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={onClearAgentHighlights}
+              className="text-brand-deep-slate/60 hover:text-brand-deep-slate text-[10px] underline font-mono cursor-pointer"
+            >
+              {language === 'tr' ? 'Temizle' : 'Clear'}
+            </button>
+          </div>
+        )}
+
         {/* Journey Active Banner */}
         {activeRoutePartnerIds && (
           <div className="bg-brand-copper/10 border-b border-brand-copper/30 px-4 py-2.5 flex items-center justify-between animate-in slide-in-from-top-1">
