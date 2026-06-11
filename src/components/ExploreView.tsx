@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { CATEGORIES, PARTNERS_DATA } from '../data';
 import { Partner } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { Search, MapPin, Star, ArrowRight, ShieldCheck, Heart, X, Building2, ClipboardCheck, Leaf, Landmark, Flower2, Gem, Hourglass, Bookmark, CircleDot, Scale, UsersRound, BookOpen, Clock } from 'lucide-react';
+import { Search, MapPin, Star, ArrowRight, ShieldCheck, Heart, X, Building2, ClipboardCheck, Leaf, Flower2, Gem, UsersRound, BookOpen, Clock } from 'lucide-react';
 import Footer from './Footer';
 import { AuthMode, AuthRole, AuthSession } from './AuthModal';
 import { getBlogPosts } from '../api';
@@ -23,7 +23,7 @@ interface ExploreViewProps {
 
 function CategoryIcon({ categoryKey }: { categoryKey: string }) {
   const commonProps = {
-    className: 'w-7 h-7',
+    className: 'w-5 h-5',
     viewBox: '0 0 32 32',
     fill: 'none',
     stroke: 'currentColor',
@@ -173,19 +173,6 @@ export default function ExploreView({
   });
 
   const displayPartners = searchQuery ? matchedPartners : premiumPartners;
-  const brandKeywords = [
-    { label: language === 'tr' ? 'Uzun Yaşam' : 'Longevity', icon: Leaf },
-    { label: language === 'tr' ? 'Miras' : 'Heritage', icon: Landmark },
-    { label: language === 'tr' ? 'Wellness' : 'Wellness', icon: Flower2 },
-    { label: 'Türkiye', icon: MapPin },
-    { label: language === 'tr' ? 'Doğal' : 'Natural', icon: Leaf },
-    { label: language === 'tr' ? 'Premium' : 'Premium', icon: Gem },
-    { label: language === 'tr' ? 'Zamansız' : 'Timeless', icon: Hourglass },
-    { label: language === 'tr' ? 'Kürasyon' : 'Curated', icon: Bookmark },
-    { label: language === 'tr' ? 'Holistik' : 'Holistic', icon: CircleDot },
-    { label: language === 'tr' ? 'Denge' : 'Balance', icon: Scale },
-  ];
-
   const categoryContent: Record<string, { en: { title: string; desc: string }; tr: { title: string; desc: string } }> = {
     'thermal-spa': {
       en: { title: 'Thermal & Mineral Waters', desc: 'Mineral bathing, hydrotherapy and recovery destinations.' },
@@ -259,21 +246,23 @@ export default function ExploreView({
       {/* Hero Welcome banner */}
       <div className="relative rounded-[32px] overflow-hidden glass-dark text-brand-soft-ivory p-6 md:p-10 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_420px] gap-8 items-stretch">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_12%,rgba(255,255,255,0.16),transparent_32%),radial-gradient(circle_at_82%_12%,rgba(217,110,95,0.22),transparent_24%)]" />
-        <div className="space-y-5 max-w-3xl z-10 self-center">
+        <div className="space-y-6 max-w-3xl z-10 self-center">
           <span className="text-xs font-semibold text-white bg-white/10 px-3 py-1.5 rounded-full uppercase tracking-wide border border-white/10">
             {language === 'tr' ? 'Global longevity rota zekası' : 'Global longevity route intelligence'}
           </span>
-          <h1 className="text-3xl md:text-6xl font-extrabold font-display leading-[1.03] tracking-normal">
+          <h1 className="text-3xl md:text-5xl xl:text-[3.45rem] font-extrabold font-display leading-[1.06] tracking-normal max-w-4xl">
             {language === 'tr'
               ? 'Sağlık hedefini anlat. AI longevity rotanı oluştursun.'
               : 'Describe Your Health Goal. AI Builds Your Longevity Route.'}
           </h1>
-          <p className="text-sm md:text-base text-brand-soft-ivory/82 leading-7 max-w-2xl">
+          <p className="text-sm md:text-base text-brand-soft-ivory/82 leading-7 max-w-2xl pb-2">
             {language === 'tr'
               ? 'Uyku, stres, toparlanma, bağışıklık, metabolizma veya sağlıklı yaşlanma hedefini yaz. Route Longevity verified klinikler, inzivalar, termal kaynaklar, hamamlar, beslenme deneyimleri ve wellness destinasyonları arasında kişiselleştirilmiş bir rota oluşturur.'
               : 'Tell us what you want to improve — sleep, stress, recovery, immunity, metabolism or healthy aging. Route Longevity creates a personalized route across verified clinics, retreats, thermal springs, hammams, nutrition experiences and wellness destinations.'}
           </p>
-          <AgentSearchBar authSession={authSession} onOpenAuth={onOpenAuth} />
+          <div className="pt-3">
+            <AgentSearchBar authSession={authSession} onOpenAuth={onOpenAuth} />
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl">
             {[
               [PARTNERS_DATA.length, language === 'tr' ? 'doğrulanmış yer' : 'verified places'],
@@ -365,31 +354,6 @@ export default function ExploreView({
                 <p className="mt-2 text-xs leading-5 text-brand-deep-slate/58">{desc}</p>
               </div>
             ))}
-          </div>
-        </div>
-
-        <div className="px-5 md:px-8 pt-6">
-          <div className="flex items-center gap-4">
-            <div className="h-px flex-1 bg-brand-turquoise/35" />
-            <h2 className="text-lg md:text-xl font-extrabold text-brand-deep-slate tracking-normal">
-              {language === 'tr' ? 'Uzun Yaşam İşaretleri' : 'Longevity Signals'}
-            </h2>
-            <div className="h-px flex-1 bg-brand-turquoise/35" />
-          </div>
-          <div className="grid grid-cols-5 md:grid-cols-10 gap-y-5 mt-5 pb-6 border-b border-brand-turquoise/22">
-            {brandKeywords.map((keyword) => {
-              const Icon = keyword.icon;
-              return (
-                <div key={keyword.label} className="flex flex-col items-center gap-2 px-2 md:border-r md:last:border-r-0 border-brand-warm-sand/70">
-                  <div className="w-10 h-10 rounded-full bg-brand-turquoise/12 text-brand-med-teal flex items-center justify-center border border-white/65 shadow-sm">
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <span className="text-[10px] md:text-xs font-bold text-brand-deep-slate text-center leading-tight">
-                    {keyword.label}
-                  </span>
-                </div>
-              );
-            })}
           </div>
         </div>
 
@@ -638,25 +602,22 @@ export default function ExploreView({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
           {CATEGORIES.map((cat) => (
             <button
               key={cat.key}
               onClick={() => handleCategoryClick(cat.key)}
-              className="glass-surface hover:border-brand-med-teal/45 hover:shadow-lg p-5 rounded-[24px] flex flex-col items-start text-left min-h-[180px] transition-all cursor-pointer group"
+              className="glass-surface hover:border-brand-med-teal/45 hover:shadow-lg p-4 rounded-[22px] flex flex-col items-center justify-between text-center min-h-[142px] transition-all cursor-pointer group"
             >
               <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-transform duration-300 group-hover:scale-105 bg-brand-olive-sage/70 text-brand-med-teal"
+                className="w-11 h-11 rounded-2xl flex items-center justify-center mb-3 transition-transform duration-300 group-hover:scale-105 bg-brand-olive-sage/70 text-brand-med-teal"
               >
                 <CategoryIcon categoryKey={cat.key} />
               </div>
-              <span className="font-display font-extrabold text-base text-brand-deep-slate leading-tight">
+              <span className="font-sans font-extrabold text-xs text-brand-deep-slate leading-tight flex min-h-[34px] items-center justify-center">
                 {categoryContent[cat.key]?.[language].title || translateCategory(cat.key, cat.label)}
               </span>
-              <span className="mt-2 text-xs leading-5 text-brand-deep-slate/58">
-                {categoryContent[cat.key]?.[language].desc || cat.label}
-              </span>
-              <span className="text-[11px] text-brand-med-teal mt-auto pt-4 font-black flex items-center gap-1.5">
+              <span className="text-[10px] text-brand-med-teal mt-3 font-black flex items-center gap-1.5 uppercase tracking-wide">
                 {language === 'tr' ? 'Keşfet' : 'Explore'} <ArrowRight className="w-3.5 h-3.5" />
               </span>
             </button>
