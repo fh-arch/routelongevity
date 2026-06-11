@@ -340,6 +340,18 @@ function parseAgentJson(text) {
   }
 }
 
+function parseAndValidateAgentResponse(rawText) {
+  try {
+    return agentResponseSchema.parse(parseAgentJson(rawText));
+  } catch (error) {
+    const parseError = new Error('AI provider returned invalid route JSON. Please try again.');
+    parseError.statusCode = 502;
+    parseError.cause = error;
+    parseError.rawText = rawText?.slice(0, 1200);
+    throw parseError;
+  }
+}
+
 function withTimeout(promise, timeoutMs) {
   let timeoutId;
   const timeout = new Promise((_, reject) => {
@@ -347,6 +359,59 @@ function withTimeout(promise, timeoutMs) {
   });
 
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timeoutId));
+}
+
+async function callOpenAiCompatible({
+  providerName,
+  apiKey,
+  baseUrl,
+  model,
+  profile,
+  history,
+  listings,
+  outcomes,
+  message,
+  language,
+}) {
+  if (!apiKey) {
+    const error = new Error(`${providerName.toUpperCase()}_API_KEY is not configured.`);
+    error.statusCode = 503;
+    throw error;
+  }
+
+  const timeoutMs = Number(process.env.AGENT_REQUEST_TIMEOUT_MS || 30000);
+  const maxOutputTokens = Number(process.env.AGENT_MAX_TOKENS || 1600);
+  const response = await withTimeout(
+    fetch(`${baseUrl.replace(/\/$/, '')}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: buildSystemInstruction(language) },
+          { role: 'user', content: buildPrompt({ profile, history, listings, outcomes, message }) },
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.25,
+        max_tokens: maxOutputTokens,
+      }),
+    }),
+    timeoutMs,
+  );
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    const providerMessage = data?.error?.message || data?.message || `${providerName} request failed.`;
+    const error = new Error(providerMessage);
+    error.statusCode = response.status >= 400 && response.status < 500 ? response.status : 502;
+    throw error;
+  }
+
+  const rawText = data?.choices?.[0]?.message?.content || '';
+  return parseAndValidateAgentResponse(rawText);
 }
 
 async function callGemini({ profile, history, listings, outcomes, message, language }) {
@@ -358,7 +423,7 @@ async function callGemini({ profile, history, listings, outcomes, message, langu
 
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const model = process.env.AI_MODEL || 'gemini-2.5-flash';
-  const maxOutputTokens = Number(process.env.AGENT_MAX_TOKENS || 800);
+  const maxOutputTokens = Number(process.env.AGENT_MAX_TOKENS || 1600);
   const timeoutMs = Number(process.env.AGENT_REQUEST_TIMEOUT_MS || 30000);
 
   const response = await withTimeout(
@@ -376,8 +441,33 @@ async function callGemini({ profile, history, listings, outcomes, message, langu
   );
 
   const rawText = response.text || '';
-  const parsed = agentResponseSchema.parse(parseAgentJson(rawText));
-  return parsed;
+  return parseAndValidateAgentResponse(rawText);
+}
+
+async function callAiProvider(args) {
+  const provider = (process.env.AI_PROVIDER || 'gemini').toLowerCase();
+
+  if (provider === 'deepseek') {
+    return callOpenAiCompatible({
+      ...args,
+      providerName: 'deepseek',
+      apiKey: process.env.DEEPSEEK_API_KEY,
+      baseUrl: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com',
+      model: process.env.AI_MODEL || 'deepseek-chat',
+    });
+  }
+
+  if (provider === 'kimi' || provider === 'moonshot') {
+    return callOpenAiCompatible({
+      ...args,
+      providerName: 'kimi',
+      apiKey: process.env.KIMI_API_KEY || process.env.MOONSHOT_API_KEY,
+      baseUrl: process.env.KIMI_BASE_URL || process.env.MOONSHOT_BASE_URL || 'https://api.moonshot.ai/v1',
+      model: process.env.AI_MODEL || 'moonshot-v1-8k',
+    });
+  }
+
+  return callGemini(args);
 }
 
 function hydrateSuggestions(agentSuggestions, listings) {
@@ -532,7 +622,7 @@ router.post('/chat', requireAuth, agentLimiter, async (req, res, next) => {
       timestamp: new Date().toISOString(),
     };
 
-    const agentResponse = await callGemini({
+    const agentResponse = await callAiProvider({
       profile,
       history,
       listings,
