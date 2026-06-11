@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import ExploreView from './components/ExploreView';
 import MapContainer from './components/MapContainer';
 import ExperiencesView from './components/ExperiencesView';
@@ -19,8 +19,15 @@ import { AnimatePresence, motion } from 'motion/react';
 import { getCurrentUser, getFavorites, setFavoriteJourney, setFavoriteListing, signout } from './api';
 
 export default function App() {
-  const { t, language } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const [showSplash, setShowSplash] = useState(true);
+  const [selectedCountry, setSelectedCountry] = useState(() => {
+    try {
+      return localStorage.getItem('route_longevity_country') || 'Türkiye';
+    } catch (e) {
+      return 'Türkiye';
+    }
+  });
   const [activeTab, setActiveTab] = useState<ActiveTab>('explore');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [authModal, setAuthModal] = useState<{ isOpen: boolean; role: AuthRole; mode: AuthMode }>({
@@ -154,6 +161,34 @@ export default function App() {
   const [focusedPartnerId, setFocusedPartnerId] = useState<string | null>(null);
   const [agentHighlightedExternalIds, setAgentHighlightedExternalIds] = useState<string[]>([]);
 
+  const availableCountries = useMemo(
+    () => Array.from(new Set(PARTNERS_DATA.map((partner) => partner.country || 'Türkiye'))).sort((a, b) => a.localeCompare(b)),
+    []
+  );
+
+  const countryPartners = useMemo(
+    () => PARTNERS_DATA.filter((partner) => (partner.country || 'Türkiye') === selectedCountry),
+    [selectedCountry]
+  );
+
+  useEffect(() => {
+    if (!availableCountries.includes(selectedCountry) && availableCountries.length > 0) {
+      setSelectedCountry(availableCountries.includes('Türkiye') ? 'Türkiye' : availableCountries[0]);
+    }
+  }, [availableCountries, selectedCountry]);
+
+  const handleSplashComplete = (country: string) => {
+    const normalizedCountry = country || 'Türkiye';
+    setSelectedCountry(normalizedCountry);
+    setLanguage(normalizedCountry === 'Türkiye' ? 'tr' : 'en');
+    try {
+      localStorage.setItem('route_longevity_country', normalizedCountry);
+    } catch (e) {
+      // ignore storage failures
+    }
+    setShowSplash(false);
+  };
+
   // States to handle active route polylines
   const [activeRoutePartnerIds, setActiveRoutePartnerIds] = useState<string[] | null>(null);
   const [activeRouteTitle, setActiveRouteTitle] = useState<string | null>(null);
@@ -204,7 +239,13 @@ export default function App() {
 
   return (
     <>
-      {showSplash && <SplashScreen onComplete={() => setShowSplash(false)} />}
+      {showSplash && (
+        <SplashScreen
+          onComplete={handleSplashComplete}
+          countries={availableCountries}
+          initialCountry={selectedCountry}
+        />
+      )}
       <AgentProvider>
       
       <div className="flex flex-col h-screen app-glass-shell overflow-hidden font-sans">
@@ -343,6 +384,7 @@ export default function App() {
               className="flex-1 flex flex-col overflow-hidden w-full h-full"
             >
               <ExploreView 
+                partners={countryPartners}
                 onTabChange={setActiveTab}
                 onCategorySelect={handleCategorySelect}
                 onFocusPartner={handleFocusPartner}
@@ -366,7 +408,7 @@ export default function App() {
               className="flex-1 flex flex-col overflow-hidden w-full h-full"
             >
               <MapContainer
-                partners={PARTNERS_DATA}
+                partners={countryPartners}
                 selectedCategory={selectedCategory}
                 onCategorySelect={handleCategorySelect}
                 favorites={favorites}

@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, ChevronDown, Globe2 } from 'lucide-react';
 
 interface SplashScreenProps {
-  onComplete: () => void;
+  onComplete: (country: string) => void;
+  countries: string[];
+  initialCountry?: string;
 }
 
-export default function SplashScreen({ onComplete }: SplashScreenProps) {
+export default function SplashScreen({ onComplete, countries, initialCountry = 'Türkiye' }: SplashScreenProps) {
   const [stage, setStage] = useState<'enter' | 'visible' | 'exit' | 'hidden'>('enter');
+  const [selectedCountry, setSelectedCountry] = useState(initialCountry);
+  const isTurkiye = selectedCountry === 'Türkiye';
 
   useEffect(() => {
     const visibleTimer = setTimeout(() => {
@@ -23,7 +27,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     setStage('exit');
     setTimeout(() => {
       setStage('hidden');
-      onComplete();
+      onComplete(selectedCountry);
     }, 700);
   };
 
@@ -69,7 +73,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             stage === 'enter' ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'
           }`}
         >
-          Agentic longevity intelligence
+          {isTurkiye ? 'Agentic longevity zekası' : 'Agentic longevity intelligence'}
         </div>
 
         {/* Title */}
@@ -78,7 +82,15 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             stage === 'enter' ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'
           }`}
         >
-          We’re building the first <span className="text-brand-med-teal">agentic AI for longevity</span>
+          {isTurkiye ? (
+            <>
+              İlk <span className="text-brand-med-teal">agentic AI longevity platformunu</span> inşa ediyoruz
+            </>
+          ) : (
+            <>
+              We’re building the first <span className="text-brand-med-teal">agentic AI for longevity</span>
+            </>
+          )}
         </h1>
 
         <p 
@@ -86,20 +98,54 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             stage === 'enter' ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
           }`}
         >
-          A glass-clear intelligence layer for longevity routes, verified clinics, wellness retreats, and preventive health travel.
+          {isTurkiye
+            ? 'Longevity rotaları, doğrulanmış klinikler, wellness inzivaları ve koruyucu sağlık seyahati için şeffaf bir zeka katmanı.'
+            : 'A glass-clear intelligence layer for longevity routes, verified clinics, wellness retreats, and preventive health travel.'}
           <span className="text-brand-med-teal text-xs uppercase tracking-widest block mt-3 font-black">
-            Heritage data. Modern guidance. Starting from Türkiye.
+            {isTurkiye
+              ? 'Miras verisi. Modern rehberlik. Türkiye’den başlayarak.'
+              : 'Heritage data. Modern guidance. Starting from Türkiye.'}
           </span>
         </p>
+
+        <div
+          className={`relative mt-7 w-full max-w-md transition-all duration-1200 delay-800 transform ${
+            stage === 'enter' ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
+          }`}
+        >
+          <label className="mb-2 flex items-center justify-center gap-2 text-[11px] font-black uppercase tracking-widest text-brand-deep-slate/62">
+            <Globe2 className="h-4 w-4 text-brand-med-teal" />
+            {isTurkiye ? 'Ülkeni seç' : 'Choose your country'}
+          </label>
+          <div className="relative">
+            <select
+              value={selectedCountry}
+              onChange={(event) => setSelectedCountry(event.target.value)}
+              className="h-14 w-full appearance-none rounded-2xl border border-white/70 bg-white/58 px-5 pr-12 text-center text-sm font-black text-brand-deep-slate shadow-inner shadow-brand-deep-slate/5 outline-none backdrop-blur-xl transition focus:border-brand-turquoise focus:ring-4 focus:ring-brand-turquoise/20"
+            >
+              {countries.map((country) => (
+                <option key={country} value={country}>
+                  {country}
+                </option>
+              ))}
+            </select>
+            <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-brand-med-teal" />
+          </div>
+          <p className="mt-2 text-[11px] font-semibold text-brand-deep-slate/52">
+            {isTurkiye
+              ? 'Türkiye seçildiğinde listelemeler ve arayüz Türkçe açılır.'
+              : 'Your listings open by country. Non-Türkiye regions use English by default.'}
+          </p>
+        </div>
 
         <button
           type="button"
           onClick={handleEnter}
-          className={`relative mt-8 inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-med-teal px-7 py-3.5 text-sm font-black text-white shadow-[0_18px_40px_rgba(8,96,88,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-deep-slate hover:shadow-[0_22px_50px_rgba(4,47,44,0.28)] focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-turquoise/25 cursor-pointer ${
+          className={`relative mt-6 inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-med-teal px-7 py-3.5 text-sm font-black text-white shadow-[0_18px_40px_rgba(8,96,88,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-brand-deep-slate hover:shadow-[0_22px_50px_rgba(4,47,44,0.28)] focus:outline-none focus-visible:ring-4 focus-visible:ring-brand-turquoise/25 cursor-pointer ${
             stage === 'enter' ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
           }`}
         >
-          Enter Route Longevity
+          {isTurkiye ? 'Route Longevity’ye Gir' : 'Enter Route Longevity'}
           <ArrowRight className="h-4 w-4" />
         </button>
 
@@ -108,7 +154,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             stage === 'enter' ? 'opacity-0 translate-y-4' : 'opacity-100 translate-y-0'
           }`}
         >
-          {['Natural', 'Holistic', 'Premium'].map((label) => (
+          {(isTurkiye ? ['Doğal', 'Holistik', 'Premium'] : ['Natural', 'Holistic', 'Premium']).map((label) => (
             <div key={label} className="rounded-2xl border border-white/65 bg-white/34 px-4 py-3 text-[10px] font-black uppercase tracking-wide text-brand-deep-slate shadow-sm backdrop-blur-xl">
               {label}
             </div>

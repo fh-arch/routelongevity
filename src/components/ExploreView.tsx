@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CATEGORIES, PARTNERS_DATA } from '../data';
+import { CATEGORIES } from '../data';
 import { Partner } from '../types';
 import { useLanguage } from '../context/LanguageContext';
 import { Search, MapPin, Star, ArrowRight, ShieldCheck, Heart, X, Building2, ClipboardCheck, Leaf, Flower2, Gem, UsersRound, BookOpen, Clock } from 'lucide-react';
@@ -10,6 +10,7 @@ import type { BlogPost } from './BlogEventsModal';
 import AgentSearchBar from './AgentSearchBar';
 
 interface ExploreViewProps {
+  partners: Partner[];
   onTabChange: (tab: any) => void;
   onCategorySelect: (catKey: string) => void;
   onFocusPartner: (partnerId: string) => void;
@@ -112,6 +113,7 @@ function CategoryIcon({ categoryKey }: { categoryKey: string }) {
 }
 
 export default function ExploreView({
+  partners,
   onTabChange,
   onCategorySelect,
   onFocusPartner,
@@ -125,7 +127,7 @@ export default function ExploreView({
   const { language, t, translateCategory, translatePartner } = useLanguage();
 
   // Only display partners with 'Premium' status as premium featured in explore
-  const premiumPartners = PARTNERS_DATA.filter((p) => p.licenseType === 'Premium');
+  const premiumPartners = partners.filter((p) => p.licenseType === 'Premium');
 
   const [searchQuery, setSearchQuery] = useState('');
   const [latestPosts, setLatestPosts] = useState<BlogPost[]>([]);
@@ -146,7 +148,7 @@ export default function ExploreView({
   };
 
   // Live filter logic. Matches by name, city, country, specialty, description, categoryLabel.
-  const matchedPartners = PARTNERS_DATA.filter((p) => {
+  const matchedPartners = partners.filter((p) => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return false;
 
@@ -265,7 +267,7 @@ export default function ExploreView({
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl">
             {[
-              [PARTNERS_DATA.length, language === 'tr' ? 'doğrulanmış yer' : 'verified places'],
+              [partners.length, language === 'tr' ? 'doğrulanmış yer' : 'verified places'],
               [CATEGORIES.length + 1, language === 'tr' ? 'longevity kategorisi' : 'longevity categories'],
               ['4.8', language === 'tr' ? 'misafir puanı' : 'guest rating'],
               ['25+', language === 'tr' ? 'ülke planlandı' : 'countries planned']

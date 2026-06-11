@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Partner, Category } from '../types';
-import { PARTNERS_DATA, CATEGORIES } from '../data';
+import { Partner } from '../types';
+import { CATEGORIES } from '../data';
 import { useLanguage } from '../context/LanguageContext';
 import { MapPin, Star, Phone, Mail, Globe, Search, Filter, X, Heart, ShieldCheck, Compass, Sparkles } from 'lucide-react';
 
@@ -257,7 +257,7 @@ export default function MapContainer({
     if (activeRoutePartnerIds && activeRoutePartnerIds.length > 1) {
       // Find matching partners
       const routePartners = activeRoutePartnerIds
-        .map(id => PARTNERS_DATA.find(p => p.id === id))
+        .map(id => partners.find(p => p.id === id))
         .filter((p): p is Partner => p !== undefined);
 
       if (routePartners.length > 0) {
@@ -335,7 +335,7 @@ export default function MapContainer({
         animationFrameRef.current = requestAnimationFrame(animatePath);
       }
     }
-  }, [activeRoutePartnerIds]);
+  }, [activeRoutePartnerIds, partners]);
 
   // Handle Heatmap Overlay Layer: Concentrated longevity hotspots
   useEffect(() => {
@@ -388,7 +388,7 @@ export default function MapContainer({
     if (!map) return;
     
     if (focusedPartnerId) {
-      const partner = PARTNERS_DATA.find(p => p.id === focusedPartnerId);
+      const partner = partners.find(p => p.id === focusedPartnerId);
       if (partner) {
         setSelectedPartner(partner);
         map.setView([partner.latitude, partner.longitude], 10, { animate: true, duration: 1 });
@@ -399,7 +399,7 @@ export default function MapContainer({
         }
       }
     }
-  }, [focusedPartnerId]);
+  }, [focusedPartnerId, partners, setFocusedPartnerId]);
 
   // Fit map to show all AI-highlighted pins
   useEffect(() => {
