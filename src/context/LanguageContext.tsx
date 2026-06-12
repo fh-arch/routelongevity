@@ -60,6 +60,9 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     } catch (e) {
       // ignore
     }
+
+    document.documentElement.lang = language === 'tr' ? 'tr' : 'en';
+    document.documentElement.dir = 'ltr';
   }, [language]);
 
   const setLanguage = (lang: Language) => {

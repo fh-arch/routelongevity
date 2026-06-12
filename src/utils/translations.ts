@@ -362,7 +362,7 @@ export const categoryTranslations: Record<'en' | 'tr', Record<string, string>> =
     'hammams': 'Tarihi Hamamlar',
     'thermal-spa': 'Termal Banyo & Kaplıcalar',
     'mediterranean-diet': 'Akdeniz Tipi Beslenme',
-    'longevity-clinics': 'Uzun Yaşam Klinikler',
+    'longevity-clinics': 'Uzun Yaşam Klinikleri',
     'retreat-nature': 'Doğa & Meditasyon',
     'traditional-med': 'Geleneksel Şifa',
     'local-producers': 'Yerel Üreticiler'

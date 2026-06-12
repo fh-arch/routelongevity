@@ -36,6 +36,7 @@ export default function SplashScreen({ onComplete, countries, initialCountry = '
   return (
     <div
       id="route-longevity-splash"
+      lang={isTurkiye ? 'tr' : 'en'}
       className={`fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-brand-soft-ivory app-glass-shell px-5 transition-opacity duration-700 ease-in-out ${
         stage === 'exit' ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}

@@ -186,7 +186,7 @@ export default function ExploreView({
     },
     'longevity-clinics': {
       en: { title: 'Longevity Clinics', desc: 'Diagnostics, preventive programs and physician-led protocols.' },
-      tr: { title: 'Longevity Klinikleri', desc: 'Tanı, önleyici programlar ve hekim liderliğinde protokoller.' },
+      tr: { title: 'Uzun Yaşam Klinikleri', desc: 'Tanı, önleyici programlar ve hekim liderliğinde protokoller.' },
     },
     'retreat-nature': {
       en: { title: 'Retreats & Nature Recovery', desc: 'Forest, mountain and coastal resets for nervous-system balance.' },
