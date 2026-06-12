@@ -5,6 +5,12 @@ import { GoogleGenAI } from '@google/genai';
 import { z } from 'zod';
 import { requireAuth } from '../auth.js';
 import { query } from '../db.js';
+import {
+  notifyAdminOutcomeSubmitted,
+  scheduleOutcomeReminderEmail,
+  sendRouteReadyEmail,
+} from '../email/agentEmails.js';
+import { runEmailJob } from '../email/emailClient.js';
 
 const router = express.Router();
 
@@ -554,12 +560,20 @@ router.post('/outcomes', requireAuth, async (req, res, next) => {
     if (!body) return;
 
     let listingId = body.listingId;
+    let listing = null;
     if (!listingId) {
       const listingResult = await query(
-        `SELECT id FROM listings WHERE external_id = $1 AND status = 'approved'`,
+        `SELECT id, external_id, name, city, country FROM listings WHERE external_id = $1 AND status = 'approved'`,
         [body.listingExternalId],
       );
-      listingId = listingResult.rows[0]?.id;
+      listing = listingResult.rows[0] || null;
+      listingId = listing?.id;
+    } else {
+      const listingResult = await query(
+        `SELECT id, external_id, name, city, country FROM listings WHERE id = $1 AND status = 'approved'`,
+        [listingId],
+      );
+      listing = listingResult.rows[0] || null;
     }
 
     if (!listingId) {
@@ -585,6 +599,12 @@ router.post('/outcomes', requireAuth, async (req, res, next) => {
         JSON.stringify(body.biomarkerChange),
       ],
     );
+
+    runEmailJob('admin outcome notification', () => notifyAdminOutcomeSubmitted({
+      user: req.user,
+      listing,
+      outcome: result.rows[0],
+    }));
 
     return res.status(201).json({ outcome: result.rows[0] });
   } catch (error) {
@@ -660,6 +680,18 @@ router.post('/chat', requireAuth, agentLimiter, async (req, res, next) => {
           agentResponse.text,
         ],
       );
+    }
+
+    if (suggestions.length > 0) {
+      runEmailJob('route ready', () => sendRouteReadyEmail({
+        user: req.user,
+        message: body.message,
+        suggestions,
+      }));
+      scheduleOutcomeReminderEmail({
+        user: req.user,
+        suggestions,
+      });
     }
 
     return res.json({
