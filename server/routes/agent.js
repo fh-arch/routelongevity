@@ -358,6 +358,25 @@ function parseAndValidateAgentResponse(rawText) {
   }
 }
 
+function buildFallbackAgentResponse({ listings, message, language }) {
+  const suggestions = listings.slice(0, 5).map((listing, index) => ({
+    listingId: listing.id,
+    externalId: listing.external_id,
+    reason: language === 'tr'
+      ? `${listing.name}, "${message}" hedefiyle eşleşen gerçek ve onaylı Route Longevity kayıtlarından biridir. ${(listing.specialty || listing.description || 'Kategori ve konum uyumu güçlü.').slice(0, 360)}`
+      : `${listing.name} is one of the approved Route Longevity listings that matches "${message}". ${(listing.specialty || listing.description || 'It has a strong category and location fit.').slice(0, 360)}`,
+    durationDays: index === 0 ? 2 : 1,
+    priceRange: listing.is_premium ? 'premium' : 'standard',
+  }));
+
+  return {
+    text: language === 'tr'
+      ? 'AI yanıtı beklenen formatta gelmedi, bu yüzden mevcut gerçek kayıtlar üzerinden güvenli bir rota önerisi hazırladım.'
+      : 'The AI response was not formatted correctly, so I built a safe route recommendation from the available verified listings.',
+    suggestions,
+  };
+}
+
 function withTimeout(promise, timeoutMs) {
   let timeoutId;
   const timeout = new Promise((_, reject) => {
@@ -642,14 +661,30 @@ router.post('/chat', requireAuth, agentLimiter, async (req, res, next) => {
       timestamp: new Date().toISOString(),
     };
 
-    const agentResponse = await callAiProvider({
-      profile,
-      history,
-      listings,
-      outcomes,
-      message: body.message,
-      language: body.language,
-    });
+    let agentResponse;
+    try {
+      agentResponse = await callAiProvider({
+        profile,
+        history,
+        listings,
+        outcomes,
+        message: body.message,
+        language: body.language,
+      });
+    } catch (error) {
+      if (error.message === 'AI provider returned invalid route JSON. Please try again.') {
+        console.warn('AI provider returned invalid route JSON; using deterministic listing fallback.', {
+          rawText: error.rawText,
+        });
+        agentResponse = buildFallbackAgentResponse({
+          listings,
+          message: body.message,
+          language: body.language,
+        });
+      } else {
+        throw error;
+      }
+    }
 
     const suggestions = hydrateSuggestions(agentResponse.suggestions, listings);
     const agentMessage = {

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { CATEGORIES } from '../data';
 import { Partner } from '../types';
 import { useLanguage } from '../context/LanguageContext';
-import { Search, MapPin, Star, ArrowRight, ShieldCheck, Heart, X, Building2, ClipboardCheck, Leaf, Flower2, Gem, UsersRound, BookOpen, Clock } from 'lucide-react';
+import { Search, MapPin, Star, ArrowRight, ShieldCheck, Heart, X, Building2, ClipboardCheck, Leaf, Flower2, Gem, UsersRound, BookOpen, Clock, ChevronDown } from 'lucide-react';
 import Footer from './Footer';
 import { AuthMode, AuthRole, AuthSession } from './AuthModal';
 import { getBlogPosts } from '../api';
@@ -11,6 +11,8 @@ import AgentSearchBar from './AgentSearchBar';
 
 interface ExploreViewProps {
   partners: Partner[];
+  initialCountry?: string;
+  onCountryChange?: (country: string) => void;
   onTabChange: (tab: any) => void;
   onCategorySelect: (catKey: string) => void;
   onFocusPartner: (partnerId: string) => void;
@@ -114,6 +116,8 @@ function CategoryIcon({ categoryKey }: { categoryKey: string }) {
 
 export default function ExploreView({
   partners,
+  initialCountry = '',
+  onCountryChange,
   onTabChange,
   onCategorySelect,
   onFocusPartner,
@@ -126,11 +130,13 @@ export default function ExploreView({
 }: ExploreViewProps) {
   const { language, t, translateCategory, translatePartner } = useLanguage();
 
-  // Only display partners with 'Premium' status as premium featured in explore
-  const premiumPartners = partners.filter((p) => p.licenseType === 'Premium');
-
   const [searchQuery, setSearchQuery] = useState('');
+  const [countryFilter, setCountryFilter] = useState(initialCountry);
   const [latestPosts, setLatestPosts] = useState<BlogPost[]>([]);
+
+  useEffect(() => {
+    setCountryFilter(initialCountry);
+  }, [initialCountry]);
 
   useEffect(() => {
     getBlogPosts(language)
@@ -141,6 +147,14 @@ export default function ExploreView({
   const leadArticle = latestPosts[0];
 
   const getPartnerCountry = (partner: Partner) => partner.country || 'Türkiye';
+  const availableCountries = useMemo(
+    () => Array.from(new Set(partners.map(getPartnerCountry))).sort((a, b) => a.localeCompare(b, language)),
+    [partners, language],
+  );
+  const countryFilteredPartners = useMemo(
+    () => countryFilter ? partners.filter((partner) => getPartnerCountry(partner) === countryFilter) : partners,
+    [partners, countryFilter],
+  );
   const formatPartnerLocation = (partner: Partner) => {
     const city = translatePartner(partner.id, 'city', partner.city);
     const country = getPartnerCountry(partner);
@@ -148,7 +162,7 @@ export default function ExploreView({
   };
 
   // Live filter logic. Matches by name, city, country, specialty, description, categoryLabel.
-  const matchedPartners = partners.filter((p) => {
+  const matchedPartners = countryFilteredPartners.filter((p) => {
     const q = searchQuery.toLowerCase().trim();
     if (!q) return false;
 
@@ -174,7 +188,9 @@ export default function ExploreView({
     );
   });
 
-  const displayPartners = searchQuery ? matchedPartners : premiumPartners;
+  const displayPartners = searchQuery
+    ? matchedPartners
+    : countryFilteredPartners.filter((p) => p.licenseType === 'Premium');
   const categoryContent: Record<string, { en: { title: string; desc: string }; tr: { title: string; desc: string } }> = {
     'thermal-spa': {
       en: { title: 'Thermal & Mineral Waters', desc: 'Mineral bathing, hydrotherapy and recovery destinations.' },
@@ -548,39 +564,72 @@ export default function ExploreView({
       {/* Real-time Search Box */}
       <div className="glass-surface-strong rounded-3xl p-5 md:p-6 space-y-3 relative overflow-hidden">
         
-        <div className="relative">
-          <label htmlFor="explore-search" className="block text-xs font-bold text-[#042f2c] uppercase tracking-wider mb-2 font-sans select-none">
-            {t('exploreSearchLabel')}
-          </label>
+        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_260px]">
           <div className="relative">
-            <Search className="w-5 h-5 text-brand-deep-slate/40 absolute left-4 top-1/2 -translate-y-1/2" />
-            <input
-              id="explore-search"
-              type="text"
-              placeholder={t('exploreSearchPlaceholder')}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-11 pr-12 py-3 bg-white/58 text-sm text-brand-deep-slate rounded-2xl border border-white/80 focus:outline-none focus:border-brand-med-teal/70 focus:ring-1 focus:ring-brand-med-teal/50 transition-all placeholder:text-brand-deep-slate/30 backdrop-blur-md"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                aria-label={language === 'tr' ? 'Aramayı temizle' : 'Clear search'}
-                className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-brand-deep-slate/45 hover:text-brand-deep-slate transition-colors hover:bg-brand-warm-sand/25 rounded-full cursor-pointer"
+            <label htmlFor="explore-search" className="block text-xs font-bold text-[#042f2c] uppercase tracking-wider mb-2 font-sans select-none">
+              {t('exploreSearchLabel')}
+            </label>
+            <div className="relative">
+              <Search className="w-5 h-5 text-brand-deep-slate/40 absolute left-4 top-1/2 -translate-y-1/2" />
+              <input
+                id="explore-search"
+                type="text"
+                placeholder={t('exploreSearchPlaceholder')}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-11 pr-12 py-3 bg-white/58 text-sm text-brand-deep-slate rounded-2xl border border-white/80 focus:outline-none focus:border-brand-med-teal/70 focus:ring-1 focus:ring-brand-med-teal/50 transition-all placeholder:text-brand-deep-slate/30 backdrop-blur-md"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  aria-label={language === 'tr' ? 'Aramayı temizle' : 'Clear search'}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 text-brand-deep-slate/45 hover:text-brand-deep-slate transition-colors hover:bg-brand-warm-sand/25 rounded-full cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="explore-country" className="block text-xs font-bold text-[#042f2c] uppercase tracking-wider mb-2 font-sans select-none">
+              {language === 'tr' ? 'Ülke' : 'Country'}
+            </label>
+            <div className="relative">
+              <select
+                id="explore-country"
+                value={countryFilter}
+                onChange={(event) => {
+                  setCountryFilter(event.target.value);
+                  onCountryChange?.(event.target.value);
+                }}
+                className="w-full appearance-none rounded-2xl border border-white/80 bg-white/58 px-4 py-3 pr-10 text-sm font-bold text-brand-deep-slate outline-none backdrop-blur-md transition-all focus:border-brand-med-teal/70 focus:ring-1 focus:ring-brand-med-teal/50"
               >
-                <X className="w-4 h-4" />
-              </button>
-            )}
+                <option value="">{language === 'tr' ? 'Tüm Ülkeler' : 'All Countries'}</option>
+                {availableCountries.map((country) => (
+                  <option key={country} value={country}>{country}</option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-med-teal" />
+            </div>
           </div>
         </div>
 
-        {searchQuery && (
+        {(searchQuery || countryFilter) && (
           <div className="flex items-center justify-between text-xs text-brand-deep-slate/60 font-mono animate-in fade-in duration-200">
             <span>
-              {t('foundMatchingLocations').replace('{count}', matchedPartners.length.toString())}
+              {searchQuery
+                ? t('foundMatchingLocations').replace('{count}', matchedPartners.length.toString())
+                : language === 'tr'
+                  ? `${displayPartners.length} öne çıkan yer gösteriliyor.`
+                  : `Showing ${displayPartners.length} featured places.`}
             </span>
             <button
-              onClick={() => setSearchQuery('')}
+              onClick={() => {
+                setSearchQuery('');
+                setCountryFilter('');
+                onCountryChange?.('');
+              }}
               className="text-brand-med-teal font-bold hover:underline cursor-pointer"
             >
               {t('clearSearch')}

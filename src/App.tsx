@@ -76,7 +76,11 @@ export default function App() {
       console.warn('Sign out request failed, clearing local session anyway.', error);
     }
     localStorage.removeItem('route_longevity_session_user');
+    localStorage.removeItem('route_longevity_favorites');
+    localStorage.removeItem('route_longevity_saved_routes');
     setAuthSession(null);
+    setFavorites([]);
+    setSavedRouteIds([]);
     if (activeTab === 'profile') {
       setActiveTab('explore');
     }
@@ -112,18 +116,24 @@ export default function App() {
   }, [authSession]);
 
   const toggleFavorite = async (id: string) => {
+    if (!authSession) {
+      openAuth('user', 'signin');
+      return;
+    }
+
     const willSave = !favorites.includes(id);
 
     setFavorites(prev =>
       prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
     );
 
-    if (authSession) {
-      try {
-        await setFavoriteListing(id, willSave);
-      } catch (error) {
-        console.warn('Could not sync listing favorite.', error);
-      }
+    try {
+      await setFavoriteListing(id, willSave);
+    } catch (error) {
+      console.warn('Could not sync listing favorite.', error);
+      setFavorites(prev =>
+        willSave ? prev.filter(f => f !== id) : [...prev, id]
+      );
     }
   };
 
@@ -142,18 +152,24 @@ export default function App() {
   }, [savedRouteIds]);
 
   const toggleSavedRoute = async (id: string) => {
+    if (!authSession) {
+      openAuth('user', 'signin');
+      return;
+    }
+
     const willSave = !savedRouteIds.includes(id);
 
     setSavedRouteIds(prev =>
       prev.includes(id) ? prev.filter(rId => rId !== id) : [...prev, id]
     );
 
-    if (authSession) {
-      try {
-        await setFavoriteJourney(id, willSave);
-      } catch (error) {
-        console.warn('Could not sync route favorite.', error);
-      }
+    try {
+      await setFavoriteJourney(id, willSave);
+    } catch (error) {
+      console.warn('Could not sync route favorite.', error);
+      setSavedRouteIds(prev =>
+        willSave ? prev.filter(rId => rId !== id) : [...prev, id]
+      );
     }
   };
 
@@ -166,26 +182,29 @@ export default function App() {
     []
   );
 
-  const countryPartners = useMemo(
-    () => PARTNERS_DATA.filter((partner) => (partner.country || 'Türkiye') === selectedCountry),
-    [selectedCountry]
-  );
-
   useEffect(() => {
-    if (!availableCountries.includes(selectedCountry) && availableCountries.length > 0) {
+    if (selectedCountry && !availableCountries.includes(selectedCountry) && availableCountries.length > 0) {
       setSelectedCountry(availableCountries.includes('Türkiye') ? 'Türkiye' : availableCountries[0]);
     }
   }, [availableCountries, selectedCountry]);
 
-  const handleSplashComplete = (country: string) => {
-    const normalizedCountry = country || 'Türkiye';
+  const updateSelectedCountry = (country: string) => {
+    const normalizedCountry = country;
     setSelectedCountry(normalizedCountry);
     setLanguage(normalizedCountry === 'Türkiye' ? 'tr' : 'en');
     try {
-      localStorage.setItem('route_longevity_country', normalizedCountry);
+      if (normalizedCountry) {
+        localStorage.setItem('route_longevity_country', normalizedCountry);
+      } else {
+        localStorage.removeItem('route_longevity_country');
+      }
     } catch (e) {
       // ignore storage failures
     }
+  };
+
+  const handleSplashComplete = (country: string) => {
+    updateSelectedCountry(country || 'Türkiye');
     setShowSplash(false);
   };
 
@@ -384,7 +403,9 @@ export default function App() {
               className="flex-1 flex flex-col overflow-hidden w-full h-full"
             >
               <ExploreView 
-                partners={countryPartners}
+                partners={PARTNERS_DATA}
+                initialCountry={selectedCountry}
+                onCountryChange={updateSelectedCountry}
                 onTabChange={setActiveTab}
                 onCategorySelect={handleCategorySelect}
                 onFocusPartner={handleFocusPartner}
@@ -408,7 +429,9 @@ export default function App() {
               className="flex-1 flex flex-col overflow-hidden w-full h-full"
             >
               <MapContainer
-                partners={countryPartners}
+                partners={PARTNERS_DATA}
+                initialCountry={selectedCountry}
+                onCountryChange={updateSelectedCountry}
                 selectedCategory={selectedCategory}
                 onCategorySelect={handleCategorySelect}
                 favorites={favorites}
@@ -488,7 +511,7 @@ export default function App() {
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               className="flex-1 flex flex-col overflow-hidden w-full h-full"
             >
-              <EventsPage onOpenBlog={openBlog} onOpenEvents={openEvents} />
+              <EventsPage onOpenBlog={openBlog} onOpenEvents={openEvents} authSession={authSession} />
             </motion.div>
           )}
 

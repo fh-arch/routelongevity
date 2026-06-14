@@ -6,6 +6,8 @@ import { MapPin, Star, Phone, Mail, Globe, Search, Filter, X, Heart, ShieldCheck
 
 interface MapContainerProps {
   partners: Partner[];
+  initialCountry?: string;
+  onCountryChange?: (country: string) => void;
   selectedCategory: string;
   onCategorySelect: (catKey: string) => void;
   favorites: string[];
@@ -20,6 +22,8 @@ interface MapContainerProps {
 
 export default function MapContainer({
   partners,
+  initialCountry = '',
+  onCountryChange,
   selectedCategory,
   onCategorySelect,
   favorites,
@@ -42,7 +46,7 @@ export default function MapContainer({
 
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [countryFilter, setCountryFilter] = useState('');
+  const [countryFilter, setCountryFilter] = useState(initialCountry);
   const [showMobileList, setShowMobileList] = useState(false);
   const [showDensityLayer, setShowDensityLayer] = useState(false);
 
@@ -58,6 +62,30 @@ export default function MapContainer({
   const availableCountries = Array.from(new Set(partners.map(getPartnerCountry))).sort((a, b) =>
     a.localeCompare(b, language)
   );
+
+  useEffect(() => {
+    setCountryFilter(initialCountry);
+  }, [initialCountry]);
+
+  useEffect(() => {
+    const map = mapInstanceRef.current;
+    const L = (window as any).L;
+    if (!map || !L) return;
+
+    if (!countryFilter) {
+      map.setView(mapHomeCenter, mapHomeZoom, { animate: true });
+      return;
+    }
+
+    const countryPartners = partners.filter((partner) => getPartnerCountry(partner) === countryFilter);
+    if (countryPartners.length > 0) {
+      const bounds = L.latLngBounds(countryPartners.map((partner) => [partner.latitude, partner.longitude]));
+      map.fitBounds(bounds, {
+        padding: [52, 52],
+        maxZoom: countryPartners.length === 1 ? 9 : 7,
+      });
+    }
+  }, [countryFilter, partners]);
 
   // Filter partners based on state (category + search + country) supporting dual language searching.
   const filteredPartners = partners.filter(p => {
@@ -501,25 +529,8 @@ export default function MapContainer({
               <select
                 value={countryFilter}
                 onChange={(e) => {
-                  const selectedCountry = e.target.value;
-                  setCountryFilter(selectedCountry);
-                  const map = mapInstanceRef.current;
-                  const L = (window as any).L;
-                  if (!map || !L) return;
-
-                  if (!selectedCountry) {
-                    map.setView(mapHomeCenter, mapHomeZoom, { animate: true });
-                    return;
-                  }
-
-                  const countryPartners = partners.filter((p) => getPartnerCountry(p) === selectedCountry);
-                  if (countryPartners.length > 0) {
-                    const bounds = L.latLngBounds(countryPartners.map((p) => [p.latitude, p.longitude]));
-                    map.fitBounds(bounds, {
-                      padding: [52, 52],
-                      maxZoom: countryPartners.length === 1 ? 9 : 7,
-                    });
-                  }
+                  setCountryFilter(e.target.value);
+                  onCountryChange?.(e.target.value);
                 }}
                 className="w-full text-xs bg-white border border-brand-warm-sand/70 rounded-lg px-2.5 py-1.5 appearance-none focus:outline-none text-brand-deep-slate cursor-pointer"
               >
@@ -541,6 +552,7 @@ export default function MapContainer({
                 onClick={() => {
                   onCategorySelect('all');
                   setCountryFilter('');
+                  onCountryChange?.('');
                   setSearchQuery('');
                   mapInstanceRef.current?.setView(mapHomeCenter, mapHomeZoom, { animate: true });
                 }}

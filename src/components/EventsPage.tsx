@@ -3,20 +3,30 @@ import { Calendar, CheckCircle2, Clock, Loader2, MapPin, Users } from 'lucide-re
 import { getEvents, registerEvent } from '../api';
 import { useLanguage } from '../context/LanguageContext';
 import type { LongevityEvent } from './BlogEventsModal';
+import type { AuthSession } from './AuthModal';
 import Footer from './Footer';
 
 interface EventsPageProps {
   onOpenBlog: () => void;
   onOpenEvents: () => void;
+  authSession?: AuthSession | null;
 }
 
-export default function EventsPage({ onOpenBlog, onOpenEvents }: EventsPageProps) {
+export default function EventsPage({ onOpenBlog, onOpenEvents, authSession }: EventsPageProps) {
   const { language } = useLanguage();
   const [events, setEvents] = useState<LongevityEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [registeredId, setRegisteredId] = useState('');
   const [registration, setRegistration] = useState({ name: '', email: '' });
+
+  useEffect(() => {
+    if (!authSession) return;
+    setRegistration((prev) => ({
+      name: prev.name || authSession.name || '',
+      email: prev.email || authSession.email || '',
+    }));
+  }, [authSession]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -36,6 +46,10 @@ export default function EventsPage({ onOpenBlog, onOpenEvents }: EventsPageProps
       setError('');
       await registerEvent({ eventId, name: registration.name, email: registration.email });
       setRegisteredId(eventId);
+      setRegistration((prev) => ({
+        name: authSession?.name || prev.name,
+        email: authSession?.email || prev.email,
+      }));
     } catch (registerError) {
       setError(registerError instanceof Error ? registerError.message : 'Registration failed.');
     }
@@ -111,7 +125,10 @@ export default function EventsPage({ onOpenBlog, onOpenEvents }: EventsPageProps
                   className="rounded-xl bg-brand-deep-slate px-4 py-3 text-sm font-black text-white"
                 >
                   {registeredId === event.id ? (
-                    <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-brand-turquoise" /> Registered</span>
+                    <span className="inline-flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-brand-turquoise" />
+                      {language === 'tr' ? 'Profile kaydedildi' : 'Saved to profile'}
+                    </span>
                   ) : language === 'tr' ? 'Kayıt Ol' : 'Register'}
                 </button>
               </div>
