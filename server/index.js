@@ -105,6 +105,7 @@ const eventRegistrationSchema = z.object({
   eventId: z.string().min(1).max(120),
   name: z.string().min(2).max(120),
   email: z.string().email().max(180).transform((email) => email.toLowerCase()),
+  language: z.enum(['en', 'tr']).optional().default('tr'),
 });
 
 const contactMessageSchema = z.object({
@@ -269,6 +270,15 @@ function tagList(value) {
     .filter(Boolean);
 }
 
+function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 async function sendVerificationCode(email, code) {
   await sendEmail({
     to: email,
@@ -318,6 +328,83 @@ async function notifyAdmin(subject, lines) {
     subject,
     text: lines.filter(Boolean).join('\n'),
     fallbackLog: `Admin notification: ${subject}\n${lines.join('\n')}`,
+  });
+}
+
+function buildQrCodeUrl(value) {
+  return `https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=12&data=${encodeURIComponent(value)}`;
+}
+
+async function sendEventTicketEmail({ registration, event, language = 'tr' }) {
+  const eventTitle = event?.title?.[language] || event?.title?.en || registration.event_id;
+  const eventDate = event?.date_label?.[language] || event?.date_label?.en || '';
+  const eventTime = event?.time_label?.[language] || event?.time_label?.en || '';
+  const eventLocation = event?.location?.[language] || event?.location?.en || '';
+  const eventCity = event?.city?.[language] || event?.city?.en || '';
+  const ticketUrl = `${appUrl.replace(/\/+$/, '')}/events?ticket=${registration.id}`;
+  const qrPayload = JSON.stringify({
+    type: 'route-longevity-event-ticket',
+    registrationId: registration.id,
+    eventId: registration.event_id,
+    email: registration.email,
+  });
+  const qrUrl = buildQrCodeUrl(qrPayload);
+  const subject = language === 'tr'
+    ? `Route Longevity etkinlik biletiniz: ${eventTitle}`
+    : `Your Route Longevity event ticket: ${eventTitle}`;
+
+  const text = [
+    language === 'tr' ? `Merhaba ${registration.name},` : `Hi ${registration.name},`,
+    '',
+    language === 'tr'
+      ? 'Etkinlik kaydınız başarıyla alınmıştır. Bilet bilgileriniz aşağıdadır.'
+      : 'Your event registration is confirmed. Your ticket details are below.',
+    '',
+    `${eventTitle}`,
+    [eventDate, eventTime].filter(Boolean).join(' | '),
+    [eventLocation, eventCity].filter(Boolean).join(', '),
+    '',
+    language === 'tr' ? `Bilet kodu: ${registration.id}` : `Ticket code: ${registration.id}`,
+    language === 'tr' ? `QR bağlantısı: ${qrUrl}` : `QR link: ${qrUrl}`,
+    ticketUrl,
+  ].filter(Boolean).join('\n');
+
+  const html = `
+    <div style="margin:0;padding:28px;background:#f5faf7;font-family:Arial,Helvetica,sans-serif;color:#042f2c;">
+      <div style="max-width:680px;margin:0 auto;background:rgba(255,255,255,0.94);border:1px solid #d8ebe6;border-radius:28px;overflow:hidden;box-shadow:0 24px 80px rgba(4,47,44,0.12);">
+        <div style="padding:28px;background:#042f2c;color:#fff;">
+          <div style="font-size:12px;letter-spacing:0.2em;text-transform:uppercase;color:#79c9b8;font-weight:800;">Route Longevity</div>
+          <h1 style="margin:12px 0 0;font-size:28px;line-height:1.15;">${language === 'tr' ? 'Etkinlik kaydınız tamamlandı' : 'Your event registration is confirmed'}</h1>
+        </div>
+        <div style="padding:28px;">
+          <p style="margin:0 0 18px;color:#38534e;font-size:15px;line-height:1.65;">
+            ${language === 'tr'
+              ? `Merhaba ${escapeHtml(registration.name)}, etkinlik biletiniz hazır. Girişte QR kodu gösterebilirsiniz.`
+              : `Hi ${escapeHtml(registration.name)}, your event ticket is ready. You can show this QR code at check-in.`}
+          </p>
+          <div style="display:block;border:1px solid #d8ebe6;border-radius:22px;background:#f9fdfb;padding:20px;margin-bottom:20px;">
+            <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:#0e7a70;font-weight:800;">${language === 'tr' ? 'Etkinlik' : 'Event'}</div>
+            <h2 style="margin:8px 0 10px;color:#042f2c;font-size:22px;">${escapeHtml(eventTitle)}</h2>
+            <p style="margin:0;color:#5f7772;font-size:14px;line-height:1.7;">${escapeHtml([eventDate, eventTime].filter(Boolean).join(' | '))}</p>
+            <p style="margin:2px 0 0;color:#5f7772;font-size:14px;line-height:1.7;">${escapeHtml([eventLocation, eventCity].filter(Boolean).join(', '))}</p>
+          </div>
+          <div style="text-align:center;border:1px solid #d8ebe6;border-radius:22px;background:#ffffff;padding:22px;">
+            <img src="${qrUrl}" alt="Event ticket QR code" width="220" height="220" style="display:block;margin:0 auto 14px;border-radius:16px;" />
+            <div style="font-size:11px;color:#7f918d;text-transform:uppercase;letter-spacing:0.12em;font-weight:800;">${language === 'tr' ? 'Bilet Kodu' : 'Ticket Code'}</div>
+            <div style="margin-top:6px;font-family:monospace;font-size:13px;color:#042f2c;word-break:break-all;">${escapeHtml(registration.id)}</div>
+          </div>
+          <a href="${ticketUrl}" style="display:inline-block;margin-top:20px;background:#0e7a70;color:#fff;text-decoration:none;border-radius:14px;padding:13px 18px;font-weight:800;">${language === 'tr' ? 'Etkinliği görüntüle' : 'View event'}</a>
+        </div>
+      </div>
+    </div>
+  `;
+
+  await sendEmail({
+    to: registration.email,
+    subject,
+    text,
+    html,
+    fallbackLog: `Event ticket for ${registration.email}\n${text}`,
   });
 }
 
@@ -1221,6 +1308,15 @@ app.post('/api/event-registrations', optionalAuth, async (req, res, next) => {
        RETURNING id, event_id, name, email, status, created_at`,
       [body.eventId, req.user?.id || null, body.name, body.email],
     );
+    const registration = registrationResult.rows[0];
+
+    const eventResult = await query(
+      `SELECT id, title, date_label, time_label, location, city
+       FROM events
+       WHERE id = $1`,
+      [body.eventId],
+    );
+    const event = eventResult.rows[0] || null;
 
     await notifyAdmin('Route Longevity event registration', [
       `Event: ${body.eventId}`,
@@ -1229,7 +1325,15 @@ app.post('/api/event-registrations', optionalAuth, async (req, res, next) => {
       `User ID: ${req.user?.id || 'guest'}`,
     ]);
 
-    return res.status(201).json({ registration: registrationResult.rows[0] });
+    sendEventTicketEmail({
+      registration,
+      event,
+      language: body.language,
+    }).catch((error) => {
+      console.error('Event ticket email failed:', error);
+    });
+
+    return res.status(201).json({ registration });
   } catch (error) {
     return next(error);
   }

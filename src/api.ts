@@ -348,6 +348,7 @@ export async function registerEvent(input: {
   eventId: string;
   name: string;
   email: string;
+  language?: 'en' | 'tr';
 }) {
   return request<{ registration: unknown }>('/api/event-registrations', {
     method: 'POST',
