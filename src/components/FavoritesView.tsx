@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { AnimatePresence } from 'motion/react';
 import { Partner, RouteJourney } from '../types';
 import { PARTNERS_DATA, WELLNESS_JOURNEYS } from '../data';
@@ -46,9 +46,16 @@ export default function FavoritesView({
       });
   }, []);
 
-  // Find matching saved partners & wellness routes
-  const savedPartners = PARTNERS_DATA.filter((p) => favorites.includes(p.id));
-  const savedJourneys = journeys.filter((j) => savedRouteIds.includes(j.id));
+  const favoriteSet = useMemo(() => new Set(favorites.map(String).filter(Boolean)), [favorites]);
+  const savedRouteSet = useMemo(() => new Set(savedRouteIds.map(String).filter(Boolean)), [savedRouteIds]);
+
+  // Find matching saved partners & wellness routes. Keep unresolved ids visible for diagnostics/removal.
+  const savedPartners = PARTNERS_DATA.filter((p) => favoriteSet.has(p.id));
+  const unresolvedFavoriteIds = favorites
+    .map(String)
+    .filter(Boolean)
+    .filter((id) => !PARTNERS_DATA.some((p) => p.id === id));
+  const savedJourneys = journeys.filter((j) => savedRouteSet.has(j.id));
 
   const handleShowOnMap = (partnerId: string) => {
     onFocusPartner(partnerId);
@@ -87,7 +94,7 @@ export default function FavoritesView({
                 : 'text-brand-deep-slate/60 hover:text-brand-deep-slate hover:bg-brand-warm-sand/20'
             }`}
           >
-            {language === 'tr' ? `Şifa Yerleri (${savedPartners.length})` : `Healing Places (${savedPartners.length})`}
+            {language === 'tr' ? `Şifa Yerleri (${favorites.length})` : `Healing Places (${favorites.length})`}
           </button>
           
           <button
@@ -105,7 +112,7 @@ export default function FavoritesView({
 
       {activeSubTab === 'hubs' ? (
         /* Saved Healing Places Grid Section */
-        savedPartners.length === 0 ? (
+        savedPartners.length === 0 && unresolvedFavoriteIds.length === 0 ? (
           <div className="bg-white border border-brand-warm-sand/40 rounded-3xl p-12 text-center max-w-2xl mx-auto space-y-5 shadow-sm">
             <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto shadow-sm">
               <Heart className="w-8 h-8 text-red-500 fill-red-50/20" strokeWidth={1} />
@@ -187,6 +194,41 @@ export default function FavoritesView({
                   >
                     <MessageSquarePlus className="w-3.5 h-3.5" />
                     <span>{language === 'tr' ? 'Nasıldı?' : 'How was it?'}</span>
+                  </button>
+                </div>
+              </div>
+            ))}
+
+            {unresolvedFavoriteIds.map((id) => (
+              <div
+                key={id}
+                className="bg-white rounded-2xl border border-amber-200 overflow-hidden flex flex-col justify-between shadow-sm animate-in fade-in duration-300"
+              >
+                <div className="p-5 space-y-3">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                    <Heart className="w-5 h-5 fill-current" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-bold text-brand-deep-slate font-sans leading-tight">
+                      {language === 'tr' ? 'Kayıtlı yer senkronize ediliyor' : 'Saved place is syncing'}
+                    </h3>
+                    <p className="mt-2 text-xs text-brand-deep-slate/60 leading-relaxed font-serif">
+                      {language === 'tr'
+                        ? 'Bu favori veritabanında kayıtlı ancak mevcut katalogda eşleşen kart bulunamadı. İsterseniz kaldırıp yeniden kaydedebilirsiniz.'
+                        : 'This favorite exists in the database, but its listing card is not in the current catalog. You can remove it and save it again.'}
+                    </p>
+                    <p className="mt-3 rounded-lg bg-[#f6fbf9] px-3 py-2 text-[10px] font-mono text-brand-deep-slate/55 break-all">
+                      {id}
+                    </p>
+                  </div>
+                </div>
+                <div className="p-5 pt-0">
+                  <button
+                    onClick={() => toggleFavorite(id)}
+                    className="w-full py-2 border border-amber-200 bg-amber-50 hover:bg-amber-100 font-bold text-xs rounded-xl text-amber-700 transition-colors flex items-center justify-center gap-1.5 cursor-pointer select-none"
+                  >
+                    <Heart className="w-3.5 h-3.5" />
+                    <span>{language === 'tr' ? 'Bu kaydı kaldır' : 'Remove this saved record'}</span>
                   </button>
                 </div>
               </div>

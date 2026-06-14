@@ -105,10 +105,11 @@ export default function App() {
 
     getFavorites()
       .then(({ listingIds, journeyIds }) => {
-        setFavorites(listingIds);
-        setSavedRouteIds(journeyIds);
-        localStorage.setItem('route_longevity_favorites', JSON.stringify(listingIds));
-        localStorage.setItem('route_longevity_saved_routes', JSON.stringify(journeyIds));
+        const normalizedListingIds = listingIds.map(String).filter(Boolean);
+        const normalizedJourneyIds = journeyIds.map(String).filter(Boolean);
+
+        setFavorites((current) => Array.from(new Set([...current.map(String), ...normalizedListingIds])));
+        setSavedRouteIds((current) => Array.from(new Set([...current.map(String), ...normalizedJourneyIds])));
       })
       .catch((error) => {
         console.warn('Could not load account favorites.', error);
@@ -132,7 +133,7 @@ export default function App() {
     } catch (error) {
       console.warn('Could not sync listing favorite.', error);
       setFavorites(prev =>
-        willSave ? prev.filter(f => f !== id) : [...prev, id]
+        willSave ? prev.filter(f => f !== id) : Array.from(new Set([...prev, id]))
       );
     }
   };
@@ -168,7 +169,7 @@ export default function App() {
     } catch (error) {
       console.warn('Could not sync route favorite.', error);
       setSavedRouteIds(prev =>
-        willSave ? prev.filter(rId => rId !== id) : [...prev, id]
+        willSave ? prev.filter(rId => rId !== id) : Array.from(new Set([...prev, id]))
       );
     }
   };
