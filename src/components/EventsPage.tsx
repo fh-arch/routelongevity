@@ -19,15 +19,22 @@ export default function EventsPage({ onOpenBlog, onOpenEvents, authSession }: Ev
   const [error, setError] = useState('');
   const [registeredId, setRegisteredId] = useState('');
   const [confirmationEvent, setConfirmationEvent] = useState<LongevityEvent | null>(null);
-  const [registration, setRegistration] = useState({ name: '', email: '' });
+  const [confirmationEmail, setConfirmationEmail] = useState('');
+  const [registrations, setRegistrations] = useState<Record<string, { name: string; email: string }>>({});
 
   useEffect(() => {
     if (!authSession) return;
-    setRegistration((prev) => ({
-      name: prev.name || authSession.name || '',
-      email: prev.email || authSession.email || '',
-    }));
-  }, [authSession]);
+    setRegistrations((prev) => {
+      const next = { ...prev };
+      for (const event of events) {
+        next[event.id] = {
+          name: next[event.id]?.name || authSession.name || '',
+          email: next[event.id]?.email || authSession.email || '',
+        };
+      }
+      return next;
+    });
+  }, [authSession, events]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -38,6 +45,8 @@ export default function EventsPage({ onOpenBlog, onOpenEvents, authSession }: Ev
   }, [language]);
 
   const submitRegistration = async (event: LongevityEvent) => {
+    const registration = registrations[event.id] || { name: '', email: '' };
+
     if (!registration.name.trim() || !registration.email.includes('@')) {
       setError(language === 'tr' ? 'Lütfen ad ve e-posta girin.' : 'Please enter name and email.');
       return;
@@ -48,10 +57,7 @@ export default function EventsPage({ onOpenBlog, onOpenEvents, authSession }: Ev
       await registerEvent({ eventId: event.id, name: registration.name, email: registration.email, language });
       setRegisteredId(event.id);
       setConfirmationEvent(event);
-      setRegistration((prev) => ({
-        name: authSession?.name || prev.name,
-        email: authSession?.email || prev.email,
-      }));
+      setConfirmationEmail(registration.email);
     } catch (registerError) {
       setError(registerError instanceof Error ? registerError.message : 'Registration failed.');
     }
@@ -111,14 +117,26 @@ export default function EventsPage({ onOpenBlog, onOpenEvents, authSession }: Ev
               </div>
               <div className="mt-5 grid grid-cols-1 gap-2">
                 <input
-                  value={registration.name}
-                  onChange={(e) => setRegistration((prev) => ({ ...prev, name: e.target.value }))}
+                  value={registrations[event.id]?.name || ''}
+                  onChange={(e) => setRegistrations((prev) => ({
+                    ...prev,
+                    [event.id]: {
+                      name: e.target.value,
+                      email: prev[event.id]?.email || '',
+                    },
+                  }))}
                   placeholder={language === 'tr' ? 'Adınız' : 'Your name'}
                   className="rounded-xl border border-brand-warm-sand/70 bg-[#f6fbf9] px-3 py-2.5 text-sm outline-none focus:border-brand-med-teal"
                 />
                 <input
-                  value={registration.email}
-                  onChange={(e) => setRegistration((prev) => ({ ...prev, email: e.target.value }))}
+                  value={registrations[event.id]?.email || ''}
+                  onChange={(e) => setRegistrations((prev) => ({
+                    ...prev,
+                    [event.id]: {
+                      name: prev[event.id]?.name || '',
+                      email: e.target.value,
+                    },
+                  }))}
                   placeholder={language === 'tr' ? 'E-posta' : 'Email'}
                   className="rounded-xl border border-brand-warm-sand/70 bg-[#f6fbf9] px-3 py-2.5 text-sm outline-none focus:border-brand-med-teal"
                 />
@@ -179,7 +197,7 @@ export default function EventsPage({ onOpenBlog, onOpenEvents, authSession }: Ev
                       {[confirmationEvent.location, confirmationEvent.city].filter(Boolean).join(', ')}
                     </p>
                     <p className="mt-3 text-[11px] font-bold text-brand-med-teal">
-                      {registration.email}
+                      {confirmationEmail}
                     </p>
                   </div>
                 </div>
