@@ -18,6 +18,9 @@ import { Compass, Map as MapIcon, Activity, Heart, User, BookOpen, Calendar, Shi
 import { AnimatePresence, motion } from 'motion/react';
 import { getCurrentUser, getFavorites, setFavoriteJourney, setFavoriteListing, signout } from './api';
 
+const isAuthenticationError = (error: unknown) =>
+  error instanceof Error && /authentication required|sign in|unauthorized|forbidden/i.test(error.message);
+
 export default function App() {
   const { t, language, setLanguage } = useLanguage();
   const [showSplash, setShowSplash] = useState(true);
@@ -43,6 +46,8 @@ export default function App() {
       return null;
     }
   });
+  const [pendingFavoriteId, setPendingFavoriteId] = useState<string | null>(null);
+  const [pendingSavedRouteId, setPendingSavedRouteId] = useState<string | null>(null);
   
   // Blog and Events state
   const openBlog = () => {
@@ -79,6 +84,8 @@ export default function App() {
     localStorage.removeItem('route_longevity_favorites');
     localStorage.removeItem('route_longevity_saved_routes');
     setAuthSession(null);
+    setPendingFavoriteId(null);
+    setPendingSavedRouteId(null);
     setFavorites([]);
     setSavedRouteIds([]);
     if (activeTab === 'profile') {
@@ -116,8 +123,47 @@ export default function App() {
       });
   }, [authSession]);
 
+  useEffect(() => {
+    if (!authSession || !pendingFavoriteId) return;
+
+    const id = pendingFavoriteId;
+    setPendingFavoriteId(null);
+    setFavorites((prev) => (prev.includes(id) ? prev : [...prev, id]));
+
+    setFavoriteListing(id, true).catch((error) => {
+      console.warn('Could not sync pending listing favorite.', error);
+      setFavorites((prev) => prev.filter((favoriteId) => favoriteId !== id));
+
+      if (isAuthenticationError(error)) {
+        localStorage.removeItem('route_longevity_session_user');
+        setAuthSession(null);
+        openAuth('user', 'signin');
+      }
+    });
+  }, [authSession, pendingFavoriteId]);
+
+  useEffect(() => {
+    if (!authSession || !pendingSavedRouteId) return;
+
+    const id = pendingSavedRouteId;
+    setPendingSavedRouteId(null);
+    setSavedRouteIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+
+    setFavoriteJourney(id, true).catch((error) => {
+      console.warn('Could not sync pending route favorite.', error);
+      setSavedRouteIds((prev) => prev.filter((routeId) => routeId !== id));
+
+      if (isAuthenticationError(error)) {
+        localStorage.removeItem('route_longevity_session_user');
+        setAuthSession(null);
+        openAuth('user', 'signin');
+      }
+    });
+  }, [authSession, pendingSavedRouteId]);
+
   const toggleFavorite = async (id: string) => {
     if (!authSession) {
+      setPendingFavoriteId(id);
       openAuth('user', 'signin');
       return;
     }
@@ -135,6 +181,12 @@ export default function App() {
       setFavorites(prev =>
         willSave ? prev.filter(f => f !== id) : Array.from(new Set([...prev, id]))
       );
+
+      if (isAuthenticationError(error)) {
+        localStorage.removeItem('route_longevity_session_user');
+        setAuthSession(null);
+        openAuth('user', 'signin');
+      }
     }
   };
 
@@ -154,6 +206,7 @@ export default function App() {
 
   const toggleSavedRoute = async (id: string) => {
     if (!authSession) {
+      setPendingSavedRouteId(id);
       openAuth('user', 'signin');
       return;
     }
@@ -171,6 +224,12 @@ export default function App() {
       setSavedRouteIds(prev =>
         willSave ? prev.filter(rId => rId !== id) : Array.from(new Set([...prev, id]))
       );
+
+      if (isAuthenticationError(error)) {
+        localStorage.removeItem('route_longevity_session_user');
+        setAuthSession(null);
+        openAuth('user', 'signin');
+      }
     }
   };
 
