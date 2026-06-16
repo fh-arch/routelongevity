@@ -8,11 +8,9 @@ import SplashScreen from './components/SplashScreen';
 import BlogPage from './components/BlogPage';
 import EventsPage from './components/EventsPage';
 import AuthModal, { AuthMode, AuthRole, AuthSession } from './components/AuthModal';
-import AgentChat from './components/AgentChat/AgentChat';
 import { PARTNERS_DATA } from './data';
 import { ActiveTab } from './types';
 import { useLanguage } from './context/LanguageContext';
-import { AgentProvider } from './context/AgentContext';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import { Compass, Map as MapIcon, Activity, Heart, User, BookOpen, Calendar, ShieldCheck, LogOut } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -235,7 +233,6 @@ export default function App() {
 
   // State to handle direct focus-out and auto-centering on map pins
   const [focusedPartnerId, setFocusedPartnerId] = useState<string | null>(null);
-  const [agentHighlightedExternalIds, setAgentHighlightedExternalIds] = useState<string[]>([]);
 
   const availableCountries = useMemo(
     () => Array.from(new Set(PARTNERS_DATA.map((partner) => partner.country || 'Türkiye'))).sort((a, b) => a.localeCompare(b)),
@@ -279,14 +276,6 @@ export default function App() {
     setActiveRouteTitle(null);
   };
 
-  const handleViewAgentSuggestion = (partnerId: string, allIds: string[] = []) => {
-    setAgentHighlightedExternalIds(allIds.length ? allIds : [partnerId]);
-    handleFocusPartner(partnerId);
-    setActiveTab('map');
-  };
-
-  const clearAgentHighlights = () => setAgentHighlightedExternalIds([]);
-
   const handleSelectRoute = (partnerIds: string[], title: string) => {
     setActiveRoutePartnerIds(partnerIds);
     setActiveRouteTitle(title);
@@ -325,8 +314,6 @@ export default function App() {
           initialCountry={selectedCountry}
         />
       )}
-      <AgentProvider>
-      
       <div className="flex flex-col h-screen app-glass-shell overflow-hidden font-sans">
       
       {/* Mobile Top Header */}
@@ -500,8 +487,6 @@ export default function App() {
                 setFocusedPartnerId={setFocusedPartnerId}
                 activeRoutePartnerIds={activeRoutePartnerIds}
                 activeRouteTitle={activeRouteTitle}
-                agentHighlightedExternalIds={agentHighlightedExternalIds}
-                onClearAgentHighlights={clearAgentHighlights}
               />
             </motion.div>
           )}
@@ -634,12 +619,6 @@ export default function App() {
         onClose={() => setAuthModal((prev) => ({ ...prev, isOpen: false }))}
         onSuccess={setAuthSession}
       />
-      <AgentChat
-        favorites={favorites}
-        toggleFavorite={toggleFavorite}
-        onViewSuggestion={handleViewAgentSuggestion}
-      />
-      </AgentProvider>
     </>
   );
 }

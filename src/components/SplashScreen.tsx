@@ -74,7 +74,7 @@ export default function SplashScreen({ onComplete, countries, initialCountry = '
             stage === 'enter' ? 'opacity-0 translate-y-2' : 'opacity-100 translate-y-0'
           }`}
         >
-          {isTurkiye ? 'Agentic longevity zekası' : 'Agentic longevity intelligence'}
+          {isTurkiye ? 'Longevity keşif platformu' : 'Longevity discovery platform'}
         </div>
 
         {/* Title */}
@@ -85,11 +85,11 @@ export default function SplashScreen({ onComplete, countries, initialCountry = '
         >
           {isTurkiye ? (
             <>
-              İlk <span className="text-brand-med-teal">agentic AI longevity platformunu</span> inşa ediyoruz
+              Doğrulanmış <span className="text-brand-med-teal">longevity rotalarını</span> keşfedin
             </>
           ) : (
             <>
-              We’re building the first <span className="text-brand-med-teal">agentic AI for longevity</span>
+              Discover verified <span className="text-brand-med-teal">longevity routes</span>
             </>
           )}
         </h1>
@@ -100,12 +100,12 @@ export default function SplashScreen({ onComplete, countries, initialCountry = '
           }`}
         >
           {isTurkiye
-            ? 'Longevity rotaları, doğrulanmış klinikler, wellness inzivaları ve koruyucu sağlık seyahati için şeffaf bir zeka katmanı.'
-            : 'A glass-clear intelligence layer for longevity routes, verified clinics, wellness retreats, and preventive health travel.'}
+            ? 'Klinikler, termal merkezler, hamamlar, inzivalar, üreticiler ve sağlıklı yaşam destinasyonları tek haritada.'
+            : 'Clinics, thermal destinations, hammams, retreats, producers, and wellness places on one verified map.'}
           <span className="text-brand-med-teal text-xs uppercase tracking-widest block mt-3 font-black">
             {isTurkiye
-              ? 'Miras verisi. Modern rehberlik. Türkiye’den başlayarak.'
-              : 'Heritage data. Modern guidance. Starting from Türkiye.'}
+              ? 'Gerçek yerler. Kategoriler. Harita tabanlı keşif.'
+              : 'Real places. Clear categories. Map-based discovery.'}
           </span>
         </p>
 

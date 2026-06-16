@@ -7,7 +7,6 @@ import Footer from './Footer';
 import { AuthMode, AuthRole, AuthSession } from './AuthModal';
 import { getBlogPosts } from '../api';
 import type { BlogPost } from './BlogEventsModal';
-import AgentSearchBar from './AgentSearchBar';
 
 interface ExploreViewProps {
   partners: Partner[];
@@ -266,21 +265,18 @@ export default function ExploreView({
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_12%,rgba(255,255,255,0.16),transparent_32%),radial-gradient(circle_at_82%_12%,rgba(217,110,95,0.22),transparent_24%)]" />
         <div className="space-y-6 max-w-3xl z-10 self-center">
           <span className="text-xs font-semibold text-white bg-white/10 px-3 py-1.5 rounded-full uppercase tracking-wide border border-white/10">
-            {language === 'tr' ? 'Global longevity rota zekası' : 'Global longevity route intelligence'}
+            {language === 'tr' ? 'Global longevity listeleme ağı' : 'Global longevity listing network'}
           </span>
           <h1 className="text-3xl md:text-5xl xl:text-[3.45rem] font-extrabold font-display leading-[1.06] tracking-normal max-w-4xl">
             {language === 'tr'
-              ? 'Sağlık hedefini anlat. AI longevity rotanı oluştursun.'
-              : 'Describe Your Health Goal. AI Builds Your Longevity Route.'}
+              ? 'Doğrulanmış longevity merkezlerini ve wellness rotalarını keşfedin.'
+              : 'Discover verified longevity places and wellness routes.'}
           </h1>
           <p className="text-sm md:text-base text-brand-soft-ivory/82 leading-7 max-w-2xl pb-2">
             {language === 'tr'
-              ? 'Uyku, stres, toparlanma, bağışıklık, metabolizma veya sağlıklı yaşlanma hedefini yaz. Route Longevity verified klinikler, inzivalar, termal kaynaklar, hamamlar, beslenme deneyimleri ve wellness destinasyonları arasında kişiselleştirilmiş bir rota oluşturur.'
-              : 'Tell us what you want to improve — sleep, stress, recovery, immunity, metabolism or healthy aging. Route Longevity creates a personalized route across verified clinics, retreats, thermal springs, hammams, nutrition experiences and wellness destinations.'}
+              ? 'Klinikler, termal kaynaklar, hamamlar, inzivalar, beslenme deneyimleri ve üreticiler arasında ülke, kategori ve harita üzerinden kolayca gezinin.'
+              : 'Browse clinics, thermal springs, hammams, retreats, nutrition experiences, and producers by country, category, and map.'}
           </p>
-          <div className="pt-3">
-            <AgentSearchBar authSession={authSession} onOpenAuth={onOpenAuth} />
-          </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl">
             {[
               [partners.length, language === 'tr' ? 'doğrulanmış yer' : 'verified places'],
@@ -341,40 +337,6 @@ export default function ExploreView({
       </div>
 
       <section className="glass-surface-strong rounded-[28px] overflow-hidden">
-        <div className="px-5 md:px-8 pt-6 pb-3">
-          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
-            <div>
-              <p className="text-[11px] font-black uppercase tracking-widest text-brand-med-teal">
-                {language === 'tr' ? 'AI rota akışı' : 'AI route workflow'}
-              </p>
-              <h2 className="mt-1 text-2xl font-extrabold text-brand-deep-slate">
-                {language === 'tr' ? 'AI Longevity Rotanız Nasıl Oluşur?' : 'How Your AI Longevity Route Works'}
-              </h2>
-            </div>
-            <p className="max-w-md text-xs leading-5 text-brand-deep-slate/55">
-              {language === 'tr'
-                ? 'Route Longevity tıbbi tanı sunmaz. Belirttiğiniz hedeflere göre doğrulanmış wellness ve longevity deneyimlerini keşfetmenize yardımcı olur.'
-                : 'Route Longevity does not provide medical diagnosis. It helps users discover verified wellness and longevity experiences based on their stated goals.'}
-            </p>
-          </div>
-          <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-4">
-            {[
-              [language === 'tr' ? 'Hedefini yaz' : 'Describe your goal', language === 'tr' ? 'Uyku, stres, toparlanma veya metabolizma gibi ihtiyacını anlat.' : 'Tell us about sleep, stress, recovery, metabolism or another need.'],
-              [language === 'tr' ? 'AI eşleştirir' : 'AI matches needs', language === 'tr' ? 'Sistem gerçek yerleri kategori, konum ve sağlık odağıyla eşleştirir.' : 'The system matches real places by category, location and health focus.'],
-              [language === 'tr' ? 'Rotanı incele' : 'Review your route', language === 'tr' ? 'Önerilen klinik, termal, inziva ve deneyimleri karşılaştır.' : 'Compare recommended clinics, thermal places, retreats and experiences.'],
-              [language === 'tr' ? 'Kaydet ve geliştir' : 'Save and refine', language === 'tr' ? 'Favorilere ekle, haritada gör ve partnerlerden detay iste.' : 'Save favorites, view on map and request partner details.'],
-            ].map(([title, desc], index) => (
-              <div key={title} className="relative rounded-3xl border border-brand-warm-sand/55 bg-white/78 p-4 shadow-sm">
-                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-2xl bg-brand-olive-sage/70 text-sm font-black text-brand-deep-slate">
-                  {index + 1}
-                </div>
-                <h3 className="text-sm font-black text-brand-deep-slate">{title}</h3>
-                <p className="mt-2 text-xs leading-5 text-brand-deep-slate/58">{desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div className="px-5 md:px-8 py-6">
           <div className="flex items-center gap-4 mb-5">
             <div className="h-px flex-1 bg-brand-turquoise/35" />
@@ -541,8 +503,8 @@ export default function ExploreView({
             </h2>
             <p className="text-sm text-white/68 leading-6 mt-2">
               {language === 'tr'
-                ? 'Route Longevity’nin doğrulanmış partner ağına katılın ve kişiselleştirilmiş AI rotalarında keşfedilebilir olun.'
-                : 'Join Route Longevity’s verified partner network and become discoverable inside personalized AI-generated routes.'}
+                ? 'Route Longevity’nin doğrulanmış partner ağına katılın ve harita tabanlı longevity listelemelerinde keşfedilebilir olun.'
+                : 'Join Route Longevity’s verified partner network and become discoverable in map-based longevity listings.'}
             </p>
           </div>
           <button

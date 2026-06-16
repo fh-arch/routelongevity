@@ -63,8 +63,8 @@ export default function Footer({ onOpenBlog, onOpenEvents }: FooterProps) {
           
           <p className="text-xs md:text-sm text-brand-soft-ivory/75 leading-relaxed max-w-sm">
             {language === 'tr'
-              ? 'Route Longevity, doğrulanmış klinikleri, inzivaları, termal deneyimleri ve sağlıklı yaşam destinasyonlarını kişiselleştirilmiş rotalar içinde görünür kılan global longevity platformudur.'
-              : 'Route Longevity is a global longevity route platform connecting verified clinics, retreats, thermal experiences and wellness destinations through personalized route intelligence.'}
+              ? 'Route Longevity, doğrulanmış klinikleri, inzivaları, termal deneyimleri ve sağlıklı yaşam destinasyonlarını harita tabanlı listelemelerle görünür kılan global longevity platformudur.'
+              : 'Route Longevity is a global longevity listing platform connecting verified clinics, retreats, thermal experiences, and wellness destinations on one curated map.'}
           </p>
 
         </div>

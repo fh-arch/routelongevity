@@ -135,7 +135,7 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
     setAnalyticsLoading(true);
     getAgentAnalytics()
       .then(setAnalytics)
-      .catch(() => setError('Could not load AI analytics.'))
+      .catch(() => setError('Could not load route analytics.'))
       .finally(() => setAnalyticsLoading(false));
   }, [activeTab]);
 
@@ -167,7 +167,7 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
     { id: 'travelers', label: 'Travelers', icon: Users },
     { id: 'blogs', label: 'Blogs', icon: Newspaper },
     { id: 'events', label: 'Events', icon: CalendarCheck },
-    { id: 'ai-analytics', label: 'AI Analytics', icon: Sparkles },
+    { id: 'ai-analytics', label: 'Route Analytics', icon: Sparkles },
   ];
 
   const renderQueue = (
@@ -425,7 +425,7 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
           {analyticsLoading && (
             <div className="flex items-center gap-2 rounded-2xl border border-brand-warm-sand/50 bg-white p-4 text-sm font-bold text-brand-deep-slate">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Loading AI analytics...
+              Loading route analytics...
             </div>
           )}
 
@@ -434,7 +434,7 @@ export default function AdminDashboard({ authSession, onOpenBlog, onOpenEvents }
               {/* Stat cards */}
               <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
                 {[
-                  { label: 'Agent Sessions', value: analytics.stats.totalSessions },
+                  { label: 'Route Sessions', value: analytics.stats.totalSessions },
                   { label: 'Route Suggestions', value: analytics.stats.totalSuggestions },
                   { label: 'Outcome Reports', value: analytics.stats.totalOutcomes },
                   { label: 'Avg Outcome Score', value: analytics.stats.avgOutcomeScore !== null ? `${analytics.stats.avgOutcomeScore} / 10` : '—' },
